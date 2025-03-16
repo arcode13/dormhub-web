@@ -22,11 +22,9 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Aplikasi Manajemen Asrama Mahasiswa</h3>
+  <h3 align="center">Student Dormitory Management Application</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
-    <br />
     “DormHub”
     <br />
     <a href="https://dormhub.com"><strong>Explore the docs »</strong></a>
