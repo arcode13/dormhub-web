@@ -163,7 +163,7 @@ _Follow the steps below to install and set up the application properly._
 
 5. **Access the application at**
    ```sh
-   [localhost:8080](http://localhost:8080)
+   http://localhost:8080
    
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
