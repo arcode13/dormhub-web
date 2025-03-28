@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:image" th:content="@{'/assets/images/' + ${konfigurasi['web-logo']}}" />
+        <meta property="og:title" th:content="${konfigurasi['web-nama-website']}" />
+        
+        <!-- Title -->
+        <title th:text="${konfigurasi['web-nama-website']} + ' - Login'"></title>
+        
+        <!-- App Favicon -->
+        <link rel="shortcut icon" th:href="@{'/assets/images/' + ${konfigurasi['web-favicon']}}">
+        
+        <!-- App CSS -->
+        <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body class="authentication-bg">
+        <div class="account-pages my-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-10">
+                        <div class="card">
+                            <div class="card-body p-0">
+                                <div class="row">
+                                    <div class="col-md-6 p-5">
+                                        <div class="mx-auto mb-5">
+                                            <a href="login">
+                                                <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24" />
+                                                <h3 class="d-inline align-middle ml-1 text-logo" th:text="${konfigurasi['web-nama-website']}"></h3>
+                                            </a>
+                                        </div>
+                                        <h5 class="mb-0 mt-4">Selamat Datang!</h5>
+                                        <p class="text-muted mt-1 mb-4">Masukan email dan password anda untuk mengakses <b th:text="${konfigurasi['web-nama-website']}"></b>.</p>
+                                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <span th:text="${error}"></span>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <span th:text="${success}"></span>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form method="POST" action="/login" class="authentication-form">
+                                            <div class="form-group">
+                                                <label class="form-control-label">Email</label>
+                                                <div class="input-group input-group-merge">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="icon-dual" data-feather="mail"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="email" class="form-control" name="email" placeholder="Contoh : user@dormhub.my.id">
+                                                </div>
+                                            </div>
+                                            <div class="form-group mt-4">
+                                                <label class="form-control-label">Password</label>
+                                                <a href="forgot-password" class="float-right text-muted text-unline-dashed ml-1">Lupa Password?</a>
+                                                <div class="input-group input-group-merge">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <i class="icon-dual" data-feather="lock"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="password" class="form-control" name="password">
+                                                </div>
+                                            </div>
+                                            <div class="form-group mb-4">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" name="remember" value="1" id="checkbox-signin">
+                                                    <label class="custom-control-label" for="checkbox-signin">Ingat Saya</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group mb-0 text-center">
+                                                <button type="submit" class="btn btn-danger btn-block" name="login">Login</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-lg-6 d-none d-md-inline-block">
+                                        <div class="auth-page-sidebar">
+                                            <div class="overlay"></div>
+                                            <div class="auth-user-testimonial">
+                                                <p class="font-size-24 font-weight-bold text-white mb-1" th:text="${konfigurasi['web-nama-website']} + '!'"></p>
+                                                <p class="lead">"Aplikasi Manajemen Asrama Mahasiswa."</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <p class="text-muted">Belum punya akun? <a href="register" class="text-danger font-weight-bold">Daftar</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="demo-card">
+            <div class="card shadow-lg">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <span>Informasi Demo Akun</span>
+                    <div>
+                        <button type="button" class="close text-white" onclick="closeDemoCard()"><i class="fa fa-times"></i></span></button>
+                        <button type="button" class="close text-white" id="minimize-btn" onclick="minimizeDemoCard()"><i class="fa fa-minus"></i></button>
+                    </div>
+                </div>
+                <div id="demo-card-body" class="card-body">
+                    <p class="mb-2">
+                        <b>Email :</b> mahasiswa@dormhub.my.id<br>
+                        <b>Password :</b> tester123<br>
+                        <b>Level :</b> Mahasiswa
+                    </p>
+                    <hr>
+                    <p class="mb-2">
+                        <b>Email :</b> seniorresidence@dormhub.my.id<br>
+                        <b>Password :</b> tester123<br>
+                        <b>Level :</b> Senior Residence
+                    </p>
+                    <hr>
+                    <p class="mb-2">
+                        <b>Email :</b> helpdesk@dormhub.my.id<br>
+                        <b>Password :</b> tester123<br>
+                        <b>Level :</b> Help Desk
+                    </p>
+                    <hr>
+                    <p class="mb-2">
+                        <b>Email :</b> admin@dormhub.my.id<br>
+                        <b>Password :</b> tester123<br>
+                        <b>Level :</b> Admin
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function closeDemoCard() {
+                const demoCard = document.getElementById('demo-card');
+                demoCard.classList.add('hide');
+                setTimeout(() => demoCard.remove(), 300);
+            }
+            function minimizeDemoCard() {
+                const demoCardBody = document.getElementById('demo-card-body');
+                const minimizeBtnIcon = document.querySelector('#minimize-btn i');
+                
+                if (demoCardBody.style.display === 'none') {
+                    demoCardBody.style.display = 'block';
+                    minimizeBtnIcon.classList.remove('fa-plus');
+                    minimizeBtnIcon.classList.add('fa-minus');
+                } else {
+                    demoCardBody.style.display = 'none';
+                    minimizeBtnIcon.classList.remove('fa-minus');
+                    minimizeBtnIcon.classList.add('fa-plus');
+                }
+            }
+        </script>
+
+        <!-- Vendor JS -->
+        <script src="assets/js/vendor.min.js"></script>
+        
+        <!-- App JS -->
+        <script src="assets/js/app.min.js"></script>
+    </body>
+</html>

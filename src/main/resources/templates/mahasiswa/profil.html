@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:image" th:content="@{'/assets/images/' + ${konfigurasi['web-logo']}}" />
+        <meta property="og:title" th:content="${konfigurasi['web-nama-website']}" />
+        
+        <!-- Title -->
+        <title th:text="${konfigurasi['web-nama-website']} + ' - Profil'"></title>
+        
+        <!-- App Favicon -->
+        <link rel="shortcut icon" th:href="@{'/assets/images/' + ${konfigurasi['web-favicon']}}">
+        
+        <!-- App CSS -->
+        <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
+                <div class="container-fluid">
+                    <a href="/mahasiswa" class="navbar-brand mr-0 mr-md-2 logo">
+                        <span class="logo-lg">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                            <span class="d-inline h5 ml-1 text-logo" th:text="${konfigurasi['web-nama-website']}"></span>
+                        </span>
+                        <span class="logo-sm">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                        </span>
+                    </a>
+                    <ul class="navbar-nav bd-navbar-nav flex-row list-unstyled menu-left mb-0">
+                        <li class="">
+                            <button class="button-menu-mobile open-left disable-btn">
+                                <i data-feather="menu" class="menu-icon"></i>
+                                <i data-feather="x" class="close-icon"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <th:block th:if="${isSeniorResidence}">
+                    <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
+                        <a href="../senior-residence/dashboard" class="btn btn-sm btn-danger rounded">
+                            <i class="fa fa-arrow-right mr-1"></i> Masuk ke Senior Residence
+                        </a>
+                    </ul>
+                    </th:block>
+                </div>
+            </div>
+            <div class="left-side-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
+                    <div class="media-body">
+                        <h6 class="pro-user-name mt-0 mb-0" th:text="${user.namaLengkap}"></h6>
+                        <span class="pro-user-desc font-weight-600">Mahasiswa</span>
+                    </div>
+                    <div class="dropdown align-self-center profile-dropdown-menu">
+                        <a class="dropdown-toggle mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                            <span data-feather="chevron-down"></span>
+                        </a>
+                        <div class="dropdown-menu profile-dropdown">
+                            <a href="/mahasiswa/profil" class="dropdown-item notify-item">
+                                <i data-feather="user" class="icon-dual icon-xs mr-2"></i>
+                                <span>Profil</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="../logout" class="dropdown-item notify-item">
+                                <i data-feather="log-out" class="icon-dual icon-xs mr-2"></i>
+                                <span>Keluar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-content">
+                    <div id="sidebar-menu" class="slimscroll-menu">
+                        <ul class="metismenu" id="menu-bar">
+                            <li class="menu-title">Menu</li>
+                            <li>
+                                <a href="/mahasiswa/dashboard">
+                                    <i class="fa fa-home"></i>
+                                    <span>Beranda</span>
+                                </a>
+                            </li>
+                            <li th:if="${isCheckin == true and isCheckout == false}">
+                                <a href="javascript: void(0);">
+                                    <i class="fa fa-file"></i>
+                                    <span>Laporan</span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <ul class="nav-second-level" aria-expanded="false">
+                                    <li>
+                                        <a href="/mahasiswa/buat-laporan-umum">Buat Laporan</a>
+                                    </li>
+                                    <li>
+                                        <a href="/mahasiswa/daftar-laporan">Daftar Laporan</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li th:if="${isCheckin == true}">
+                                <a href="/mahasiswa/informasi-kamar">
+                                    <i class="fa fa-bed"></i>
+                                    <span>Informasi Kamar</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            
+            <div class="content-page">
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row page-title">
+                            <div class="col-md-12">
+                                <h4 class="mb-1 mt-0">Profil</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-lg-2 col-lg-7">
+                                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <span th:text="${error}"></span>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <span th:text="${success}"></span>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="offset-lg-2 col-lg-7">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="photo-profile">
+                                            <div class="text-right mb-4">
+                                                <a href="javascript:;" class="btn btn-danger btn-sm mr-2">Edit Foto Profil</a>
+                                            </div>
+                                            <div class="mb-3 text-center">
+                                                <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="rounded-circle border" alt="Profil" width="120" height="120">
+                                            </div>
+                                            <div class="align-items-center text-center mb-5">
+                                                <div>
+                                                    <h1 class="mb-2 mt-0 text-uppercase d-none d-md-block" th:text="${user.namaLengkap}"></h1>
+                                                    <h4 class="mb-2 mt-0 text-uppercase d-block d-md-none" th:text="${user.namaLengkap}"></h4>
+                                                    <span class="text-muted ">Mahasiswa</span>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center">
+                                                <div class="col-md-4 col-4">
+                                                    <h5 class="mb-0" th:text="${konfigurasi['web-nama-gedung']}"></h5>
+                                                    <p class="text-muted">Gedung</p>
+                                                </div>
+                                                <div class="col-md-4 col-4">
+                                                    <h5 class="mb-0" th:text="${mahasiswa.noKamar}"></h5>
+                                                    <p class="text-muted">No. Kamar</p>
+                                                </div>
+                                                <div class="col-md-4 col-4">
+                                                    <h5 class="mb-0" th:text="${mahasiswa.noKasur}"></h5>
+                                                    <p class="text-muted">No. Kasur</p>
+                                                </div>
+                                            </div>                                            
+                                        </div>
+                                        <div class="d-none edit-photo">
+                                            <div class="text-right mb-4">
+                                                <a href="javascript:;" class="btn btn-warning btn-sm"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+                                            </div>
+                                            <form method="POST" action="/mahasiswa/profil/ubah-foto" enctype="multipart/form-data">
+                                                <div class="form-group">
+                                                    <label>Foto Profil</label>
+                                                    <div class="d-flex">
+                                                        <label id="custom" for="image"><i class="fa-regular fa-images"></i><small>Upload</small></label>
+                                                        <input type="file" name="fotoProfil" id="image" hidden required>
+                                                        <div id="list-images"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group text-right">
+                                                    <button type="reset" class="btn btn-light">Ulangi</button>
+                                                    <button type="submit" class="btn btn-danger">Edit Foto Profil</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="offset-lg-2 col-lg-7">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="about-me">
+                                            <div class="text-right mb-4">
+                                                <a href="javascript:;" class="btn btn-danger btn-sm">Edit Profil</a>
+                                                <a href="javascript:;" class="btn btn-success btn-sm">Ganti Password</a>
+                                            </div>
+                                            <h6 class="mb-1 mt-0">Nama Lengkap</h6>
+                                            <p class="mb-4" th:text="${user.namaLengkap}"></p>
+                                            <h6 class="mb-1 mt-0">Email</h6>
+                                            <p class="mb-4" th:text="${user.email}"></p>
+                                            <h6 class="mb-1 mt-0">Nomor HP</h6>
+                                            <p class="mb-4" th:text="${user.nomorHp}"></p>
+                                            <h6 class="mb-1 mt-0">Jenis Kelamin</h6>
+                                            <p class="mb-0" th:text="${user.jenisKelamin}"></p>
+                                        </div>
+                                        <div class="d-none edit-profile">
+                                            <div class="text-right mb-4">
+                                                <a href="javascript:;" class="btn btn-warning btn-sm"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+                                            </div>
+                                            <form method="POST" action="/mahasiswa/profil/ubah-data">
+                                                <div class="form-group">
+                                                    <label>Nama Lengkap</label>
+                                                    <input type="text" name="namaLengkap" class="form-control" th:value="${user.namaLengkap}" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Nomor HP</label>
+                                                    <input type="text" name="nomorHp" class="form-control" th:value="${user.nomorHp}" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Jenis Kelamin</label>
+                                                    <div class="custom-control custom-radio mb-2">
+                                                        <input type="radio" class="custom-control-input" name="jenisKelamin" value="Laki-Laki" id="lakilaki" th:checked="${user.jenisKelamin == 'Laki-Laki'}" required>
+                                                        <label class="custom-control-label" for="lakilaki">Laki-Laki</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio">
+                                                        <input type="radio" class="custom-control-input" name="jenisKelamin" value="Perempuan" id="perempuan" th:checked="${user.jenisKelamin == 'Perempuan'}" required>
+                                                        <label class="custom-control-label" for="perempuan">Perempuan</label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group text-right">
+                                                    <button type="reset" class="btn btn-light">Ulangi</button>
+                                                    <button type="submit" class="btn btn-danger">Simpan</button>
+                                                </div>
+                                            </form>                                            
+                                        </div>
+                                        <div class="d-none change-password">
+                                            <div class="text-right mb-4">
+                                                <a href="javascript:;" class="btn btn-warning btn-sm"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+                                            </div>
+                                            <form method="POST" action="/mahasiswa/profil/ubah-password">
+                                                <div class="form-group">
+                                                    <label>Password Saat Ini</label>
+                                                    <input type="password" class="form-control" name="passwordLama" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Password Baru</label>
+                                                    <input type="password" class="form-control" name="passwordBaru" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Konfirmasi Password Baru</label>
+                                                    <input type="password" class="form-control" name="konfirmasiPasswordBaru" required>
+                                                </div>
+                                                <div class="form-group text-right">
+                                                    <button type="reset" class="btn btn-light">Ulangi</button>
+                                                    <button type="submit" class="btn btn-danger">Ganti Password</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const editPhotoButton = document.querySelector('.photo-profile .btn-danger');
+                        const editProfileButton = document.querySelector('.about-me .btn-danger');
+                        const changePasswordButton = document.querySelector('.about-me .btn-success');
+                        const detailPhoto = document.querySelector('.photo-profile');
+                        const editPhoto = document.querySelector('.edit-photo');
+                        const detailProfile = document.querySelector('.about-me');
+                        const editProfile = document.querySelector('.edit-profile');
+                        const changePassword = document.querySelector('.change-password');
+                        const backButtons = document.querySelectorAll('.btn-warning');
+                        editPhotoButton.addEventListener('click', () => {
+                            detailPhoto.classList.add('d-none');
+                            editPhoto.classList.remove('d-none');
+                        });
+                        editProfileButton.addEventListener('click', () => {
+                            detailProfile.classList.add('d-none');
+                            editProfile.classList.remove('d-none');
+                        });
+                        changePasswordButton.addEventListener('click', () => {
+                            detailProfile.classList.add('d-none');
+                            changePassword.classList.remove('d-none');
+                        });
+                        backButtons.forEach(button => {
+                            button.addEventListener('click', () => {
+                                if (!editPhoto.classList.contains('d-none')) {
+                                    editPhoto.classList.add('d-none');
+                                    detailPhoto.classList.remove('d-none');
+                                }
+                                if (!editProfile.classList.contains('d-none')) {
+                                    editProfile.classList.add('d-none');
+                                    detailProfile.classList.remove('d-none');
+                                }
+                                if (!changePassword.classList.contains('d-none')) {
+                                    changePassword.classList.add('d-none');
+                                    detailProfile.classList.remove('d-none');
+                                }
+                            });
+                        });
+                    });
+                    const imagesFile = document.getElementById('image');
+                    const listimage = document.getElementById('list-images');
+                    const maxFileSize = 2 * 1024 * 1024;
+                    const allowedExtensions = ['image/jpeg', 'image/jpg', 'image/png'];
+                    document.addEventListener('DOMContentLoaded', function () {
+                        imagesFile.addEventListener('change', function (e) {
+                            e.preventDefault();
+                            const imageFiles = e.target.files;
+                            listimage.innerHTML = '';
+                            for (let index = 0; index < imageFiles.length; index++) {
+                                const file = imageFiles[index];
+                                if (file.size > maxFileSize) {
+                                    alert('Ukuran file maksimal 2 MB');
+                                    imagesFile.value = '';
+                                    return;
+                                }
+                                if (!allowedExtensions.includes(file.type)) {
+                                    alert('Format file hanya boleh JPG, JPEG, atau PNG');
+                                    imagesFile.value = '';
+                                    return;
+                                }
+                                const reader = new FileReader();
+                                reader.readAsDataURL(file);
+                                reader.addEventListener('load', () => {
+                                    const img = `
+                                    <div class="position-relative" data-item="${index + 1}" style="width: max-content;">
+                                        <img id="displayimg" class="rounded-2" src="${reader.result}" width="115" height="115" alt="">
+                                        <span data-img="${index + 1}" id="remove-list" class="remove-list" style="cursor: pointer;">X</span>
+                                    </div>`;
+                                    listimage.insertAdjacentHTML('beforeend', img);
+                                });
+                            }
+                        });
+                        listimage.addEventListener('click', function (e) {
+                            if (e.target.id === 'remove-list') {
+                                const elemData = e.target.dataset.img;
+                                if (elemData) {
+                                    if (confirm('Hapus Foto Profil?')) {
+                                        listimage.removeChild(e.target.parentElement);
+                                        imagesFile.value = '';
+                                    }
+                                }
+                            }
+                        });
+                    });
+                </script>
+                
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12" th:text="${konfigurasi['web-footer']}"></div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <!-- Vendor JS -->
+        <script src="../assets/js/vendor.min.js"></script>
+        
+        <!-- App JS -->
+        <script src="../assets/js/app.min.js"></script>
+    </body>
+</html>

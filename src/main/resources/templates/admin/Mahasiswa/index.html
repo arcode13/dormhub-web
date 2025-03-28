@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>DormHub - Daftar Mahasiswa</title>
+    
+    <!-- App Favicon -->
+    <link th:href="@{/assets/images/favicon.ico}" rel="shortcut icon">
+    
+    <!-- App CSS -->
+    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/icons.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/app.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/style.css}" rel="stylesheet" type="text/css">
+    
+    <!-- DataTable CSS -->
+    <link th:href="@{/assets/css/dataTables.bootstrap4.min.css}" rel="stylesheet" type="text/css">
+    
+    <!-- jQuery -->
+    <script th:src="@{/assets/js/jquery-3.7.1.js}"></script>
+</head>
+<body>
+    <div id="wrapper">
+        <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
+            <div class="container-fluid">
+                <a href="#" class="navbar-brand mr-0 mr-md-2 logo">
+                    <span class="logo-lg">
+                        <img th:src="@{/assets/images/logo.png}" alt="DormHub" height="24">
+                        <span class="d-inline h5 ml-1 text-logo">DormHub</span>
+                    </span>
+                    <span class="logo-sm">
+                        <img th:src="@{/assets/images/logo.png}" alt="DormHub" height="24">
+                    </span>
+                </a>
+            </div>
+        </div>
+        <div class="left-side-menu">
+            <div class="media user-profile mt-2 mb-2">
+                <img th:src="@{/assets/images/users/avatar-1.jpg}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                <div class="media-body">
+                    <h6 class="pro-user-name mt-0 mb-0">John Doe</h6>
+                    <span class="pro-user-desc font-weight-600">Admin</span>
+                </div>
+            </div>
+            <div class="sidebar-content">
+                <div id="sidebar-menu" class="slimscroll-menu">
+                    <ul class="metismenu" id="menu-bar">
+                        <li class="menu-title">Menu</li>
+                        <li>
+                            <a th:href="@{/admin/dashboard}">
+                                <i class="fa fa-home"></i>
+                                <span>Beranda</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);">
+                                <i class="fa fa-users"></i>
+                                <span>Pengguna</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+                            <ul class="nav-second-level" aria-expanded="false">
+                                <li><a th:href="@{/admin/mahasiswa}">Mahasiswa</a></li>
+                                <li><a th:href="@{/admin/senior-residence}">Senior Residence</a></li>
+                                <li><a th:href="@{/admin/help-desk}">Help Desk</a></li>
+                                <li><a th:href="@{/admin/admin}">Admin</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a th:href="@{/admin/jurusan}">
+                                <i class="fa fa-graduation-cap"></i>
+                                <span>Jurusan</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="content-page">
+            <div class="content">
+                <div class="container-fluid">
+                    <div class="row page-title">
+                        <div class="col-md-12">
+                            <h4 class="mb-1 mt-0">Daftar Mahasiswa</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped" id="table">
+                                            <thead>
+                                                <tr class="text-center">
+                                                    <th>No.</th>
+                                                    <th>Foto Profil</th>
+                                                    <th>Nama Lengkap</th>
+                                                    <th>Email</th>
+                                                    <th>Nomor HP</th>
+                                                    <th>Kamar</th>
+                                                    <th>Jenis Kelamin</th>
+                                                    <th>Status</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="mahasiswa, iterStat : ${mahasiswaList}" class="text-center">
+                                                    <td th:text="${iterStat.index + 1}"></td>
+                                                    <td>
+                                                        <img th:src="@{/assets/images/pengguna/}" alt="Foto Profil" class="rounded" width="100">
+                                                    </td>
+                                                    <td th:text="${mahasiswa.user.namaLengkap}"></td>
+                                                    <td th:text="${mahasiswa.user.email}"></td>
+                                                    <td th:text="${mahasiswa.user.nomorHp}"></td>
+                                                    <td>
+                                                        Lantai : <b th:text="${mahasiswa.noKamar}"></b><br>
+                                                        No. Kasur : <b th:text="${mahasiswa.noKasur}"></b>
+                                                    </td>
+                                                    <td th:text="${mahasiswa.user.jenisKelamin}"></td>
+                                                    <td>
+                                                        <span th:if="${mahasiswa.isCheckin == 1}" class="badge badge-success">Aktif</span>
+                                                        <span th:if="${mahasiswa.isCheckin == 0}" class="badge badge-danger">Tidak Aktif</span>
+                                                    </td>
+                                                    <td>
+                                                        <a th:href="@{/admin/mahasiswa/edit/{id}(id=${mahasiswa.id})}" class="btn btn-sm btn-warning" title="Edit">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a href="javascript:;" onclick="confirm_delete('')" class="btn btn-sm btn-danger" title="Hapus">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                Copyright &copy; 2024 DormHub. All Rights Reserved
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <!-- Vendor JS -->
+        <script th:src="@{/assets/js/vendor.min.js}"></script>
+        <script th:src="@{/assets/js/dataTables.bootstrap4.min.js}"></script>
+        <script th:src="@{/assets/js/app.min.js}"></script>
+    </body>
+</html>

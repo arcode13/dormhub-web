@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:image" th:content="@{'/assets/images/' + ${konfigurasi['web-logo']}}" />
+        <meta property="og:title" th:content="${konfigurasi['web-nama-website']}" />
+        
+        <!-- Title -->
+        <title th:text="${konfigurasi['web-nama-website']} + ' - Info Mahasiswa'"></title>
+        
+        <!-- App Favicon -->
+        <link rel="shortcut icon" th:href="@{'/assets/images/' + ${konfigurasi['web-favicon']}}">
+        
+        <!-- App CSS -->
+        <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
+                <div class="container-fluid">
+                    <a href="/senior-residence" class="navbar-brand mr-0 mr-md-2 logo">
+                        <span class="logo-lg">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                            <span class="d-inline h5 ml-1 text-logo" th:text="${konfigurasi['web-nama-website']}"></span>
+                        </span>
+                        <span class="logo-sm">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                        </span>
+                    </a>
+                    <ul class="navbar-nav bd-navbar-nav flex-row list-unstyled menu-left mb-0">
+                        <li class="">
+                            <button class="button-menu-mobile open-left disable-btn">
+                                <i data-feather="menu" class="menu-icon"></i>
+                                <i data-feather="x" class="close-icon"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
+                        <a href="../mahasiswa/dashboard" class="btn btn-sm btn-danger rounded">
+                            <i class="fa fa-arrow-left mr-1"></i> Kembali ke Mahasiswa
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <div class="left-side-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
+                    <div class="media-body">
+                        <h6 class="pro-user-name mt-0 mb-0"><span th:text="${user.namaLengkap}"></span></h6>
+                        <span class="pro-user-desc font-weight-600">Senior Residence</span>
+                    </div>
+                </div>
+                <div class="sidebar-content">
+                    <div id="sidebar-menu" class="slimscroll-menu">
+                        <ul class="metismenu" id="menu-bar">
+                            <li class="menu-title">Menu</li>
+                            <li>
+                                <a href="/senior-residence/dashboard">
+                                    <i class="fa fa-home"></i>
+                                    <span>Beranda</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/senior-residence/info-mahasiswa">
+                                    <i class="fa fa-bed"></i>
+                                    <span>Info Mahasiswa</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            
+            <div class="content-page">
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row page-title">
+                            <div class="col-md-12">
+                                <h4 class="mb-1 mt-0">Info Mahasiswa</h4>
+                            </div>
+                        </div>
+                        <div class="row room-select">
+                            <div class="offset-lg-2 col-lg-7">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="mb-1 mt-0 text-welcome">Pilih Lantai dan Kamar</h5>
+                                            <span class="btn btn-success">Gedung : A</span>
+                                        </div>
+                                        <div class="floor-buttons"></div>
+                                        <div class="form-group">
+                                            <select class="custom-select" id="kamar">
+                                                <option value="" disabled selected>Pilih Kamar</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group text-right">
+                                            <button type="button" class="btn btn-danger show-room">Lihat</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row room-not-found d-none">
+                            <div class="offset-lg-2 col-lg-7">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <img src="../assets/images/not-found.png" alt="Not Found" class="img-fluid mb-4">
+                                        <p class="mb-5">Data mahasiswa pada <b>No. Kamar <span id="room-number-not-found"></span></b> tidak ditemukan. Silakan periksa kembali.</p>
+                                        <button class="btn btn-rounded btn-warning shadow-sm back-to-select"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-none room-info">
+                            <div class="offset-lg-2 col-lg-7 mb-4">
+                                <button class="btn btn-sm btn-warning back-to-select"><i class="fa fa-arrow-left mr-1"></i> Kembali</button>
+                            </div>
+                            <div class="offset-lg-2 col-lg-7 mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="btn btn-danger">Daftar Teman Sekamar</span>
+                                    <span class="btn btn-success" th:text="'Gedung : ' + ${konfigurasi['web-nama-gedung']}"></span>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <table class="table table-bordered">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Nama</th>
+                                                    <th>Program Studi</th>
+                                                    <th>No. HP</th>
+                                                    <th>No. Kasur</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="offset-lg-2 col-lg-7">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="btn btn-danger">Denah Kamar</span>
+                                    <span class="btn btn-success">No. Kamar : <span id="room-number-info"></span></span>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="room-layout">
+                                            <div class="bed">3</div>
+                                            <div class="room-table first-room-table">Meja</div>
+                                            <div class="bed">1</div>
+                                            <div class="door">Pintu Masuk</div>
+                                            <div class="bed bed-custom">4</div>
+                                            <div class="room-table last-room-table">Meja</div>
+                                            <div class="bed bed-custom">2</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script>
+                    document.addEventListener('DOMContentLoaded', async () => {
+                        const kamarSelect = document.getElementById('kamar');
+                        const floorButtons = document.querySelectorAll('.floor-button');
+                        const roomInfoSection = document.querySelector('.room-info');
+                        const roomSelectSection = document.querySelector('.room-select');
+                        const submitBtn = document.querySelector('.show-room');
+                        const tableBody = document.querySelector('.room-info table tbody');
+
+                        let jumlahKamar = 0;
+                        let jumlahKasur = 0;
+
+                        async function fetchKonfigurasi() {
+                            try {
+                                const response = await fetch('/api/konfigurasi');
+                                const data = await response.json();
+
+                                const jumlahLantai = parseInt(data.find((item) => item.key === 'web-lantai').value, 10);
+                                jumlahKamar = parseInt(data.find((item) => item.key === 'web-kamar').value, 10);
+                                jumlahKasur = parseInt(data.find((item) => item.key === 'web-kasur').value, 10);
+
+                                updateFloorButtons(jumlahLantai);
+                                updateRoomOptions(1, jumlahKamar);
+                            } catch (error) {
+                                alert('Gagal memuat konfigurasi. Silakan coba lagi.');
+                            }
+                        }
+
+                        function updateFloorButtons(jumlahLantai) {
+                            const floorContainer = document.querySelector('.floor-buttons');
+                            floorContainer.innerHTML = '';
+                            for (let i = 1; i <= jumlahLantai; i++) {
+                                const button = document.createElement('button');
+                                button.className = 'floor-button';
+                                button.textContent = `Lantai ${i}`;
+                                if (i === 1) button.classList.add('active');
+                                floorContainer.appendChild(button);
+
+                                button.addEventListener('click', () => {
+                                    document.querySelectorAll('.floor-button').forEach(btn => btn.classList.remove('active'));
+                                    button.classList.add('active');
+                                    updateRoomOptions(i, jumlahKamar);
+                                });
+                            }
+                        }
+
+                        function updateRoomOptions(floor, jumlahKamar) {
+                            kamarSelect.innerHTML = '<option value="" disabled selected>Pilih Kamar</option>';
+                            for (let i = 1; i <= jumlahKamar; i++) {
+                                const option = document.createElement('option');
+                                option.value = `${floor}${i < 10 ? '0' : ''}${i}`;
+                                option.textContent = `Kamar ${option.value}`;
+                                kamarSelect.appendChild(option);
+                            }
+                        }
+
+                        async function fetchMahasiswa(noKamar) {
+                            const data = await fetch(`/api/mahasiswa?noKamar=${noKamar}`).then(res => res.json());
+                            return data;
+                        }
+
+                        submitBtn.addEventListener('click', async () => {
+                            const selectedRoom = kamarSelect.value;
+                            if (selectedRoom) {
+                                const data = await fetchMahasiswa(selectedRoom);
+                                const roomLayout = document.querySelector('.room-layout');
+                                const notFoundSection = document.querySelector('.room-not-found');
+                                const roomNumberNotFound = document.getElementById('room-number-not-found');
+                                const roomNumberInfo = document.getElementById('room-number-info');
+                                
+                                if (roomNumberNotFound) {
+                                    roomNumberNotFound.textContent = selectedRoom;
+                                }
+                                if (roomNumberInfo) {
+                                    roomNumberInfo.textContent = selectedRoom;
+                                }
+
+                                tableBody.innerHTML = '';
+
+                                if (data.length === 0) {
+                                    roomInfoSection.classList.add('d-none');
+                                    notFoundSection.classList.remove('d-none');
+                                } else {
+                                    notFoundSection.classList.add('d-none');
+                                    roomInfoSection.classList.remove('d-none');
+
+                                    for (let i = 1; i <= jumlahKasur; i++) {
+                                        const mahasiswa = data.find((m) => m.noKasur === i);
+                                        const row = document.createElement('tr');
+                                        row.innerHTML = mahasiswa
+                                            ? `<td>${mahasiswa.user.namaLengkap}</td>
+                                            <td>${mahasiswa.jurusan.nama}</td>
+                                            <td>${mahasiswa.user.nomorHp}</td>
+                                            <td>${i}</td>`
+                                            : `<td colspan="3">Mahasiswa Tidak Ditemukan.</td>
+                                            <td>${i}</td>`;
+                                        tableBody.appendChild(row);
+                                    }
+                                    roomLayout.classList.remove('d-none');
+                                }
+
+                                roomSelectSection.classList.add('d-none');
+                            } else {
+                                alert('Silakan pilih kamar terlebih dahulu!');
+                            }
+                        });
+
+                        document.addEventListener('click', (event) => {
+                            if (event.target.closest('.back-to-select')) {
+                                roomInfoSection.classList.add('d-none');
+                                document.querySelector('.room-not-found').classList.add('d-none');
+                                roomSelectSection.classList.remove('d-none');
+                            }
+                        });
+
+                        updateRoomOptions(1);
+                        fetchKonfigurasi();
+                    });
+                </script>
+                
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12" th:text="${konfigurasi['web-footer']}"></div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <!-- Vendor JS -->
+        <script src="../assets/js/vendor.min.js"></script>
+        
+        <!-- App JS -->
+        <script src="../assets/js/app.min.js"></script>
+    </body>
+</html>

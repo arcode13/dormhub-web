@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:image" th:content="@{'/assets/images/' + ${konfigurasi['web-logo']}}" />
+        <meta property="og:title" th:content="${konfigurasi['web-nama-website']}" />
+        
+        <!-- Title -->
+        <title th:text="${konfigurasi['web-nama-website']} + ' - Beranda'"></title>
+        
+        <!-- App Favicon -->
+        <link rel="shortcut icon" th:href="@{'/assets/images/' + ${konfigurasi['web-favicon']}}">
+        
+        <!-- App CSS -->
+        <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/style.css" rel="stylesheet" type="text/css" />
+        
+        <!-- DataTable CSS -->
+        <link href="../assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+        
+        <!-- jQuery -->
+        <script src="../assets/js/jquery-3.7.1.js"></script>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
+                <div class="container-fluid">
+                    <a href="/help-desk" class="navbar-brand mr-0 mr-md-2 logo">
+                        <span class="logo-lg">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                            <span class="d-inline h5 ml-1 text-logo" th:text="${konfigurasi['web-nama-website']}"></span>
+                        </span>
+                        <span class="logo-sm">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                        </span>
+                    </a>
+                    <ul class="navbar-nav bd-navbar-nav flex-row list-unstyled menu-left mb-0">
+                        <li class="">
+                            <button class="button-menu-mobile open-left disable-btn">
+                                <i data-feather="menu" class="menu-icon"></i>
+                                <i data-feather="x" class="close-icon"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="left-side-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
+                    <div class="media-body">
+                        <h6 class="pro-user-name mt-0 mb-0"><span th:text="${user.namaLengkap}"></span></h6>
+                        <span class="pro-user-desc font-weight-600">Help Desk</span>
+                    </div>
+                    <div class="dropdown align-self-center profile-dropdown-menu">
+                        <a class="dropdown-toggle mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                            <span data-feather="chevron-down"></span>
+                        </a>
+                        <div class="dropdown-menu profile-dropdown">
+                            <a href="/help-desk/profil" class="dropdown-item notify-item">
+                                <i data-feather="user" class="icon-dual icon-xs mr-2"></i>
+                                <span>Profil</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="../logout" class="dropdown-item notify-item">
+                                <i data-feather="log-out" class="icon-dual icon-xs mr-2"></i>
+                                <span>Keluar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-content">
+                    <div id="sidebar-menu" class="slimscroll-menu">
+                        <ul class="metismenu" id="menu-bar">
+                            <li class="menu-title">Menu</li>
+                            <li>
+                                <a href="/help-desk/dashboard">
+                                    <i class="fa fa-home"></i>
+                                    <span>Beranda</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/help-desk/daftar-laporan">
+                                    <i class="fa fa-file"></i>
+                                    <span>Daftar Laporan</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            
+            <div class="content-page">
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row page-title">
+                            <div class="col-md-12">
+                                <h4 class="mb-1 mt-0 text-welcome">Hallo <span th:text="${user.namaLengkap}"></span>, <span th:text="${ucapan}"></span> 👋</h4>
+                            </div>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span th:text="${error}"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span th:text="${success}"></span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-5">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="mb-4 mt-0 text-danger">Laporan Barang</h5>
+                                        <form method="POST" action="/help-desk/buat-laporan-barang" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <label>Mahasiswa</label>
+                                                <select class="form-control" name="mahasiswaId" required>
+                                                    <option value="" disabled selected>Pilih Mahasiswa</option>
+                                                    <th:block th:each="mahasiswa : ${mahasiswaList}">
+                                                        <option th:value="${mahasiswa.id}" th:text="${mahasiswa.user.namaLengkap} + ' - No. Kamar ' + ${mahasiswa.noKamar} + ''"></option>
+                                                    </th:block>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Jenis</label>
+                                                <div class="custom-control custom-radio mb-2">
+                                                    <input type="radio" class="custom-control-input" name="jenis" value="Paket" id="paket" required>
+                                                    <label class="custom-control-label" for="paket">Paket</label>
+                                                </div>
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input" name="jenis" value="Makanan" id="makanan" required>
+                                                    <label class="custom-control-label" for="makanan">Makanan</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Foto/Bukti</label>
+                                                <div class="d-flex">
+                                                    <label id="custom" for="image"><i class="fa-regular fa-images"></i><small>Upload</small></label>
+                                                    <input type="file" name="buktiFoto" id="image" hidden required>
+                                                    <div id="list-images"></div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-right">
+                                                <button type="reset" class="btn btn-light">Ulangi</button>
+                                                <button type="submit" class="btn btn-danger">Buat Laporan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-7">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped" id="table">
+                                                <thead>
+                                                    <tr class="text-center">
+                                                        <th>No.</th>
+                                                        <th>Mahasiswa</th>
+                                                        <th>Jenis</th>
+                                                        <th>Foto/Bukti</th>
+                                                        <th>Status</th>
+                                                        <th>Tanggal - Waktu</th>
+                                                    </tr>
+                                                </thead>
+                                                <th:block th:each="laporan, iterStat : ${laporanBarangList}">
+                                                    <tr class="text-center">
+                                                        <td th:text="${iterStat.index + 1}"></td>
+                                                        <td th:utext="${laporan.namaLengkap} + ' - <b>No. Kamar ' + ${laporan.noKamar} + '</b>'"></td>
+                                                        <td th:text="${laporan.jenis}"></td>
+                                                        <td>
+                                                            <img th:src="@{'/assets/images/laporan-barang/' + ${laporan.buktiFoto}}" class="rounded" width="150" alt="Foto/Bukti">
+                                                        </td>
+                                                        <td><span th:class="'btn btn-sm ' + (${laporan.status.toLowerCase()} == 'menunggu' ? 'btn-warning' : (${laporan.status.toLowerCase()} == 'diterima' ? 'btn-success' : 'btn-danger'))" th:text="${#strings.capitalize(laporan.status)}"></span></td>
+                                                        <td th:text="${laporan.formattedCreatedAt}"></td>
+                                                    </tr>
+                                                </th:block>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script>
+                    const imagesFile = document.getElementById('image');
+                    const listimage = document.getElementById('list-images');
+                    const maxFileSize = 2 * 1024 * 1024;
+                    const allowedExtensions = ['image/jpeg', 'image/jpg', 'image/png'];
+                    document.addEventListener('DOMContentLoaded', function () {
+                        imagesFile.addEventListener('change', function (e) {
+                            e.preventDefault();
+                            const imageFiles = e.target.files;
+                            listimage.innerHTML = '';
+                            for (let index = 0; index < imageFiles.length; index++) {
+                                const file = imageFiles[index];
+                                if (file.size > maxFileSize) {
+                                    alert('Ukuran bukti foto maksimal 2 MB');
+                                    imagesFile.value = '';
+                                    return;
+                                }
+                                if (!allowedExtensions.includes(file.type)) {
+                                    alert('Format bukti foto hanya boleh JPG, JPEG, atau PNG');
+                                    imagesFile.value = '';
+                                    return;
+                                }
+                                const reader = new FileReader();
+                                reader.readAsDataURL(file);
+                                reader.addEventListener('load', () => {
+                                    const img = `
+                                    <div class="position-relative" data-item="${index + 1}" style="width: max-content;">
+                                        <img id="displayimg" class="rounded-2" src="${reader.result}" width="115" height="115" alt="">
+                                        <span data-img="${index + 1}" id="remove-list" class="remove-list" style="cursor: pointer;">X</span>
+                                    </div>`;
+                                    listimage.insertAdjacentHTML('beforeend', img);
+                                });
+                            }
+                        });
+                        listimage.addEventListener('click', function (e) {
+                            if (e.target.id === 'remove-list') {
+                                const elemData = e.target.dataset.img;
+                                if (elemData) {
+                                    if (confirm('Hapus Bukti?')) {
+                                        listimage.removeChild(e.target.parentElement);
+                                        imagesFile.value = '';
+                                    }
+                                }
+                            }
+                        });
+                    });
+                </script>
+                
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12" th:text="${konfigurasi['web-footer']}"></div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <!-- Vendor JS -->
+        <script src="../assets/js/vendor.min.js"></script>
+        
+        <!-- DataTable JS -->
+        <script src="../assets/js/jquery.dataTables.min.js"></script>
+        <script src="../assets/js/dataTables.bootstrap4.min.js"></script>
+        
+        <!-- App JS -->
+        <script src="../assets/js/app.min.js"></script>
+        <script src="../assets/js/custom.js"></script>
+    </body>
+</html>

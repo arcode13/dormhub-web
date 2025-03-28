@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:image" th:content="@{'/assets/images/' + ${konfigurasi['web-logo']}}" />
+        <meta property="og:title" th:content="${konfigurasi['web-nama-website']}" />
+        
+        <!-- Title -->
+        <title th:text="${konfigurasi['web-nama-website']} + ' - Informasi Kamar'"></title>
+        
+        <!-- App Favicon -->
+        <link rel="shortcut icon" th:href="@{'/assets/images/' + ${konfigurasi['web-favicon']}}">
+        
+        <!-- App CSS -->
+        <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/style.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
+                <div class="container-fluid">
+                    <a href="/mahasiswa" class="navbar-brand mr-0 mr-md-2 logo">
+                        <span class="logo-lg">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                            <span class="d-inline h5 ml-1 text-logo" th:text="${konfigurasi['web-nama-website']}"></span>
+                        </span>
+                        <span class="logo-sm">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                        </span>
+                    </a>
+                    <ul class="navbar-nav bd-navbar-nav flex-row list-unstyled menu-left mb-0">
+                        <li class="">
+                            <button class="button-menu-mobile open-left disable-btn">
+                                <i data-feather="menu" class="menu-icon"></i>
+                                <i data-feather="x" class="close-icon"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <th:block th:if="${isSeniorResidence}">
+                    <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
+                        <a href="../senior-residence/dashboard" class="btn btn-sm btn-danger rounded">
+                            <i class="fa fa-arrow-right mr-1"></i> Masuk ke Senior Residence
+                        </a>
+                    </ul>
+                    </th:block>
+                </div>
+            </div>
+            <div class="left-side-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
+                    <div class="media-body">
+                        <h6 class="pro-user-name mt-0 mb-0"><span th:text="${user.namaLengkap}"></span></h6>
+                        <span class="pro-user-desc font-weight-600">Mahasiswa</span>
+                    </div>
+                    <div class="dropdown align-self-center profile-dropdown-menu">
+                        <a class="dropdown-toggle mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                            <span data-feather="chevron-down"></span>
+                        </a>
+                        <div class="dropdown-menu profile-dropdown">
+                            <a href="/mahasiswa/profil" class="dropdown-item notify-item">
+                                <i data-feather="user" class="icon-dual icon-xs mr-2"></i>
+                                <span>Profil</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="../logout" class="dropdown-item notify-item">
+                                <i data-feather="log-out" class="icon-dual icon-xs mr-2"></i>
+                                <span>Keluar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-content">
+                    <div id="sidebar-menu" class="slimscroll-menu">
+                        <ul class="metismenu" id="menu-bar">
+                            <li class="menu-title">Menu</li>
+                            <li>
+                                <a href="/mahasiswa/dashboard">
+                                    <i class="fa fa-home"></i>
+                                    <span>Beranda</span>
+                                </a>
+                            </li>
+                            <li th:if="${isCheckin == true and isCheckout == false}">
+                                <a href="javascript: void(0);">
+                                    <i class="fa fa-file"></i>
+                                    <span>Laporan</span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <ul class="nav-second-level" aria-expanded="false">
+                                    <li>
+                                        <a href="/mahasiswa/buat-laporan-umum">Buat Laporan</a>
+                                    </li>
+                                    <li>
+                                        <a href="/mahasiswa/daftar-laporan">Daftar Laporan</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li th:if="${isCheckin == true}">
+                                <a href="/mahasiswa/informasi-kamar">
+                                    <i class="fa fa-bed"></i>
+                                    <span>Informasi Kamar</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            
+            <div class="content-page">
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row page-title">
+                            <div class="col-md-12">
+                                <h4 class="mb-1 mt-0">Informasi Kamar</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-lg-2 col-lg-7 mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="btn btn-danger">Daftar Teman Sekamar</span>
+                                    <span class="btn btn-success" th:text="'Gedung : ' + ${konfigurasi['web-nama-gedung']}"></span>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body p-0">
+                                        <table class="table table-bordered">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Nama</th>
+                                                    <th>Program Studi</th>
+                                                    <th>No. HP</th>
+                                                    <th>No. Kasur</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="mahasiswa : ${mahasiswaSekamar}">
+                                                    <td th:text="${mahasiswa.user.namaLengkap}"></td>
+                                                    <td th:text="${mahasiswa.jurusan.nama}"></td>
+                                                    <td th:text="${mahasiswa.user.nomorHp}"></td>
+                                                    <td th:text="${mahasiswa.noKasur}"></td>
+                                                </tr>                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="offset-lg-2 col-lg-7">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="btn btn-danger">Denah Kamar</span>
+                                    <span class="btn btn-success">Nomor Kamar : <span th:text="${noKamar}"></span></span>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="room-layout">
+                                            <div class="bed">3</div>
+                                            <div class="room-table first-room-table">Meja</div>
+                                            <div class="bed">1</div>
+                                            <div class="door">Pintu Masuk</div>
+                                            <div class="bed bed-custom">4</div>
+                                            <div class="room-table last-room-table">Meja</div>
+                                            <div class="bed bed-custom">2</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12" th:text="${konfigurasi['web-footer']}"></div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <!-- Vendor JS -->
+        <script src="../assets/js/vendor.min.js"></script>
+        
+        <!-- App JS -->
+        <script src="../assets/js/app.min.js"></script>
+    </body>
+</html>

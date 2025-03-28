@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:image" th:content="@{'/assets/images/' + ${konfigurasi['web-logo']}}" />
+        <meta property="og:title" th:content="${konfigurasi['web-nama-website']}" />
+        
+        <!-- Title -->
+        <title th:text="${konfigurasi['web-nama-website']} + ' - Beranda'"></title>
+        
+        <!-- App Favicon -->
+        <link rel="shortcut icon" th:href="@{'/assets/images/' + ${konfigurasi['web-favicon']}}">
+        
+        <!-- App CSS -->
+        <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/css/style.css" rel="stylesheet" type="text/css" />
+        
+        <!-- DataTable CSS -->
+        <link href="../assets/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+        
+        <!-- jQuery -->
+        <script src="../assets/js/jquery-3.7.1.js"></script>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
+                <div class="container-fluid">
+                    <a href="/senior-residence" class="navbar-brand mr-0 mr-md-2 logo">
+                        <span class="logo-lg">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                            <span class="d-inline h5 ml-1 text-logo" th:text="${konfigurasi['web-nama-website']}"></span>
+                        </span>
+                        <span class="logo-sm">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                        </span>
+                    </a>
+                    <ul class="navbar-nav bd-navbar-nav flex-row list-unstyled menu-left mb-0">
+                        <li class="">
+                            <button class="button-menu-mobile open-left disable-btn">
+                                <i data-feather="menu" class="menu-icon"></i>
+                                <i data-feather="x" class="close-icon"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav flex-row ml-auto d-flex list-unstyled topnav-menu float-right mb-0">
+                        <a href="../mahasiswa/dashboard" class="btn btn-sm btn-danger rounded">
+                            <i class="fa fa-arrow-left mr-1"></i> Kembali ke Mahasiswa
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <div class="left-side-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                    <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
+                    <div class="media-body">
+                        <h6 class="pro-user-name mt-0 mb-0"><span th:text="${user.namaLengkap}"></span></h6>
+                        <span class="pro-user-desc font-weight-600">Senior Residence</span>
+                    </div>
+                </div>
+                <div class="sidebar-content">
+                    <div id="sidebar-menu" class="slimscroll-menu">
+                        <ul class="metismenu" id="menu-bar">
+                            <li class="menu-title">Menu</li>
+                            <li>
+                                <a href="/senior-residence/dashboard">
+                                    <i class="fa fa-home"></i>
+                                    <span>Beranda</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/senior-residence/info-mahasiswa">
+                                    <i class="fa fa-bed"></i>
+                                    <span>Info Mahasiswa</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            
+            <div class="content-page">
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row page-title">
+                            <div class="col-md-12">
+                                <h4 class="mb-1 mt-0 text-welcome">Hallo <span th:text="${user.namaLengkap}"></span>, <span th:text="${ucapan}"></span> 👋</h4>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-5">
+                            <div class="col-md-6">
+                                <div class="card shadow-custom rounded-custom mb-3">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3 d-flex align-items-center">
+                                            <div class="media-body">
+                                                <h3 class="text-uppercase font-weight-600 d-block m-0 mb-2" th:text="${laporanIzinBulanIni}"></h3>
+                                                <span class="font-weight-500">Laporan Izin Mahasiswa Bulan Ini</span>
+                                            </div>
+                                            <div class="align-self-center ml-3">
+                                                <div class="d-flex justify-content-center align-items-center bg-danger rounded-circle text-white avatar-custom">
+                                                    <i class="fas fa-file-alt"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card shadow-custom rounded-custom mb-3">
+                                    <div class="card-body p-0">
+                                        <div class="media p-3 d-flex align-items-center">
+                                            <div class="media-body">
+                                                <h3 class="text-uppercase font-weight-600 d-block m-0 mb-2" th:text="${totalLaporanIzin}"></h3>
+                                                <span class="font-weight-500">Total Seluruh Laporan Izin Mahasiswa</span>
+                                            </div>
+                                            <div class="align-self-center ml-3">
+                                                <div class="d-flex justify-content-center align-items-center bg-danger rounded-circle text-white avatar-custom">
+                                                    <i class="fas fa-file-alt"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <span th:text="${error}"></span>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <span th:text="${success}"></span>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title mt-0 mb-4">Daftar Laporan Izin</h4>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped" id="table">
+                                                <thead>
+                                                    <tr class="text-center">
+                                                        <th>No.</th>
+                                                        <th>Mahasiswa</th>
+                                                        <th>Keterangan</th>
+                                                        <th>Bukti</th>
+                                                        <th>Status</th>
+                                                        <th>Tanggal - Waktu</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr th:each="laporan, iterStat : ${daftarLaporan}" class="text-center">
+                                                        <td th:text="${iterStat.count}"></td>
+                                                        <td th:utext="${laporan.namaLengkap} + ' - <b>No. Kamar ' + ${laporan.noKamar} + '</b>'"></td>
+                                                        <td th:text="${laporan.alasan}"></td>
+                                                        <td>
+                                                            <div th:if="${laporan.buktiFoto != null}">
+                                                                <img th:src="@{'/assets/images/laporan-umum/' + ${laporan.buktiFoto}}" alt="Bukti" class="rounded" width="250">
+                                                            </div>
+                                                            <div th:if="${laporan.buktiFoto == null}">
+                                                                Bukti tidak tersedia.
+                                                            </div>                                                            
+                                                        </td>
+                                                        <td align="center">
+                                                            <div class="btn-group">
+                                                                <button type="button" th:class="'btn btn-sm ' + (${laporan.status.toLowerCase()} == 'menunggu' ? 'btn-warning' : (${laporan.status.toLowerCase()} == 'diterima' ? 'btn-success' : 'btn-danger')) + ' dropdown-toggle'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span th:text="${#strings.capitalize(laporan.status)}"></span> <i class="icon"><span data-feather="chevron-down"></span></i></button>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item" th:href="@{'/senior-residence/ubah-status/' + ${laporan.id} + '/menunggu'}">Menunggu</a>
+                                                                    <a class="dropdown-item" th:href="@{'/senior-residence/ubah-status/' + ${laporan.id} + '/diterima'}">Diterima</a>
+                                                                    <a class="dropdown-item" th:href="@{'/senior-residence/ubah-status/' + ${laporan.id} + '/ditolak'}">Ditolak</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>                                                        
+                                                        <td th:text="${laporan.formattedCreatedAt}"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12" th:text="${konfigurasi['web-footer']}"></div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <!-- Vendor JS -->
+        <script src="../assets/js/vendor.min.js"></script>
+        
+        <!-- DataTable JS -->
+        <script src="../assets/js/jquery.dataTables.min.js"></script>
+        <script src="../assets/js/dataTables.bootstrap4.min.js"></script>
+        
+        <!-- App JS -->
+        <script src="../assets/js/app.min.js"></script>
+        <script src="../assets/js/custom.js"></script>
+    </body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:image" th:content="@{'/assets/images/' + ${konfigurasi['web-logo']}}" />
+        <meta property="og:title" th:content="${konfigurasi['web-nama-website']}" />
+        
+        <!-- Title -->
+        <title th:text="${konfigurasi['web-nama-website']} + ' - Jurusan'"></title>
+        
+        <!-- App Favicon -->
+        <link rel="shortcut icon" th:href="@{'/assets/images/' + ${konfigurasi['web-favicon']}}">
+        
+        <!-- App CSS -->
+        <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+        <link th:href="@{/assets/css/icons.min.css}" rel="stylesheet" type="text/css">
+        <link th:href="@{/assets/css/app.min.css}" rel="stylesheet" type="text/css">
+        <link th:href="@{/assets/css/style.css}" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <div id="wrapper">
+            <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
+                <div class="container-fluid">
+                    <a href="/admin" class="navbar-brand mr-0 mr-md-2 logo">
+                        <span class="logo-lg">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                            <span class="d-inline h5 ml-1 text-logo" th:text="${konfigurasi['web-nama-website']}"></span>
+                        </span>
+                        <span class="logo-sm">
+                            <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                        </span>
+                    </a>
+                    <ul class="navbar-nav bd-navbar-nav flex-row list-unstyled menu-left mb-0">
+                        <li class="">
+                            <button class="button-menu-mobile open-left disable-btn">
+                                <i data-feather="menu" class="menu-icon"></i>
+                                <i data-feather="x" class="close-icon"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="left-side-menu">
+                <div class="media user-profile mt-2 mb-2">
+                    <img th:src="@{${user.fotoProfil != null ? '../../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../../assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                    <img th:src="@{${user.fotoProfil != null ? '../../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../../assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
+                    <div class="media-body">
+                        <h6 class="pro-user-name mt-0 mb-0"><span th:text="${user.namaLengkap}"></span></h6>
+                        <span class="pro-user-desc font-weight-600">Admin</span>
+                    </div>
+                    <div class="dropdown align-self-center profile-dropdown-menu">
+                        <a class="dropdown-toggle mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                            <span data-feather="chevron-down"></span>
+                        </a>
+                        <div class="dropdown-menu profile-dropdown">
+                            <a href="/admin/profil" class="dropdown-item notify-item">
+                                <i data-feather="user" class="icon-dual icon-xs mr-2"></i>
+                                <span>Profil</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="../../logout" class="dropdown-item notify-item">
+                                <i data-feather="log-out" class="icon-dual icon-xs mr-2"></i>
+                                <span>Keluar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-content">
+                    <div id="sidebar-menu" class="slimscroll-menu">
+                        <ul class="metismenu" id="menu-bar">
+                            <li class="menu-title">Menu</li>
+                            <li>
+                                <a href="/admin/dashboard">
+                                    <i class="fa fa-home"></i>
+                                    <span>Beranda</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/admin/jurusan">
+                                    <i class="fa fa-graduation-cap"></i>
+                                    <span>Jurusan</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);">
+                                    <i class="fa fa-users"></i>
+                                    <span>Pengguna</span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <ul class="nav-second-level" aria-expanded="false">
+                                    <li>
+                                        <a href="/admin/mahasiswa">Mahasiswa</a>
+                                    </li>
+                                    <li>
+                                        <a href="/admin/senior-residence">Senior Residence</a>
+                                    </li>
+                                    <li>
+                                        <a href="/admin/help-desk">Help Desk</a>
+                                    </li>
+                                    <li>
+                                        <a href="/admin/admin">Admin</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            
+            <div class="content-page">
+                <div class="content">
+                    <div class="container-fluid">
+                        <div class="row page-title">
+                            <div class="col-md-12">
+                                <h4 class="mb-1 mt-0">Tambah Jurusan</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="offset-lg-2 col-lg-7">
+                                <a href="/admin/jurusan" class="btn btn-sm btn-warning back-to-select mb-3"><i class="fa fa-arrow-left mr-1"></i> Kembali</a>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <form th:action="@{/admin/jurusan/tambah}" method="post">
+                                            <div class="form-group">
+                                                <label>Nama Jurusan</label>
+                                                <input type="text" class="form-control" name="nama">
+                                            </div>
+                                            <div class="form-group text-right">
+                                                <button type="reset" class="btn btn-light">Ulangi</button>
+                                                <button type="submit" class="btn btn-danger">Tambah</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script>
+                    const imagesFile = document.getElementById('image');
+                    const listimage = document.getElementById('list-images');
+                    const removeList = document.querySelectorAll('#remove-list');
+                    document.addEventListener('DOMContentLoaded', function() {
+                        imagesFile.addEventListener('change', function(e) {
+                            e.preventDefault();
+                            const imageFiles = e.target.files;
+                            listimage.innerHTML = '';
+                            for (let index = 0; index < imageFiles.length; index++) {
+                                const reader = new FileReader();
+                                reader.readAsDataURL(imageFiles[index]);
+                                reader.addEventListener('load', () => {
+                                    const img = `
+                                    <div class="position-relative" data-item="${index + 1}" style="width: max-content;">
+                                        <img id="displayimg" class="rounded-2" src="${reader.result}" width="115" height="115" alt="" srcset="">
+                                        <span data-img="${index + 1}" id="remove-list" class="remove-list">X</span>
+                                    </div>`;
+                                    listimage.insertAdjacentHTML('beforeend', img);
+                                });
+                            }
+                        });
+                        listimage.addEventListener('click', function(e) {
+                            if (e.target.id === 'remove-list') {
+                                const elemData = e.target.dataset.img;
+                                if (elemData) {
+                                    if (confirm("Hapus Foto Profil?")) {
+                                        listimage.removeChild(e.target.parentElement);
+                                    }
+                                }
+                            }
+                        });
+                    });
+                </script>
+                
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12" th:text="${konfigurasi['web-footer']}"></div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <!-- Vendor JS -->
+        <script src="../../assets/js/vendor.min.js"></script>
+        
+        <!-- App JS -->
+        <script src="../../assets/js/app.min.js"></script>
+    </body>
+</html>
