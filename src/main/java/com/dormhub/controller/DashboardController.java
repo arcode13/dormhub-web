@@ -606,13 +606,11 @@ public class DashboardController {
                 Files.write(logoPath, logo.getBytes());
                 konfigurasiRepository.save(new Konfigurasi(4, "web-logo", sanitizedLogoName));
 
-                // Hapus file lama setelah file baru berhasil disimpan
                 if (oldLogoPath != null) {
                     Files.deleteIfExists(oldLogoPath);
                 }
             }
     
-            // 3. Update data lain ke database
             konfigurasiRepository.save(new Konfigurasi(2, "web-nama-website", namaWebsite));
             konfigurasiRepository.save(new Konfigurasi(3, "web-nama-gedung", namaGedung));
             konfigurasiRepository.save(new Konfigurasi(5, "web-lantai", String.valueOf(lantai)));
@@ -622,7 +620,6 @@ public class DashboardController {
             konfigurasiRepository.save(new Konfigurasi(9, "web-selesai-tgl-co", selesaiTglCo));
             konfigurasiRepository.save(new Konfigurasi(10, "web-footer", footer));
     
-            // 4. Berikan pesan sukses
             redirectAttributes.addFlashAttribute("success", "Konfigurasi berhasil diperbarui.");
         } catch (Exception e) {
             e.printStackTrace();

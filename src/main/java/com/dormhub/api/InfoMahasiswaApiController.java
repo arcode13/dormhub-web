@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/senior-residence")
@@ -32,7 +33,6 @@ public class InfoMahasiswaApiController {
 
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (!userOptional.isPresent()) {
-            return ResponseEntity.badRequest().body("{\"error\": \"User tidak ditemukan.\"}");
             return ResponseEntity.badRequest().body(Map.of("error", "User tidak ditemukan."));
         }
 

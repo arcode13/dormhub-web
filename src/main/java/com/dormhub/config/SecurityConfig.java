@@ -1,5 +1,6 @@
 package com.dormhub.config;
 
+import com.dormhub.security.JwtAuthFilter;
 import com.dormhub.service.CustomUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -17,44 +20,29 @@ public class SecurityConfig {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     private final CustomUserDetailsService userDetailsService;
+    private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthFilter jwtAuthFilter) {
         this.userDetailsService = userDetailsService;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Disable CSRF if not needed
-            .headers(headers -> headers.frameOptions().sameOrigin()) // Needed for iframes (optional)
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/register", "/forgot-password", "/reset-password", "/assets/**", "/css/**", "/js/**", "/img/**").permitAll() // Public pages
-                .anyRequest().authenticated() // All other pages require authentication
+                .requestMatchers(
+                    "/", "/login", "/register", "/forgot-password", "/reset-password",
+                    "/api/auth/**",
+                    "/assets/**", "/css/**", "/js/**", "/img/**"
+                ).permitAll()
+                .anyRequest().authenticated()
             )
-            .formLogin(login -> login
-                .loginPage("/login") // Custom login page
-                .loginProcessingUrl("/login") // Login processing URL
-                .usernameParameter("email") // Use email as username
-                .passwordParameter("password") // Password remains the same
-                .defaultSuccessUrl("/", true) // Redirect after successful login
-                .successHandler((request, response, authentication) -> {
-                    String redirectUrl = getRedirectUrlBasedOnRole(authentication);
-                    response.sendRedirect(redirectUrl); // Redirect based on role
-                })
-                .failureUrl("/login") // Redirect if login fails
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout") // Logout URL
-                .logoutSuccessUrl("/login") // Redirect after logout
-                .permitAll()
-            )
-            .rememberMe(remember -> remember
-                .key("uniqueAndSecretKey") // Secure key for remember-me functionality
-                .tokenValiditySeconds(1209600) // Duration (2 weeks)
-            );
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        logger.info("SecurityFilterChain configuration completed");
+        logger.info("SecurityFilterChain configuration completed with JWT support");
         return http.build();
     }
 

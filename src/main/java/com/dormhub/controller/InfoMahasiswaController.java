@@ -33,17 +33,14 @@ public class InfoMahasiswaController {
     @GetMapping("/senior-residence/info-mahasiswa")
     public String infoMahasiswa(Model model, RedirectAttributes redirectAttributes) {
         
-        // Mendapatkan email pengguna yang sedang login
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         
-        // Mencari user berdasarkan email
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             int userId = user.getId();
             
-            // Ambil data Senior Residence
             SeniorResidence seniorResidence = seniorResidenceService.getSeniorResidenceByMahasiswaId(userId).orElse(null);
             if (seniorResidence == null) {
                 redirectAttributes.addFlashAttribute("error", "Senior Residence tidak ditemukan.");

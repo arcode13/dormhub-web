@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import com.dormhub.security.JwtUtil;
 
 import java.util.*;
 
@@ -32,52 +33,77 @@ public class AuthApiController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    private final JwtUtil jwtUtil;
+
+    public AuthApiController(UserService userService,
+                            UserRepository userRepository,
+                            JurusanService jurusanService,
+                            EmailService emailService,
+                            BCryptPasswordEncoder passwordEncoder,
+                            JwtUtil jwtUtil) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.jurusanService = jurusanService;
+        this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
+
     // ======= API LOGIN =======
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String password = request.get("password");
 
-        User user = userService.findByEmail(email);
-        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+        User user = userService.authenticate(email, password);
+        if (user == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "Email atau password salah"));
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Login berhasil");
-        response.put("user_id", user.getId());
-        response.put("email", user.getEmail());
-        response.put("level", user.getLevel().getNama());
+        String token = jwtUtil.generateToken(email);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(Map.of(
+            "message", "Login berhasil",
+            "token", token,
+            "email", user.getEmail(),
+            "level", user.getLevel().getNama(),
+            "user_id", user.getId()
+        ));
     }
 
     // ======= API REGISTER =======
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Map<String, Object> request) {
-        String email = (String) request.get("email");
-        String password = (String) request.get("password");
-        String nama = (String) request.get("nama");
-        Integer jurusanId = (Integer) request.get("jurusanId");
+        try {
+            String email = (String) request.get("email");
+            String password = (String) request.get("password");
+            String nama = (String) request.get("nama");
+            String nomorHp = (String) request.get("nomorHp");
+            String jenisKelamin = (String) request.get("jenisKelamin");
+            Integer jurusanId = (Integer) request.get("jurusanId");
 
-        if (userRepository.findByEmail(email).isPresent()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Email sudah digunakan"));
+            Jurusan jurusan = jurusanService.findById(jurusanId);
+            if (jurusan == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Jurusan tidak ditemukan"));
+            }
+
+            User newUser = new User();
+            newUser.setEmail(email);
+            newUser.setPassword(password);
+            newUser.setNamaLengkap(nama);
+            newUser.setNomorHp(nomorHp);
+            newUser.setJenisKelamin(jenisKelamin);
+
+            String result = userService.registerUser(newUser, jurusan);
+
+            if (result.equals("Berhasil mendaftar")) {
+                return ResponseEntity.ok(Map.of("message", "Registrasi berhasil"));
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("error", result));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", "Terjadi kesalahan: " + e.getMessage()));
         }
-
-        Jurusan jurusan = jurusanService.findById(jurusanId);
-        if (jurusan == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Jurusan tidak ditemukan"));
-        }
-
-        User newUser = new User();
-        newUser.setEmail(email);
-        newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setNama(nama);
-        newUser.setJurusan(jurusan);
-
-        userRepository.save(newUser);
-
-        return ResponseEntity.ok(Map.of("message", "Registrasi berhasil"));
     }
 
     // ======= API FORGOT PASSWORD =======
@@ -124,7 +150,7 @@ public class AuthApiController {
 
         User user = userOptional.get();
         user.setPassword(passwordEncoder.encode(password));
-        user.setToken(null); // Hapus token setelah reset berhasil
+        user.setToken(null);
         userRepository.save(user);
 
         return ResponseEntity.ok(Map.of("message", "Password berhasil diubah."));

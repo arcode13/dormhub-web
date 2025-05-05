@@ -66,7 +66,7 @@ public class ResetPasswordController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setPassword(passwordEncoder.encode(password));
-            user.setToken(null); // Hapus token setelah berhasil reset
+            user.setToken(null);
             userRepository.save(user);
 
             redirectAttributes.addFlashAttribute("success", "Password berhasil diubah.");

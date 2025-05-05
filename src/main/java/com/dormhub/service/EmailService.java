@@ -18,7 +18,6 @@ public class EmailService {
         String username = "support@dormhub.my.id";
         String password = "@dormhub2024";
 
-        // Konfigurasi SMTP
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.ssl.enable", "true"); 
@@ -42,10 +41,8 @@ public class EmailService {
         mailcap.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
         CommandMap.setDefaultCommandMap(mailcap);
 
-        
         session.setDebug(true);
 
-        
         Message message = new MimeMessage(session);
         try {
             message.setFrom(new InternetAddress(username, "DormHub Support"));
@@ -56,7 +53,6 @@ public class EmailService {
         message.setSubject("Reset Password DormHub");
         message.setText("tester");
 
-        
         Transport.send(message);
     }
 }

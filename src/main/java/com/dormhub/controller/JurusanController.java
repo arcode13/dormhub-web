@@ -29,7 +29,6 @@ public class JurusanController {
     @Autowired
     private UserRepository userRepository;
 
-    // Menampilkan halaman daftar jurusan
     @GetMapping
     public String getAllJurusan(Principal principal, Model model) {
         String email = principal.getName();
@@ -51,7 +50,6 @@ public class JurusanController {
         return "admin/Jurusan/index"; 
     }
 
-    // Menampilkan halaman edit jurusan
     @GetMapping("/edit/{id}")
     public String editJurusanPage(@PathVariable int id, Principal principal, Model model) {
         String email = principal.getName();
@@ -75,7 +73,6 @@ public class JurusanController {
         return "admin/Jurusan/edit"; 
     }
 
-    // Menyimpan hasil edit jurusan
     @PostMapping("/edit/{id}")
     public String updateJurusan(@PathVariable int id, @ModelAttribute Jurusan updatedJurusan) {
         Jurusan jurusan = jurusanService.findById(id);
@@ -86,7 +83,6 @@ public class JurusanController {
         return "redirect:/admin/jurusan"; 
     }
 
-    // Menampilkan halaman tambah jurusan
     @GetMapping("/tambah")
     public String tambahJurusanPage(Principal principal, Model model) {
         String email = principal.getName();
@@ -106,7 +102,6 @@ public class JurusanController {
         return "admin/Jurusan/tambah"; 
     }
 
-    // Menyimpan jurusan baru
     @PostMapping("/tambah")
     public String saveJurusan(@ModelAttribute Jurusan jurusan, RedirectAttributes redirectAttributes) {
         jurusanService.saveJurusan(jurusan);
@@ -115,7 +110,6 @@ public class JurusanController {
         return "redirect:/admin/jurusan"; 
     }
 
-    // Menghapus jurusan
     @GetMapping("/delete/{id}")
     public String deleteJurusan(@PathVariable int id) {
         jurusanService.deleteJurusan(id);
