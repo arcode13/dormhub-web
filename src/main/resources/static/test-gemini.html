@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Gemini API Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        #result { 
+            margin-top: 20px; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            min-height: 100px; 
+            white-space: pre-wrap;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 2s linear infinite;
+            display: none;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #prompt {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            min-height: 80px;
+        }
+        #response {
+            margin-top: 20px;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .debug {
+            font-family: monospace;
+            font-size: 12px;
+            background-color: #f8f8f8;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+            overflow: auto;
+            max-height: 300px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gemini API Test</h1>
+    
+    <textarea id="prompt" placeholder="Masukkan pesan Anda di sini...">Beri saya 3 fakta tentang Indonesia dalam Bahasa Indonesia.</textarea>
+    
+    <div style="display: flex; align-items: center;">
+        <button id="testButton">Test Gemini API</button>
+        <div class="loader" id="loader"></div>
+    </div>
+    
+    <div id="response">
+        <h3>Respons:</h3>
+        <div id="result">Hasil akan muncul di sini...</div>
+        
+        <label><input type="checkbox" id="showDebug"> Tampilkan debug response</label>
+        <div class="debug" id="debug"></div>
+    </div>
+
+    <script>
+        document.getElementById('testButton').addEventListener('click', async function() {
+            const resultDiv = document.getElementById('result');
+            const debugDiv = document.getElementById('debug');
+            const loader = document.getElementById('loader');
+            const responseSection = document.getElementById('response');
+            const promptText = document.getElementById('prompt').value;
+            
+            // Reset dan tampilkan loading
+            resultDiv.innerHTML = 'Memproses...';
+            responseSection.style.display = 'block';
+            loader.style.display = 'inline-block';
+            
+            try {
+                const API_KEY = "AIzaSyAuyWioiBnUMmzqQf7C0oBa6c0j46mudi4";
+                const url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" + API_KEY;
+                
+                // Struktur JSON untuk Gemini API v1
+                const data = {
+                    contents: [
+                        {
+                            parts: [
+                                {
+                                    text: promptText
+                                }
+                            ]
+                        }
+                    ],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 500,
+                    }
+                };
+                
+                console.log("Mengirim request ke Gemini API...");
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log("API Response:", result);
+                
+                // Tampilkan raw response untuk debugging
+                debugDiv.textContent = JSON.stringify(result, null, 2);
+                
+                if (result.candidates && result.candidates[0] && result.candidates[0].content && 
+                    result.candidates[0].content.parts && result.candidates[0].content.parts[0] && 
+                    result.candidates[0].content.parts[0].text) {
+                    resultDiv.innerHTML = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                } else {
+                    resultDiv.innerHTML = "Tidak ada respons yang valid dari API.";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                resultDiv.innerHTML = "Error: " + error.message;
+                debugDiv.textContent = error.stack || "No stack trace available";
+            } finally {
+                // Sembunyikan loading
+                loader.style.display = 'none';
+            }
+        });
+        
+        // Toggle debug info
+        document.getElementById('showDebug').addEventListener('change', function() {
+            document.getElementById('debug').style.display = this.checked ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html> 

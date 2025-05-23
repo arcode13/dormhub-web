@@ -17,6 +17,161 @@
         <link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
         <link href="../assets/css/style.css" rel="stylesheet" type="text/css" />
+        <style>
+            .chatbot-button {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background-color: #ff5c75;
+                box-shadow: 0 4px 12px rgba(0, 120, 255, 0.3);
+                cursor: pointer;
+                z-index: 999;
+                transition: all 0.3s ease;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+            }
+            
+            .chatbot-button:hover {
+                transform: scale(1.1);
+                box-shadow: 0 6px 16px rgba(0, 120, 255, 0.4);
+            }
+            
+            .chatbot-button img {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .chatbot-popup {
+                position: fixed;
+                bottom: 100px;
+                right: 30px;
+                width: 320px;
+                height: 400px;
+                background-color: #fff;
+                border-radius: 12px;
+                box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+                z-index: 998;
+                display: none;
+                flex-direction: column;
+                overflow: hidden;
+            }
+            
+            .chatbot-header {
+                background-color: #ff5c75;
+                color: white;
+                padding: 15px;
+                font-weight: bold;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .chatbot-close {
+                color: white;
+                cursor: pointer;
+                font-size: 20px;
+            }
+            
+            .chatbot-body {
+                flex: 1;
+                padding: 15px;
+                overflow-y: auto;
+                background-color: #f5f7fb;
+            }
+            
+            .chatbot-input-container {
+                padding: 10px;
+                border-top: 1px solid #e0e0e0;
+                display: flex;
+            }
+            
+            .chatbot-input {
+                flex: 1;
+                border: 1px solid #e0e0e0;
+                border-radius: 20px;
+                padding: 8px 15px;
+                outline: none;
+            }
+            
+            .chatbot-send {
+                margin-left: 10px;
+                background-color: #ff5c75;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 35px;
+                height: 35px;
+                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .chatbot-message {
+                margin-bottom: 10px;
+                max-width: 80%;
+                padding: 10px;
+                border-radius: 10px;
+                clear: both;
+            }
+            
+            .bot-message {
+                background-color: white;
+                float: left;
+                border-bottom-left-radius: 0;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }
+            
+            .user-message {
+                background-color: #ff5c75;
+                color: white;
+                float: right;
+                border-bottom-right-radius: 0;
+            }
+            
+            /* Tampilan chatbot saat error */
+            .error-message {
+                background-color: #ffebee;
+                color: #d32f2f;
+                text-align: center;
+                padding: 5px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                clear: both;
+                width: 100%;
+                font-size: 12px;
+            }
+            
+            /* Animasi untuk loading spinner */
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .fa-spin {
+                animation: spin 1s linear infinite;
+            }
+            
+            /* Responsif pada perangkat mobile */
+            @media (max-width: 768px) {
+                .chatbot-popup {
+                    width: 90%;
+                    right: 5%;
+                    left: 5%;
+                    bottom: 80px;
+                }
+                
+                .chatbot-button {
+                    bottom: 20px;
+                    right: 20px;
+                }
+            }
+        </style>
     </head>
     <body>                                              
         <div id="wrapper">
@@ -292,10 +447,236 @@
             </div>
         </div>
         
+        <!-- Chatbot Floating Button -->
+        <div class="chatbot-button" id="chatbotButton">
+            <img src="https://chatbot.design/images/chatbot/DIGITAL%20%28RGB%29/PNG/Mark_RGB_Blue.png" alt="Chatbot">
+        </div>
+        
+        <!-- Chatbot Popup -->
+        <div class="chatbot-popup" id="chatbotPopup">
+            <div class="chatbot-header">
+                <div>DormHub Assistant</div>
+                <div class="chatbot-close" id="chatbotClose">&times;</div>
+            </div>
+            <div class="chatbot-body" id="chatbotBody">
+                <div class="chatbot-message bot-message">
+                    Halo! Saya asisten DormHub yang didukung oleh Gemini AI. Ada yang bisa saya bantu?
+                </div>
+            </div>
+            <div class="chatbot-input-container">
+                <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Tulis pesan..." />
+                <button class="chatbot-send" id="chatbotSend">
+                    <i class="fa fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        
         <!-- Vendor JS -->
         <script src="../assets/js/vendor.min.js"></script>
         
         <!-- App JS -->
         <script src="../assets/js/app.min.js"></script>
+        
+        <!-- Chatbot JS -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const chatbotButton = document.getElementById('chatbotButton');
+                const chatbotPopup = document.getElementById('chatbotPopup');
+                const chatbotClose = document.getElementById('chatbotClose');
+                const chatbotInput = document.getElementById('chatbotInput');
+                const chatbotSend = document.getElementById('chatbotSend');
+                const chatbotBody = document.getElementById('chatbotBody');
+                
+                // Menyimpan history chat untuk konteks
+                let chatHistory = [];
+                
+                // Toggle chatbot popup
+                chatbotButton.addEventListener('click', function() {
+                    if (chatbotPopup.style.display === 'flex') {
+                        chatbotPopup.style.display = 'none';
+                    } else {
+                        chatbotPopup.style.display = 'flex';
+                        chatbotInput.focus();
+                    }
+                });
+                
+                // Close chatbot popup
+                chatbotClose.addEventListener('click', function() {
+                    chatbotPopup.style.display = 'none';
+                });
+                
+                // Generate response menggunakan backend API
+                async function generateResponse(prompt) {
+                    try {
+                        // Coba panggil endpoint utama terlebih dahulu
+                        const response = await fetch('/api/chatbot/message', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ message: prompt })
+                        });
+                        
+                        if (!response.ok) {
+                            console.warn("Primary endpoint failed, trying fallback...");
+                            // Jika endpoint utama gagal, gunakan endpoint fallback
+                            const fallbackResponse = await fetch('/api/chatbot/fallback', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ message: prompt })
+                            });
+                            
+                            if (!fallbackResponse.ok) {
+                                throw new Error(`Fallback HTTP error! Status: ${fallbackResponse.status}`);
+                            }
+                            
+                            const fallbackResult = await fallbackResponse.json();
+                            console.log("Fallback API Response:", fallbackResult);
+                            
+                            if (fallbackResult.candidates && fallbackResult.candidates[0] && fallbackResult.candidates[0].content && 
+                                fallbackResult.candidates[0].content.parts && fallbackResult.candidates[0].content.parts[0] && 
+                                fallbackResult.candidates[0].content.parts[0].text) {
+                                return fallbackResult.candidates[0].content.parts[0].text;
+                            } else {
+                                return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba lagi nanti.";
+                            }
+                        }
+                        
+                        const result = await response.json();
+                        console.log("Primary API Response:", result);
+                        
+                        // Periksa respons yang valid
+                        if (result.candidates && result.candidates[0] && result.candidates[0].content && 
+                            result.candidates[0].content.parts && result.candidates[0].content.parts[0] && 
+                            result.candidates[0].content.parts[0].text) {
+                            return result.candidates[0].content.parts[0].text;
+                        } else {
+                            // Jika struktur data tidak sesuai, coba endpoint fallback
+                            console.warn("Invalid response structure from primary endpoint, trying fallback...");
+                            return generateFallbackResponse(prompt);
+                        }
+                    } catch (error) {
+                        console.error("Error calling API:", error);
+                        
+                        try {
+                            // Coba gunakan endpoint fallback
+                            console.warn("Error in primary endpoint, trying fallback...");
+                            return await generateFallbackResponse(prompt);
+                        } catch (fallbackError) {
+                            console.error("Fallback also failed:", fallbackError);
+                            
+                            // Fallback responses jika API tidak tersedia
+                            const fallbackResponses = [
+                                "Maaf, terjadi kesalahan saat menghubungi asisten. Silakan coba lagi nanti.",
+                                "Sepertinya ada masalah dengan koneksi. Coba lagi dalam beberapa saat.",
+                                "Saya tidak dapat menjawab saat ini. Mohon coba lagi nanti."
+                            ];
+                            
+                            // Pilih fallback response secara random
+                            return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+                        }
+                    }
+                }
+                
+                // Fungsi untuk memanggil endpoint fallback
+                async function generateFallbackResponse(prompt) {
+                    const fallbackResponse = await fetch('/api/chatbot/fallback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: prompt })
+                    });
+                    
+                    if (!fallbackResponse.ok) {
+                        throw new Error(`Fallback HTTP error! Status: ${fallbackResponse.status}`);
+                    }
+                    
+                    const fallbackResult = await fallbackResponse.json();
+                    console.log("Fallback API Response:", fallbackResult);
+                    
+                    if (fallbackResult.candidates && fallbackResult.candidates[0] && fallbackResult.candidates[0].content && 
+                        fallbackResult.candidates[0].content.parts && fallbackResult.candidates[0].content.parts[0] && 
+                        fallbackResult.candidates[0].content.parts[0].text) {
+                        return fallbackResult.candidates[0].content.parts[0].text;
+                    } else {
+                        return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba lagi nanti.";
+                    }
+                }
+                
+                // Send message function
+                async function sendMessage() {
+                    const message = chatbotInput.value.trim();
+                    if (message !== '') {
+                        // Tambahkan class loading
+                        chatbotSend.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                        chatbotSend.disabled = true;
+                        chatbotInput.disabled = true;
+                        
+                        // Add user message to chat
+                        const userMessageElement = document.createElement('div');
+                        userMessageElement.className = 'chatbot-message user-message';
+                        userMessageElement.textContent = message;
+                        chatbotBody.appendChild(userMessageElement);
+                        
+                        // Tambahkan ke riwayat chat
+                        chatHistory.push({ role: "user", content: message });
+                        
+                        // Clear input
+                        chatbotInput.value = '';
+                        
+                        // Scroll to bottom
+                        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+                        
+                        try {
+                            // Generate response from backend
+                            const botResponse = await generateResponse(message);
+                            
+                            // Add bot response to chat
+                            const botMessageElement = document.createElement('div');
+                            botMessageElement.className = 'chatbot-message bot-message';
+                            botMessageElement.textContent = botResponse;
+                            chatbotBody.appendChild(botMessageElement);
+                            
+                            // Tambahkan ke riwayat chat
+                            chatHistory.push({ role: "assistant", content: botResponse });
+                            
+                            // Batasi riwayat chat (hindari token yang terlalu panjang)
+                            if (chatHistory.length > 10) {
+                                chatHistory = chatHistory.slice(chatHistory.length - 10);
+                            }
+                        } catch (error) {
+                            console.error("Error in sendMessage:", error);
+                            
+                            // Add error message
+                            const errorMessageElement = document.createElement('div');
+                            errorMessageElement.className = 'chatbot-message bot-message error-message';
+                            errorMessageElement.textContent = "Maaf, terjadi kesalahan. Silakan coba lagi nanti.";
+                            chatbotBody.appendChild(errorMessageElement);
+                        } finally {
+                            // Kembalikan tombol kirim ke keadaan semula
+                            chatbotSend.innerHTML = '<i class="fa fa-paper-plane"></i>';
+                            chatbotSend.disabled = false;
+                            chatbotInput.disabled = false;
+                            
+                            // Scroll to bottom
+                            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+                        }
+                    }
+                }
+                
+                // Send message on button click
+                chatbotSend.addEventListener('click', sendMessage);
+                
+                // Send message on Enter key
+                chatbotInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            });
+        </script>
     </body>
 </html>
