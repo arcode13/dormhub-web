@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.dormhub.security.JwtUtil;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @RestController
@@ -51,7 +53,7 @@ public class AuthApiController {
 
     // ======= API LOGIN =======
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> request, HttpServletResponse response) {
         String email = request.get("email");
         String password = request.get("password");
 
@@ -61,6 +63,13 @@ public class AuthApiController {
         }
 
         String token = jwtUtil.generateToken(email);
+        
+        // Simpan token dalam cookie
+        Cookie jwtCookie = new Cookie("jwt_token", token);
+        jwtCookie.setPath("/");
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setMaxAge(86400); // 1 hari dalam detik
+        response.addCookie(jwtCookie);
 
         return ResponseEntity.ok(Map.of(
             "message", "Login berhasil",
@@ -69,6 +78,19 @@ public class AuthApiController {
             "level", user.getLevel().getNama(),
             "user_id", user.getId()
         ));
+    }
+    
+    // ======= API LOGOUT =======
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        // Hapus cookie JWT
+        Cookie jwtCookie = new Cookie("jwt_token", null);
+        jwtCookie.setPath("/");
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setMaxAge(0); // 0 berarti hapus cookie
+        response.addCookie(jwtCookie);
+        
+        return ResponseEntity.ok(Map.of("message", "Logout berhasil"));
     }
 
     // ======= API REGISTER =======

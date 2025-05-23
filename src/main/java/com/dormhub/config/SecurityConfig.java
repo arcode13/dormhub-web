@@ -36,9 +36,19 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/", "/login", "/register", "/forgot-password", "/reset-password",
                     "/api/auth/**",
-                    "/assets/**", "/css/**", "/js/**", "/img/**"
+                    "/assets/**", "/css/**", "/js/**", "/img/**", "/favicon.ico"
                 ).permitAll()
+                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/help-desk/**").hasAuthority("ROLE_HELP_DESK")
+                .requestMatchers("/mahasiswa/**").hasAnyAuthority("ROLE_MAHASISWA", "ROLE_SENIOR_RESIDENCE")
                 .anyRequest().authenticated()
+            )
+            .exceptionHandling(exc -> exc
+                .accessDeniedPage("/login?error=akses-ditolak")
+                .authenticationEntryPoint((request, response, authException) -> {
+                    logger.warn("Akses tidak sah: {}", authException.getMessage());
+                    response.sendRedirect("/login?error=tidak-terautentikasi");
+                })
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -54,25 +64,5 @@ public class SecurityConfig {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); // Encoder for password hashing
-    }
-
-    private String getRedirectUrlBasedOnRole(org.springframework.security.core.Authentication authentication) {
-        return authentication.getAuthorities().stream()
-            .map(authority -> authority.getAuthority())
-            .findFirst()
-            .map(role -> {
-                switch (role) {
-                    case "ROLE_MAHASISWA":
-                    case "ROLE_SENIOR_RESIDENCE":
-                        return "/mahasiswa/dashboard";
-                    case "ROLE_HELP_DESK":
-                        return "/help-desk/dashboard";
-                    case "ROLE_ADMIN":
-                        return "/admin/dashboard";
-                    default:
-                        return "/";
-                }
-            })
-            .orElse("/");
     }
 }

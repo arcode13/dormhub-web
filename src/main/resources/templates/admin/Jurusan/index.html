@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,8 +49,8 @@
             </div>
             <div class="left-side-menu">
                 <div class="media user-profile mt-2 mb-2">
-                    <img th:src="@{${user.fotoProfil != null ? '../../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../../assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
-                    <img th:src="@{${user.fotoProfil != null ? '../../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../../assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
+                    <img th:src="@{${user.fotoProfil != null ? '/assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '/assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                    <img th:src="@{${user.fotoProfil != null ? '/assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '/assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
                     <div class="media-body">
                         <h6 class="pro-user-name mt-0 mb-0"><span th:text="${user.namaLengkap}"></span></h6>
                         <span class="pro-user-desc font-weight-600">Admin</span>
@@ -65,7 +65,7 @@
                                 <span>Profil</span>
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a href="../../logout" class="dropdown-item notify-item">
+                            <a href="/logout" class="dropdown-item notify-item">
                                 <i data-feather="log-out" class="icon-dual icon-xs mr-2"></i>
                                 <span>Keluar</span>
                             </a>
@@ -154,7 +154,7 @@
                                                         <td th:text="${iterStat.index + 1}"></td>
                                                         <td th:text="${jurusan.nama}"></td>
                                                         <td align="center">
-                                                            <a th:href="@{'/admin/jurusan/edit/' + ${jurusan.id}}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit">
+                                                            <a th:href="@{/admin/jurusan/edit/{id}(id=${jurusan.id})}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit">
                                                                 <i class="fa fa-edit"></i>
                                                             </a>
                                                             <a href="javascript:void(0);" th:onclick="'confirm_delete(' + ${jurusan.id} + ')'" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Hapus">
@@ -187,7 +187,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-dismiss="modal">Batal</button>
-                                <a href="#" class="btn btn-danger" id="btn-yes">Ya, Hapus</a>
+                                <a href="#" class="btn btn-danger" id="btn-delete-confirm">Ya, Hapus</a>
                             </div>
                         </div>
                     </div>
@@ -205,14 +205,22 @@
         </div>
     
         <!-- Vendor JS -->
-        <script src="../../assets/js/vendor.min.js"></script>
+        <script th:src="@{/assets/js/vendor.min.js}"></script>
         
         <!-- DataTable JS -->
-        <script src="../../assets/js/jquery.dataTables.min.js"></script>
-        <script src="../../assets/js/dataTables.bootstrap4.min.js"></script>
+        <script th:src="@{/assets/js/jquery.dataTables.min.js}"></script>
+        <script th:src="@{/assets/js/dataTables.bootstrap4.min.js}"></script>
         
         <!-- App JS -->
-        <script src="../../assets/js/app.min.js"></script>
-        <script src="../../assets/js/custom.js"></script>
+        <script th:src="@{/assets/js/app.min.js}"></script>
+        <script th:src="@{/assets/js/custom.js}"></script>
+
+        <!-- Tambahkan script untuk konfirmasi hapus -->
+        <script type="text/javascript">
+            function confirm_delete(id) {
+                $('#btn-delete-confirm').attr('href', '/admin/jurusan/delete/' + id);
+                $('#modal-delete').modal('show');
+            }
+        </script>
     </body>
 </html>

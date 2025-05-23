@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" th:content="@{'/assets/images/' + ${konfigurasi['web-logo']}}" />
+    <meta property="og:title" th:content="${konfigurasi['web-nama-website']}" />
     
-    <title>DormHub - Daftar Mahasiswa</title>
+    <!-- Title -->
+    <title th:text="${konfigurasi['web-nama-website']} + ' - Daftar Mahasiswa'"></title>
     
     <!-- App Favicon -->
-    <link th:href="@{/assets/images/favicon.ico}" rel="shortcut icon">
+    <link rel="shortcut icon" th:href="@{'/assets/images/' + ${konfigurasi['web-favicon']}}">
     
     <!-- App CSS -->
-    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
-    <link th:href="@{/assets/css/icons.min.css}" rel="stylesheet" type="text/css">
-    <link th:href="@{/assets/css/app.min.css}" rel="stylesheet" type="text/css">
-    <link th:href="@{/assets/css/style.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/assets/css/icons.min.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/assets/css/app.min.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/assets/css/style.css}" rel="stylesheet" type="text/css" />
     
     <!-- DataTable CSS -->
-    <link th:href="@{/assets/css/dataTables.bootstrap4.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/assets/css/dataTables.bootstrap4.min.css}" rel="stylesheet" type="text/css" />
     
     <!-- jQuery -->
     <script th:src="@{/assets/js/jquery-3.7.1.js}"></script>
@@ -25,23 +28,48 @@
     <div id="wrapper">
         <div class="navbar navbar-expand flex-column flex-md-row navbar-custom">
             <div class="container-fluid">
-                <a href="#" class="navbar-brand mr-0 mr-md-2 logo">
+                <a href="/admin" class="navbar-brand mr-0 mr-md-2 logo">
                     <span class="logo-lg">
-                        <img th:src="@{/assets/images/logo.png}" alt="DormHub" height="24">
-                        <span class="d-inline h5 ml-1 text-logo">DormHub</span>
+                        <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
+                        <span class="d-inline h5 ml-1 text-logo" th:text="${konfigurasi['web-nama-website']}"></span>
                     </span>
                     <span class="logo-sm">
-                        <img th:src="@{/assets/images/logo.png}" alt="DormHub" height="24">
+                        <img th:src="@{'/assets/images/' + ${konfigurasi['web-logo']}}" alt="Logo" height="24">
                     </span>
                 </a>
+                <ul class="navbar-nav bd-navbar-nav flex-row list-unstyled menu-left mb-0">
+                    <li class="">
+                        <button class="button-menu-mobile open-left disable-btn">
+                            <i data-feather="menu" class="menu-icon"></i>
+                            <i data-feather="x" class="close-icon"></i>
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
         <div class="left-side-menu">
             <div class="media user-profile mt-2 mb-2">
-                <img th:src="@{/assets/images/users/avatar-1.jpg}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-sm rounded-circle mr-2" alt="Profil">
+                <img th:src="@{${user.fotoProfil != null ? '../assets/images/users/' + user.fotoProfil + '?v=' + currentTimeMillis : '../assets/images/users/user.png'}}" class="avatar-xs rounded-circle mr-2" alt="Profil">
                 <div class="media-body">
-                    <h6 class="pro-user-name mt-0 mb-0">John Doe</h6>
+                    <h6 class="pro-user-name mt-0 mb-0"><span th:text="${user.namaLengkap}"></span></h6>
                     <span class="pro-user-desc font-weight-600">Admin</span>
+                </div>
+                <div class="dropdown align-self-center profile-dropdown-menu">
+                    <a class="dropdown-toggle mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                        <span data-feather="chevron-down"></span>
+                    </a>
+                    <div class="dropdown-menu profile-dropdown">
+                        <a href="/admin/profil" class="dropdown-item notify-item">
+                            <i data-feather="user" class="icon-dual icon-xs mr-2"></i>
+                            <span>Profil</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="dropdown-item notify-item">
+                            <i data-feather="log-out" class="icon-dual icon-xs mr-2"></i>
+                            <span>Keluar</span>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="sidebar-content">
@@ -49,9 +77,15 @@
                     <ul class="metismenu" id="menu-bar">
                         <li class="menu-title">Menu</li>
                         <li>
-                            <a th:href="@{/admin/dashboard}">
+                            <a href="/admin/dashboard">
                                 <i class="fa fa-home"></i>
                                 <span>Beranda</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/jurusan">
+                                <i class="fa fa-graduation-cap"></i>
+                                <span>Jurusan</span>
                             </a>
                         </li>
                         <li>
@@ -61,20 +95,23 @@
                                 <span class="menu-arrow"></span>
                             </a>
                             <ul class="nav-second-level" aria-expanded="false">
-                                <li><a th:href="@{/admin/mahasiswa}">Mahasiswa</a></li>
-                                <li><a th:href="@{/admin/senior-residence}">Senior Residence</a></li>
-                                <li><a th:href="@{/admin/help-desk}">Help Desk</a></li>
-                                <li><a th:href="@{/admin/admin}">Admin</a></li>
+                                <li>
+                                    <a href="/admin/mahasiswa">Mahasiswa</a>
+                                </li>
+                                <li>
+                                    <a href="/admin/senior-residence">Senior Residence</a>
+                                </li>
+                                <li>
+                                    <a href="/admin/help-desk">Help Desk</a>
+                                </li>
+                                <li>
+                                    <a href="/admin/admin">Admin</a>
+                                </li>
                             </ul>
-                        </li>
-                        <li>
-                            <a th:href="@{/admin/jurusan}">
-                                <i class="fa fa-graduation-cap"></i>
-                                <span>Jurusan</span>
-                            </a>
                         </li>
                     </ul>
                 </div>
+                <div class="clearfix"></div>
             </div>
         </div>
         <div class="content-page">
@@ -89,6 +126,19 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
+                                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <span th:text="${error}"></span>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <span th:text="${success}"></span>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <a th:href="@{/admin/mahasiswa/tambah}" class="btn btn-sm btn-success float-right mb-3">Tambah</a>
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-striped" id="table">
                                             <thead>
@@ -108,7 +158,7 @@
                                                 <tr th:each="mahasiswa, iterStat : ${mahasiswaList}" class="text-center">
                                                     <td th:text="${iterStat.index + 1}"></td>
                                                     <td>
-                                                        <img th:src="@{/assets/images/pengguna/}" alt="Foto Profil" class="rounded" width="100">
+                                                        <img th:src="@{${mahasiswa.user.fotoProfil != null ? '/assets/images/users/' + mahasiswa.user.fotoProfil + '?v=' + currentTimeMillis : '/assets/images/users/user.png'}}" alt="Foto Profil" class="rounded-circle" width="50" height="50">
                                                     </td>
                                                     <td th:text="${mahasiswa.user.namaLengkap}"></td>
                                                     <td th:text="${mahasiswa.user.email}"></td>
@@ -126,7 +176,7 @@
                                                         <a th:href="@{/admin/mahasiswa/edit/{id}(id=${mahasiswa.id})}" class="btn btn-sm btn-warning" title="Edit">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
-                                                        <a href="javascript:;" onclick="confirm_delete('')" class="btn btn-sm btn-danger" title="Hapus">
+                                                        <a href="javascript:;" th:onclick="'confirm_delete(' + ${mahasiswa.id} + ')'" class="btn btn-sm btn-danger" title="Hapus">
                                                             <i class="fa fa-trash"></i>
                                                         </a>
                                                     </td>
@@ -142,17 +192,59 @@
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-12">
-                                Copyright &copy; 2024 DormHub. All Rights Reserved
-                            </div>
+                            <div class="col-12" th:text="${konfigurasi['web-footer']}"></div>
                         </div>
                     </div>
                 </footer>
             </div>
         </div>
-        <!-- Vendor JS -->
-        <script th:src="@{/assets/js/vendor.min.js}"></script>
-        <script th:src="@{/assets/js/dataTables.bootstrap4.min.js}"></script>
-        <script th:src="@{/assets/js/app.min.js}"></script>
-    </body>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal-delete" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Hapus Mahasiswa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin menghapus mahasiswa ini?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Batal</button>
+                    <a href="#" class="btn btn-danger" id="btn-delete-confirm">Ya, Hapus</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vendor JS -->
+    <script th:src="@{/assets/js/vendor.min.js}"></script>
+    
+    <!-- DataTable JS -->
+    <script th:src="@{/assets/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/assets/js/dataTables.bootstrap4.min.js}"></script>
+    
+    <!-- App JS -->
+    <script th:src="@{/assets/js/app.min.js}"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        $(document).ready(function() {
+            $('#table').DataTable({
+                "language": {
+                    "url": "../assets/js/dataTables.indonesia.json"
+                }
+            });
+        });
+        
+        function confirm_delete(id) {
+            $('#btn-delete-confirm').attr('href', '/admin/mahasiswa/delete/' + id);
+            $('#modal-delete').modal('show');
+        }
+    </script>
+</body>
 </html>

@@ -628,4 +628,36 @@ public class DashboardController {
     
         return "redirect:/admin/dashboard";
     }
+
+    /**
+     * Mengarahkan /mahasiswa ke dashboard mahasiswa
+     */
+    @GetMapping("/mahasiswa")
+    public String mahasiswaRoot() {
+        return "redirect:/mahasiswa/dashboard";
+    }
+    
+    /**
+     * Mengarahkan /help-desk ke dashboard help desk
+     */
+    @GetMapping("/help-desk")
+    public String helpDeskRoot() {
+        return "redirect:/help-desk/dashboard";
+    }
+    
+    /**
+     * Mengarahkan /admin ke dashboard admin
+     */
+    @GetMapping("/admin")
+    public String adminRoot() {
+        return "redirect:/admin/dashboard";
+    }
+
+    /**
+     * Mengarahkan /senior-residence ke dashboard senior residence
+     */
+    @GetMapping("/senior-residence")
+    public String seniorResidenceRoot() {
+        return "redirect:/senior-residence/dashboard";
+    }
 }

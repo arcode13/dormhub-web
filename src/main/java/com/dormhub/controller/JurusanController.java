@@ -74,13 +74,35 @@ public class JurusanController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateJurusan(@PathVariable int id, @ModelAttribute Jurusan updatedJurusan) {
+    public String updateJurusan(@PathVariable int id, @ModelAttribute Jurusan updatedJurusan, 
+                               RedirectAttributes redirectAttributes, Model model, Principal principal) {
+        // Validasi input kosong
+        if (updatedJurusan.getNama() == null || updatedJurusan.getNama().trim().isEmpty()) {
+            String email = principal.getName();
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User tidak ditemukan."));
+            
+            Map<String, String> konfigurasi = konfigurasiRepository.findAllAsMap().stream()
+                .collect(Collectors.toMap(
+                    entry -> entry.get("key"),
+                    entry -> entry.get("value")
+                ));
+
+            model.addAttribute("konfigurasi", konfigurasi);
+            model.addAttribute("user", user);
+            model.addAttribute("jurusan", updatedJurusan);
+            model.addAttribute("error", "Nama jurusan tidak boleh kosong");
+            return "admin/Jurusan/edit";
+        }
+
         Jurusan jurusan = jurusanService.findById(id);
         if (jurusan != null) {
             jurusan.setNama(updatedJurusan.getNama());
             jurusanService.saveJurusan(jurusan);
+            redirectAttributes.addFlashAttribute("success", "Jurusan berhasil diperbarui");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Jurusan tidak ditemukan");
         }
-        return "redirect:/admin/jurusan"; 
+        return "redirect:/admin/jurusan";
     }
 
     @GetMapping("/tambah")
@@ -103,16 +125,42 @@ public class JurusanController {
     }
 
     @PostMapping("/tambah")
-    public String saveJurusan(@ModelAttribute Jurusan jurusan, RedirectAttributes redirectAttributes) {
-        jurusanService.saveJurusan(jurusan);
+    public String saveJurusan(@ModelAttribute Jurusan jurusan, RedirectAttributes redirectAttributes, Model model, Principal principal) {
+        // Validasi input kosong
+        if (jurusan.getNama() == null || jurusan.getNama().trim().isEmpty()) {
+            String email = principal.getName();
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User tidak ditemukan."));
+            
+            Map<String, String> konfigurasi = konfigurasiRepository.findAllAsMap().stream()
+                .collect(Collectors.toMap(
+                    entry -> entry.get("key"),
+                    entry -> entry.get("value")
+                ));
 
+            model.addAttribute("konfigurasi", konfigurasi);
+            model.addAttribute("user", user);
+            model.addAttribute("error", "Nama jurusan tidak boleh kosong");
+            return "admin/Jurusan/tambah";
+        }
+
+        jurusanService.saveJurusan(jurusan);
         redirectAttributes.addFlashAttribute("success", "Jurusan berhasil ditambah");
-        return "redirect:/admin/jurusan"; 
+        return "redirect:/admin/jurusan";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteJurusan(@PathVariable int id) {
-        jurusanService.deleteJurusan(id);
-        return "redirect:/admin/jurusan"; 
+    public String deleteJurusan(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        try {
+            Jurusan jurusan = jurusanService.findById(id);
+            if (jurusan != null) {
+                jurusanService.deleteJurusan(id);
+                redirectAttributes.addFlashAttribute("success", "Jurusan berhasil dihapus");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Jurusan tidak ditemukan");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Tidak dapat menghapus jurusan karena sedang digunakan");
+        }
+        return "redirect:/admin/jurusan";
     }
 }

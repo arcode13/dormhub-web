@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dormhub.model.User;
 import com.dormhub.repository.KonfigurasiRepository;
+import com.dormhub.security.JwtUtil;
 import com.dormhub.service.UserService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class LoginController {
@@ -27,9 +31,12 @@ public class LoginController {
 
     @Autowired
     private KonfigurasiRepository konfigurasiRepository;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /**
-     * Menampilkan halaman loginnnn.
+     * Menampilkan halaman login.
      */
     @GetMapping("/login")
     public String loginPage(@RequestParam(value = "error", required = false) String error, Model model) {
@@ -51,17 +58,19 @@ public class LoginController {
     /**
      * Proses login pengguna dan pengalihan ke dashboard sesuai level.
      *
-     * @param username 
-     * @param password 
-     * @param model    
-     * @return 
+     * @param email Email pengguna
+     * @param password Password pengguna
+     * @param model Model untuk view
+     * @param response HttpServletResponse untuk menyimpan cookie JWT
+     * @return Redirect ke dashboard sesuai level
      */
     @PostMapping("/login")
     public String login(
             @RequestParam("email") String email,
             @RequestParam("password") String password,
             RedirectAttributes redirectAttributes, 
-            Model model) {
+            Model model,
+            HttpServletResponse response) {
 
         logger.debug("Login attempt dengan email: {}", email);
 
@@ -72,6 +81,17 @@ public class LoginController {
 
         if (user != null) {
             logger.info("Login sukses untuk user dengan email: {}", email);
+            
+            // Generate JWT token
+            String token = jwtUtil.generateToken(email);
+            
+            // Simpan token dalam cookie
+            Cookie jwtCookie = new Cookie("jwt_token", token);
+            jwtCookie.setPath("/");
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setMaxAge(86400); // 1 hari dalam detik
+            response.addCookie(jwtCookie);
+            
             String level = user.getLevel().getNama();
             logger.debug("User level: {}", level);
 
@@ -85,13 +105,31 @@ public class LoginController {
                     return "redirect:/help-desk/dashboard";
                 default:
                     redirectAttributes.addFlashAttribute("error", "Level tidak valid.");
-                    return "login";
+                    return "redirect:/login";
             }
         } else {
             logger.warn("Login gagal untuk email: {}", email);
             redirectAttributes.addFlashAttribute("error", "Email atau password salah.");
-            return "login";
+            return "redirect:/login";
         }
     }
 
+    /**
+     * Proses logout pengguna dan menghapus cookie JWT.
+     *
+     * @param response HttpServletResponse untuk menghapus cookie JWT
+     * @return Redirect ke halaman login
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletResponse response) {
+        // Hapus cookie JWT
+        Cookie jwtCookie = new Cookie("jwt_token", null);
+        jwtCookie.setPath("/");
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setMaxAge(0); // 0 berarti hapus cookie
+        response.addCookie(jwtCookie);
+        
+        logger.info("User berhasil logout");
+        return "redirect:/login";
+    }
 }
