@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,6 +45,12 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
+// Import ChatTitle dan ChatMessage repositories
+import com.dormhub.model.ChatMessage;
+import com.dormhub.model.ChatTitle;
+import com.dormhub.repository.ChatMessageRepository;
+import com.dormhub.repository.ChatTitleRepository;
 
 @RestController
 @RequestMapping("/api/chatbot")
@@ -82,6 +89,12 @@ public class ChatBotApiController {
     @PersistenceContext
     private EntityManager entityManager;
     
+    @Autowired
+    private ChatTitleRepository chatTitleRepository;
+    
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
+    
     public ChatBotApiController() {
         this.restTemplate = new RestTemplate();
         this.objectMapper = new ObjectMapper();
@@ -94,6 +107,14 @@ public class ChatBotApiController {
             
             // Dapatkan pesan dari request body
             String userMessage = requestBody.get("message").asText();
+            Integer chatTitleId = null;
+            
+            // Check if chatTitleId is provided
+            if (requestBody.has("chatTitleId")) {
+                chatTitleId = requestBody.get("chatTitleId").asInt();
+                logger.debug("Chat title ID provided: {}", chatTitleId);
+            }
+            
             logger.debug("User message: {}", userMessage);
             
             // Cek apakah ini pertanyaan spesifik tentang data pengguna
@@ -223,6 +244,11 @@ public class ChatBotApiController {
                             JsonNode.class
                         );
                         
+                        // Save messages to database if chatTitleId is provided
+                        if (chatTitleId != null) {
+                            saveMessagesToDatabase(chatTitleId, userMessage, geminiResponse.getBody());
+                        }
+                        
                         return geminiResponse;
                     }
                 } catch (Exception e) {
@@ -284,6 +310,11 @@ public class ChatBotApiController {
                             entity,
                             JsonNode.class
                         );
+                        
+                        // Save messages to database if chatTitleId is provided
+                        if (chatTitleId != null) {
+                            saveMessagesToDatabase(chatTitleId, userMessage, geminiResponse.getBody());
+                        }
                         
                         return geminiResponse;
                     }
@@ -537,6 +568,11 @@ public class ChatBotApiController {
             logger.debug("Response status: {}", geminiResponse.getStatusCode());
             logger.debug("Response body: {}", geminiResponse.getBody());
             
+            // Save messages to database if chatTitleId is provided
+            if (chatTitleId != null) {
+                saveMessagesToDatabase(chatTitleId, userMessage, geminiResponse.getBody());
+            }
+            
             // Kembalikan response dari Gemini API
             return ResponseEntity.ok(geminiResponse.getBody());
         } catch (Exception e) {
@@ -549,6 +585,62 @@ public class ChatBotApiController {
             errorResponse.put("message", e.getMessage());
             
             return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
+    
+    /**
+     * Helper method to save chat messages to database
+     */
+    private void saveMessagesToDatabase(Integer chatTitleId, String userMessage, JsonNode aiResponse) {
+        try {
+            // Find chat title
+            Optional<ChatTitle> chatTitleOpt = chatTitleRepository.findById(chatTitleId);
+            if (chatTitleOpt.isEmpty()) {
+                logger.error("Chat title not found with ID: {}", chatTitleId);
+                return;
+            }
+            
+            ChatTitle chatTitle = chatTitleOpt.get();
+            
+            // Save user message
+            ChatMessage userChatMessage = new ChatMessage();
+            userChatMessage.setTitle(chatTitle);
+            userChatMessage.setSenderType(ChatMessage.SenderType.user);
+            userChatMessage.setMessageContent(userMessage);
+            chatMessageRepository.save(userChatMessage);
+            
+            // Extract AI response text
+            String aiResponseText = null;
+            if (aiResponse != null && aiResponse.has("candidates") && aiResponse.get("candidates").isArray() && 
+                aiResponse.get("candidates").size() > 0) {
+                JsonNode candidate = aiResponse.get("candidates").get(0);
+                if (candidate.has("content") && candidate.get("content").has("parts") && 
+                    candidate.get("content").get("parts").isArray() && candidate.get("content").get("parts").size() > 0) {
+                    JsonNode part = candidate.get("content").get("parts").get(0);
+                    if (part.has("text")) {
+                        aiResponseText = part.get("text").asText();
+                    }
+                }
+            }
+            
+            if (aiResponseText != null) {
+                // Save AI response
+                ChatMessage aiChatMessage = new ChatMessage();
+                aiChatMessage.setTitle(chatTitle);
+                aiChatMessage.setSenderType(ChatMessage.SenderType.ai);
+                aiChatMessage.setMessageContent(aiResponseText);
+                chatMessageRepository.save(aiChatMessage);
+                
+                // Update chat title's updatedAt timestamp
+                chatTitle.setUpdatedAt(LocalDateTime.now());
+                chatTitleRepository.save(chatTitle);
+                
+                logger.debug("Saved chat messages to database for chat title ID: {}", chatTitleId);
+            } else {
+                logger.warn("Could not extract AI response text from response");
+            }
+        } catch (Exception e) {
+            logger.error("Error saving chat messages to database", e);
         }
     }
 

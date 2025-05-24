@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 04, 2025 at 04:08 PM
+-- Generation Time: May 24, 2025 at 08:25 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -38,6 +38,34 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `user_id`) VALUES
 (1, 4);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_messages`
+--
+
+CREATE TABLE `chat_messages` (
+  `id` bigint(20) NOT NULL,
+  `title_id` int(11) NOT NULL,
+  `sender_type` enum('user','ai') NOT NULL,
+  `message_content` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat_title`
+--
+
+CREATE TABLE `chat_title` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -87,7 +115,7 @@ INSERT INTO `jurusan` (`id`, `nama`) VALUES
 (12, 'Administrasi Bisnis'),
 (13, 'Teknik Fisika'),
 (14, 'haha'),
-(15, 'teknik kedokteran');
+(15, 'teknik nuklir');
 
 -- --------------------------------------------------------
 
@@ -258,9 +286,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `nama_lengkap`, `email`, `password`, `foto_profil`, `nomor_hp`, `jenis_kelamin`, `level_id`, `token`, `created_at`, `updated_at`) VALUES
-(1, 'Andi Nugraha', 'mahasiswa@dormhub.my.id', '$2a$10$JxIYtJa8fzO9TTuh10IVz.OaJXQB7TeUI/QNo/oOKaFXUDYWJtnlW', '1735784235367_DormHub.drawio.png', '08121234567', 'Laki-Laki', 1, NULL, '2024-12-19 00:40:18', '2025-01-02 09:17:15'),
+(1, 'Andi Nugraha', 'mahasiswa@dormhub.my.id', '$2a$10$JxIYtJa8fzO9TTuh10IVz.OaJXQB7TeUI/QNo/oOKaFXUDYWJtnlW', '1735784235367_DormHub.drawio.png', '08121234567', 'Laki-Laki', 1, NULL, '2024-12-19 00:40:18', '2025-05-24 11:31:16'),
 (2, 'Rina Ayu', 'seniorresidence@dormhub.my.id', '$2a$10$JxIYtJa8fzO9TTuh10IVz.OaJXQB7TeUI/QNo/oOKaFXUDYWJtnlW', NULL, '08121238976', 'Perempuan', 2, NULL, '2024-12-19 01:37:54', '2025-01-01 17:32:01'),
-(3, 'Joko Santoso', 'helpdesk@dormhub.my.id', '$2a$10$JxIYtJa8fzO9TTuh10IVz.OaJXQB7TeUI/QNo/oOKaFXUDYWJtnlW', '1735784823749_DormHub.drawio.png', '08121234578', 'Laki-Laki', 3, NULL, '2024-12-19 01:37:57', '2025-01-02 09:27:34'),
+(3, 'Joko Santoso', 'helpdesk@dormhub.my.id', '$2a$10$ecS3i412deGc3iP3isUPKuP87MCE9WsU6Wm/Etn4Alwv4PcQy.TXy', '1735784823749_DormHub.drawio.png', '08121234578', 'Laki-Laki', 3, NULL, '2024-12-19 01:37:57', '2025-05-23 20:06:43'),
 (4, 'Fajar Sidiq', 'admin@dormhub.my.id', '$2a$10$JxIYtJa8fzO9TTuh10IVz.OaJXQB7TeUI/QNo/oOKaFXUDYWJtnlW', '1735784906730_DormHub.drawio.png', '08123456789', 'Laki-Laki', 4, NULL, '2024-12-19 01:38:02', '2025-01-02 09:28:42');
 
 --
@@ -272,6 +300,21 @@ INSERT INTO `users` (`id`, `nama_lengkap`, `email`, `password`, `foto_profil`, `
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `title_id` (`title_id`);
+
+--
+-- Indexes for table `chat_title`
+--
+ALTER TABLE `chat_title`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `title` (`title`),
   ADD KEY `user_id` (`user_id`);
 
 --
@@ -347,6 +390,18 @@ ALTER TABLE `admin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `chat_title`
+--
+ALTER TABLE `chat_title`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `helpdesk`
 --
 ALTER TABLE `helpdesk`
@@ -356,7 +411,7 @@ ALTER TABLE `helpdesk`
 -- AUTO_INCREMENT for table `jurusan`
 --
 ALTER TABLE `jurusan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `konfigurasi`
@@ -409,6 +464,18 @@ ALTER TABLE `users`
 --
 ALTER TABLE `admin`
   ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `chat_messages`
+--
+ALTER TABLE `chat_messages`
+  ADD CONSTRAINT `chat_messages_ibfk_1` FOREIGN KEY (`title_id`) REFERENCES `chat_title` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `chat_title`
+--
+ALTER TABLE `chat_title`
+  ADD CONSTRAINT `chat_title_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `helpdesk`

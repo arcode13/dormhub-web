@@ -20,38 +20,42 @@
         <style>
             .chatbot-button {
                 position: fixed;
-                bottom: 30px;
+                bottom: 20px;
                 right: 30px;
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
+                width: auto;
+                height: auto;
+                border-radius: 50px;
                 background-color: #ff5c75;
-                box-shadow: 0 4px 12px rgba(0, 120, 255, 0.3);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                 cursor: pointer;
                 z-index: 999;
                 transition: all 0.3s ease;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                overflow: hidden;
+                padding: 10px 20px;
+                color: white;
+                font-weight: bold;
+                font-size: 15px;
             }
             
             .chatbot-button:hover {
-                transform: scale(1.1);
-                box-shadow: 0 6px 16px rgba(0, 120, 255, 0.4);
+                transform: scale(1.05);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
             }
             
             .chatbot-button img {
-                width: 35px;
-                height: 35px;
+                width: 20px;
+                height: 20px;
+                margin-right: 8px;
             }
             
             .chatbot-popup {
                 position: fixed;
                 bottom: 100px;
                 right: 30px;
-                width: 360px;
-                height: 500px;
+                width: 380px;
+                height: 550px;
                 background-color: #fff;
                 border-radius: 12px;
                 box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
@@ -71,6 +75,115 @@
                 align-items: center;
             }
             
+            .header-title {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .back-arrow {
+                display: none;
+                cursor: pointer;
+                font-size: 18px;
+            }
+            
+            .back-arrow:hover {
+                transform: translateX(-3px);
+                transition: transform 0.2s ease;
+            }
+            
+            .chat-controls {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .chatbot-new-chat {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .chatbot-new-chat:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+            
+            .chatbot-history {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 12px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .chatbot-history:hover {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+            
+            .chatbot-history-panel {
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: white;
+                z-index: 1000;
+                overflow-y: auto;
+                padding: 15px;
+                display: none;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .history-item {
+                padding: 12px;
+                border-radius: 8px;
+                background-color: #f5f7fb;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                border-left: 4px solid #ff5c75;
+            }
+            
+            .history-item:hover {
+                background-color: #eef0f5;
+                transform: translateY(-2px);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+            
+            .history-item h4 {
+                margin: 0 0 5px;
+                font-size: 14px;
+                color: #333;
+                font-weight: 600;
+            }
+            
+            .history-item p {
+                margin: 0;
+                font-size: 12px;
+                color: #666;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            .history-empty {
+                text-align: center;
+                padding: 20px;
+                color: #666;
+            }
+            
             .chatbot-close {
                 color: white;
                 cursor: pointer;
@@ -80,10 +193,12 @@
             .chatbot-body {
                 flex: 1;
                 padding: 18px;
+                padding-bottom: 80px;
                 overflow-y: auto;
                 background-color: #f5f7fb;
                 font-size: 14px;
                 line-height: 1.5;
+                position: relative;
             }
             
             .chatbot-input-container {
@@ -175,6 +290,37 @@
                     bottom: 20px;
                     right: 20px;
                 }
+            }
+            
+            .chat-controls-footer {
+                position: absolute;
+                bottom: 30px;
+                left: 0;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                padding: 10px;
+                z-index: 1001;
+            }
+            
+            .chatbot-new-chat-footer {
+                background-color: #ff5c75;
+                color: white;
+                border: none;
+                border-radius: 50px;
+                padding: 8px 16px;
+                font-size: 14px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.2s ease;
+            }
+            
+            .chatbot-new-chat-footer:hover {
+                transform: scale(1.05);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             }
         </style>
     </head>
@@ -454,24 +600,41 @@
         
         <!-- Chatbot Floating Button -->
         <div class="chatbot-button" id="chatbotButton">
-            <img src="https://chatbot.design/images/chatbot/DIGITAL%20%28RGB%29/PNG/Mark_RGB_Blue.png" alt="Chatbot">
+            <img src="../assets/images/chat-icon.png" alt="Chatbot" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1041/1041916.png'">
+            Hubungi Kami
         </div>
         
         <!-- Chatbot Popup -->
         <div class="chatbot-popup" id="chatbotPopup">
             <div class="chatbot-header">
-                <div>DormHub Assistant</div>
-                <div class="chatbot-close" id="chatbotClose">&times;</div>
+                <div class="header-title">
+                    <i class="fa fa-arrow-left back-arrow" id="backToHistory"></i>
+                    <span>DormHub Assistant</span>
+                </div>
+                <div class="chat-controls">
+                    <div class="chatbot-close" id="chatbotClose">&times;</div>
+                </div>
+            </div>
+            <div class="chatbot-history-panel" id="chatbotHistoryPanel">
+                <h3>Riwayat Percakapan</h3>
+                <div id="historyList" class="mt-3">
+                    <div class="history-empty">Belum ada riwayat percakapan</div>
+                </div>
+            </div>
+            <div class="chat-controls-footer">
+                <button class="chatbot-new-chat-footer" id="chatbotNewChatFooter">
+                    <i class="fa fa-plus"></i> Baru
+                </button>
             </div>
             <div class="chatbot-body" id="chatbotBody">
                 <div class="chatbot-message bot-message">
-                    Halo! Saya asisten DormHub yang didukung oleh Gemini AI.
+                    Halo! Saya asisten DormHub yang didukung oleh Gemini AI.<br><br>
                     
-                    Anda dapat bertanya tentang:
-                    • Info kamar dan kasur Anda
-                    • Jumlah laporan atau keluhan
-                    • Paket/barang Anda
-                    • Informasi pribadi Anda
+                    Anda dapat bertanya tentang:<br>
+                    • Info kamar dan kasur Anda<br>
+                    • Jumlah laporan atau keluhan<br>
+                    • Paket/barang Anda<br>
+                    • Informasi pribadi Anda<br><br>
                     
                     Atau, silakan ajak saya mengobrol tentang apa saja! Saya juga bisa menjawab pertanyaan umum dan berdiskusi berbagai topik dengan Anda.
                 </div>
@@ -500,23 +663,397 @@
                 const chatbotSend = document.getElementById('chatbotSend');
                 const chatbotBody = document.getElementById('chatbotBody');
                 
-                // Menyimpan history chat untuk konteks
-                let chatHistory = [];
+                // Variables for chat history management
+                let currentChatTitleId = null;
+                let tempMessages = [];
+                let isNewChat = true;
                 
                 // Toggle chatbot popup
                 chatbotButton.addEventListener('click', function() {
                     if (chatbotPopup.style.display === 'flex') {
                         chatbotPopup.style.display = 'none';
                     } else {
+                        // Show chat popup
                         chatbotPopup.style.display = 'flex';
-                        chatbotInput.focus();
+                        
+                        // Always show history panel when opening chat
+                        const historyPanel = document.getElementById('chatbotHistoryPanel');
+                        historyPanel.style.display = 'flex';
+                        
+                        // Hide back arrow when in history view
+                        document.getElementById('backToHistory').style.display = 'none';
+                        
+                        // Show the New Chat button
+                        document.querySelector('.chat-controls-footer').style.display = 'flex';
+                        
+                        // Load chat history
+                        loadChatHistory();
                     }
+                });
+                
+                // Back arrow functionality
+                document.getElementById('backToHistory').addEventListener('click', function() {
+                    // Show history panel
+                    const historyPanel = document.getElementById('chatbotHistoryPanel');
+                    historyPanel.style.display = 'flex';
+                    
+                    // Hide back arrow when in history view
+                    this.style.display = 'none';
+                    
+                    // Show the New Chat button
+                    document.querySelector('.chat-controls-footer').style.display = 'flex';
+                    
+                    // Load chat history
+                    loadChatHistory();
                 });
                 
                 // Close chatbot popup
                 chatbotClose.addEventListener('click', function() {
                     chatbotPopup.style.display = 'none';
+                    document.getElementById('chatbotHistoryPanel').style.display = 'none';
                 });
+                
+                // New chat buttons
+                document.getElementById('chatbotNewChatFooter').addEventListener('click', function() {
+                    // Reset to a new temporary chat
+                    initTempChat();
+                    
+                    // Hide history panel
+                    document.getElementById('chatbotHistoryPanel').style.display = 'none';
+                });
+                
+                // Initialize a temporary chat without inserting to database
+                function initTempChat() {
+                    // Reset variables
+                    currentChatTitleId = null;
+                    tempMessages = [];
+                    isNewChat = true;
+                    
+                    // Clear existing messages
+                    chatbotBody.innerHTML = '';
+                    
+                    // Add welcome message
+                    const welcomeMessage = document.createElement('div');
+                    welcomeMessage.className = 'chatbot-message bot-message';
+                    welcomeMessage.innerHTML = `
+                        Halo! Saya asisten DormHub yang didukung oleh Gemini AI.<br><br>
+                        
+                        Anda dapat bertanya tentang:<br>
+                        • Info kamar dan kasur Anda<br>
+                        • Jumlah laporan atau keluhan<br>
+                        • Paket/barang Anda<br>
+                        • Informasi pribadi Anda<br><br>
+                        
+                        Atau, silakan ajak saya mengobrol tentang apa saja! Saya juga bisa menjawab pertanyaan umum dan berdiskusi berbagai topik dengan Anda.
+                    `;
+                    chatbotBody.appendChild(welcomeMessage);
+                    
+                    // Hide history panel
+                    document.getElementById('chatbotHistoryPanel').style.display = 'none';
+                    
+                    // Show back arrow
+                    document.getElementById('backToHistory').style.display = 'inline-block';
+                    
+                    // Hide the New Chat button when in chat view
+                    document.querySelector('.chat-controls-footer').style.display = 'none';
+                }
+                
+                // Function to get current chat or create new one (now only used for loading existing chats)
+                async function getCurrentChatOrCreateNew() {
+                    try {
+                        const response = await fetch('/api/chat/current', {
+                            credentials: 'include'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data === null) {
+                            // No existing chat, initialize a temporary one
+                            initTempChat();
+                        } else {
+                            // Use existing chat
+                            currentChatTitleId = data.id;
+                            isNewChat = false;
+                            
+                            // Clear existing messages
+                            chatbotBody.innerHTML = '';
+                            
+                            // Load messages from history
+                            if (data.messages && data.messages.length > 0) {
+                                data.messages.forEach(message => {
+                                    const messageElement = document.createElement('div');
+                                    messageElement.className = `chatbot-message ${message.senderType === 'user' ? 'user-message' : 'bot-message'}`;
+                                    messageElement.textContent = message.messageContent;
+                                    chatbotBody.appendChild(messageElement);
+                                });
+                                
+                                // Scroll to bottom
+                                chatbotBody.scrollTop = chatbotBody.scrollHeight;
+                                
+                                // Hide history panel
+                                document.getElementById('chatbotHistoryPanel').style.display = 'none';
+                                
+                                // Show back arrow when in chat view
+                                document.getElementById('backToHistory').style.display = 'inline-block';
+                                
+                                // Hide the New Chat button when in chat view
+                                document.querySelector('.chat-controls-footer').style.display = 'none';
+                            } else {
+                                // If no messages in the current chat, go back to history
+                                document.getElementById('chatbotHistoryPanel').style.display = 'flex';
+                                document.getElementById('backToHistory').style.display = 'none';
+                                document.querySelector('.chat-controls-footer').style.display = 'flex';
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error getting current chat:', error);
+                        initTempChat();
+                    }
+                }
+                
+                // Function to create a new chat - now only called when sending the first message
+                async function createNewChat(firstUserMessage, firstBotResponse) {
+                    try {
+                        // Generate a better title based on the first user message using Gemini
+                        let chatTitle = await generateChatTitle(firstUserMessage);
+                        
+                        // If title generation fails, use a fallback
+                        if (!chatTitle) {
+                            chatTitle = "Chat " + new Date().toLocaleString();
+                        }
+                        
+                        const response = await fetch('/api/chat/new', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ title: chatTitle }),
+                            credentials: 'include'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        currentChatTitleId = data.id;
+                        isNewChat = false;
+                        
+                        // Save the messages to the database
+                        try {
+                            await fetch('/api/chat/save-messages', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    titleId: currentChatTitleId,
+                                    messages: [
+                                        {
+                                            content: firstUserMessage,
+                                            senderType: 'user'
+                                        },
+                                        {
+                                            content: firstBotResponse,
+                                            senderType: 'ai'
+                                        }
+                                    ]
+                                }),
+                                credentials: 'include'
+                            });
+                        } catch (error) {
+                            console.error("Error saving messages to database:", error);
+                        }
+                        
+                        return true;
+                    } catch (error) {
+                        console.error('Error creating new chat:', error);
+                        return false;
+                    }
+                }
+                
+                // Function to generate a meaningful chat title using Gemini AI
+                async function generateChatTitle(userMessage) {
+                    try {
+                        // Skip title generation for very short messages
+                        if (userMessage.length < 5) {
+                            return null;
+                        }
+                        
+                        // Prepare the prompt for Gemini
+                        const titlePrompt = {
+                            message: `Buatkan judul chat yang singkat dan bermakna (tidak lebih dari 50 karakter) berdasarkan pesan ini: "${userMessage}". 
+                                      Judul harus mencerminkan inti dari pertanyaan atau topik. 
+                                      Jangan sertakan tanda kutip, tanda petik, atau karakter khusus. 
+                                      Jawab hanya dengan judul, tanpa penjelasan tambahan.`
+                        };
+                        
+                        // Call Gemini API to generate the title
+                        const response = await fetch('/api/chatbot/message', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(titlePrompt),
+                            credentials: 'include'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        
+                        const result = await response.json();
+                        
+                        // Extract the title from Gemini's response
+                        if (result.candidates && 
+                            result.candidates[0] && 
+                            result.candidates[0].content && 
+                            result.candidates[0].content.parts && 
+                            result.candidates[0].content.parts[0] && 
+                            result.candidates[0].content.parts[0].text) {
+                            
+                            let title = result.candidates[0].content.parts[0].text.trim();
+                            
+                            // If the title is too long, truncate it
+                            if (title.length > 50) {
+                                title = title.substring(0, 47) + "...";
+                            }
+                            
+                            return title;
+                        }
+                        
+                        return null;
+                    } catch (error) {
+                        console.error('Error generating chat title:', error);
+                        return null;
+                    }
+                }
+                
+                // Function to load chat history
+                async function loadChatHistory() {
+                    try {
+                        const response = await fetch('/api/chat/titles', {
+                            credentials: 'include'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        const historyList = document.getElementById('historyList');
+                        
+                        if (data.length === 0) {
+                            historyList.innerHTML = '<div class="history-empty">Belum ada riwayat percakapan</div>';
+                            return;
+                        }
+                        
+                        historyList.innerHTML = '';
+                        
+                        data.forEach(title => {
+                            const historyItem = document.createElement('div');
+                            historyItem.className = 'history-item';
+                            historyItem.dataset.id = title.id;
+                            
+                            const date = new Date(title.updatedAt);
+                            const formattedDate = date.toLocaleDateString('id-ID', { 
+                                day: 'numeric', 
+                                month: 'short', 
+                                year: 'numeric'
+                            });
+                            
+                            const formattedTime = date.toLocaleTimeString('id-ID', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit'
+                            });
+                            
+                            historyItem.innerHTML = `
+                                <h4>Chat ${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}, ${formattedTime}</h4>
+                                <p>${formattedDate}, ${formattedTime.substring(0, 5)}</p>
+                            `;
+                            
+                            historyItem.addEventListener('click', function() {
+                                loadChatById(title.id);
+                            });
+                            
+                            historyList.appendChild(historyItem);
+                        });
+                        
+                    } catch (error) {
+                        console.error('Error loading chat history:', error);
+                        document.getElementById('historyList').innerHTML = 
+                            '<div class="history-empty">Gagal memuat riwayat percakapan</div>';
+                    }
+                }
+                
+                // Function to load a specific chat by ID
+                async function loadChatById(id) {
+                    try {
+                        const response = await fetch(`/api/chat/titles/${id}/messages`, {
+                            credentials: 'include'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        
+                        const messages = await response.json();
+                        
+                        // Set current chat title ID
+                        currentChatTitleId = id;
+                        isNewChat = false;
+                        
+                        // Clear existing messages
+                        chatbotBody.innerHTML = '';
+                        
+                        // Add messages
+                        if (messages.length > 0) {
+                            messages.forEach(message => {
+                                const messageElement = document.createElement('div');
+                                messageElement.className = `chatbot-message ${message.senderType === 'user' ? 'user-message' : 'bot-message'}`;
+                                messageElement.textContent = message.messageContent;
+                                chatbotBody.appendChild(messageElement);
+                            });
+                            
+                            // Scroll to bottom
+                            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+                        } else {
+                            // Add welcome message if no messages
+                            const welcomeMessage = document.createElement('div');
+                            welcomeMessage.className = 'chatbot-message bot-message';
+                            welcomeMessage.innerHTML = `
+                                Halo! Saya asisten DormHub yang didukung oleh Gemini AI.<br><br>
+                                
+                                Anda dapat bertanya tentang:<br>
+                                • Info kamar dan kasur Anda<br>
+                                • Jumlah laporan atau keluhan<br>
+                                • Paket/barang Anda<br>
+                                • Informasi pribadi Anda<br><br>
+                                
+                                Atau, silakan ajak saya mengobrol tentang apa saja! Saya juga bisa menjawab pertanyaan umum dan berdiskusi berbagai topik dengan Anda.
+                            `;
+                            chatbotBody.appendChild(welcomeMessage);
+                        }
+                        
+                        // Hide history panel
+                        document.getElementById('chatbotHistoryPanel').style.display = 'none';
+                        
+                        // Show back arrow when in chat view
+                        document.getElementById('backToHistory').style.display = 'inline-block';
+                        
+                        // Hide the New Chat button when in chat view
+                        document.querySelector('.chat-controls-footer').style.display = 'none';
+                        
+                    } catch (error) {
+                        console.error('Error loading chat by ID:', error);
+                        alert('Gagal memuat percakapan');
+                    }
+                }
                 
                 // Function to generate response
                 async function generateResponse(prompt) {
@@ -549,7 +1086,7 @@
                             console.log("Modified single word 'laporan' to full question");
                         } else if (singleWordCheck === "paket" || singleWordCheck === "barang") {
                             modifiedPrompt = "Paket saya ada berapa?";
-                            console.log("Modified single word 'paket' to full question");
+                            console.log("Modified simple word 'paket' to full question");
                         } else if (singleWordCheck === "nama") {
                             modifiedPrompt = "Nama saya siapa?";
                             console.log("Modified single word 'nama' to full question");
@@ -570,6 +1107,16 @@
                         const containsSystemKeyword = systemKeywords.some(keyword => 
                             modifiedPrompt.toLowerCase().includes(keyword)
                         );
+                        
+                        // Request body with chatTitleId
+                        const requestBody = {
+                            message: modifiedPrompt
+                        };
+                        
+                        // Add chatTitleId if available
+                        if (currentChatTitleId) {
+                            requestBody.chatTitleId = currentChatTitleId;
+                        }
                         
                         // Jika pertanyaan tentang data spesifik pengguna, gunakan detail-query API
                         if (containsUserSpecificKeyword) {
@@ -601,9 +1148,7 @@
                                         headers: {
                                             'Content-Type': 'application/json',
                                         },
-                                        body: JSON.stringify({ 
-                                            message: `${modifiedPrompt} Berikan respons yang ramah dan personal berdasarkan data ini: ${dataAnswer}` 
-                                        }),
+                                        body: JSON.stringify(requestBody),
                                         credentials: 'include'
                                     });
                                     
@@ -660,7 +1205,7 @@
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                body: JSON.stringify({ message: prompt }),
+                                body: JSON.stringify(requestBody),
                                 credentials: 'include' // Include cookies in the request
                             });
                             
@@ -710,7 +1255,7 @@
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ message: prompt }),
+                            body: JSON.stringify(requestBody),
                             credentials: 'include' // Include cookies in the request
                         });
                         
@@ -737,7 +1282,7 @@
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ message: prompt }),
+                            body: JSON.stringify(requestBody),
                             credentials: 'include' // Include cookies in the request
                         });
                         
@@ -779,8 +1324,13 @@
                         userMessageElement.textContent = message;
                         chatbotBody.appendChild(userMessageElement);
                         
-                        // Tambahkan ke riwayat chat
-                        chatHistory.push({ role: "user", content: message });
+                        // Store user message in temp array if this is a new chat
+                        if (isNewChat) {
+                            tempMessages.push({
+                                content: message,
+                                senderType: 'user'
+                            });
+                        }
                         
                         // Clear input
                         chatbotInput.value = '';
@@ -798,12 +1348,41 @@
                             botMessageElement.textContent = botResponse;
                             chatbotBody.appendChild(botMessageElement);
                             
-                            // Tambahkan ke riwayat chat
-                            chatHistory.push({ role: "assistant", content: botResponse });
-                            
-                            // Batasi riwayat chat (hindari token yang terlalu panjang)
-                            if (chatHistory.length > 10) {
-                                chatHistory = chatHistory.slice(chatHistory.length - 10);
+                            // Store bot message in temp array if this is a new chat
+                            if (isNewChat) {
+                                tempMessages.push({
+                                    content: botResponse,
+                                    senderType: 'ai'
+                                });
+                                
+                                // Create a new chat in the database with the first exchange
+                                await createNewChat(message, botResponse);
+                            } else if (currentChatTitleId) {
+                                // For existing chats, save messages to database
+                                try {
+                                    await fetch('/api/chat/save-messages', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                            titleId: currentChatTitleId,
+                                            messages: [
+                                                {
+                                                    content: message,
+                                                    senderType: 'user'
+                                                },
+                                                {
+                                                    content: botResponse,
+                                                    senderType: 'ai'
+                                                }
+                                            ]
+                                        }),
+                                        credentials: 'include'
+                                    });
+                                } catch (error) {
+                                    console.error("Error saving messages to database:", error);
+                                }
                             }
                         } catch (error) {
                             console.error("Error in sendMessage:", error);
@@ -825,15 +1404,21 @@
                     }
                 }
                 
-                // Send message on button click
-                chatbotSend.addEventListener('click', sendMessage);
-                
-                // Send message on Enter key
+                // Send message when pressing Enter
                 chatbotInput.addEventListener('keypress', function(e) {
                     if (e.key === 'Enter') {
                         sendMessage();
                     }
                 });
+                
+                // Send message when clicking send button
+                chatbotSend.addEventListener('click', sendMessage);
+                
+                // Initialize on page load
+                loadChatHistory();
+                
+                // Make sure the Baru button is visible when showing history
+                document.querySelector('.chat-controls-footer').style.display = 'flex';
             });
         </script>
     </body>
