@@ -746,7 +746,8 @@
                         • Info kamar dan kasur Anda<br>
                         • Jumlah laporan atau keluhan<br>
                         • Paket/barang Anda<br>
-                        • Informasi pribadi Anda<br><br>
+                        • Informasi pribadi Anda<br>
+                        • Jadwal check-in dan check-out<br><br>
                         
                         Atau, silakan ajak saya mengobrol tentang apa saja! Saya juga bisa menjawab pertanyaan umum dan berdiskusi berbagai topik dengan Anda.
                     `;
@@ -1004,14 +1005,25 @@
                             return null;
                         }
                         
-                        // Prepare the prompt for Gemini
+                        // Prepare the prompt for Gemini - modified to create better titles in Indonesian
                         const titlePrompt = {
-                            message: `SISTEM: Kamu adalah AI yang bertugas mengekstrak judul dari pesan. Kamu HANYA mengembalikan judul pendek (10-30 karakter) tanpa kalimat tambahan, tanpa sapaan, dan tanpa tanda kutip. Contoh: jika input "Bagaimana cara mendaftar asrama?", kamu HANYA menjawab "Cara Mendaftar Asrama".
+                            message: `SISTEM: Kamu adalah AI yang bertugas mengekstrak judul percakapan dari pesan dalam Bahasa Indonesia. Kamu HANYA mengembalikan judul pendek (10-30 karakter) tanpa kalimat tambahan, tanpa sapaan, dan tanpa tanda kutip. Judul harus ditulis dalam Bahasa Indonesia. Judul harus menggambarkan topik atau subjek utama dari pesan pengguna.
+
+Contoh input: "Bagaimana cara mendaftar asrama?"
+Contoh output yang baik: "Pendaftaran Asrama"
+
+Contoh input: "Jadwal check in dan check out kapan?"
+Contoh output yang baik: "Jadwal Check In/Out"
+
+Contoh input: "Kamar saya nomor berapa?"
+Contoh output yang baik: "Informasi Kamar"
 
 PENGGUNA: "${userMessage}"
 
 JAWABAN KAMU (HANYA JUDUL):`
                         };
+                        
+                        console.log("Generating chat title with prompt:", titlePrompt.message);
                         
                         // Call Gemini API to generate the title
                         const response = await fetch('/api/chatbot/message', {
@@ -1038,6 +1050,7 @@ JAWABAN KAMU (HANYA JUDUL):`
                             result.candidates[0].content.parts[0].text) {
                             
                             let title = result.candidates[0].content.parts[0].text.trim();
+                            console.log("Raw generated title:", title);
                             
                             // Remove any introductory text before the actual title
                             if (title.includes("\n")) {
@@ -1060,16 +1073,19 @@ JAWABAN KAMU (HANYA JUDUL):`
                             
                             // If the title is just punctuation or empty after cleaning, return null
                             if (!title || title.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim().length === 0) {
-                                return null;
+                                console.log("Title is empty or only punctuation after cleaning");
+                                return "Percakapan Baru";
                             }
                             
+                            console.log("Final generated title:", title);
                             return title;
                         }
                         
-                        return null;
+                        console.log("Could not extract title from Gemini response");
+                        return "Percakapan Baru";
                     } catch (error) {
                         console.error('Error generating chat title:', error);
-                        return null;
+                        return "Percakapan Baru";
                     }
                 }
                 
@@ -1181,7 +1197,8 @@ JAWABAN KAMU (HANYA JUDUL):`
                                 • Info kamar dan kasur Anda<br>
                                 • Jumlah laporan atau keluhan<br>
                                 • Paket/barang Anda<br>
-                                • Informasi pribadi Anda<br><br>
+                                • Informasi pribadi Anda<br>
+                                • Jadwal check-in dan check-out<br><br>
                                 
                                 Atau, silakan ajak saya mengobrol tentang apa saja! Saya juga bisa menjawab pertanyaan umum dan berdiskusi berbagai topik dengan Anda.
                             `;
@@ -1239,13 +1256,33 @@ JAWABAN KAMU (HANYA JUDUL):`
                             modifiedPrompt = "Nama saya siapa?";
                             console.log("Modified single word 'nama' to full question");
                         } else if (singleWordCheck === "checkin" || singleWordCheck === "check in") {
-                            modifiedPrompt = "Informasi tentang check in";
-                            console.log("Modified to check-in information request");
+                            modifiedPrompt = "Jadwal check in kapan?";
+                            console.log("Modified to check-in schedule request");
                         } else if (singleWordCheck === "checkout" || singleWordCheck === "check out") {
-                            modifiedPrompt = "Informasi tentang check out";
-                            console.log("Modified to check-out information request");
+                            modifiedPrompt = "Jadwal check out kapan?";
+                            console.log("Modified to check-out schedule request");
+                        } else if (singleWordCheck === "jadwal") {
+                            modifiedPrompt = "Jadwal check in dan check out kapan?";
+                            console.log("Modified to check-in/out schedule request");
                         }
                         
+                        // Deteksi pertanyaan tentang jadwal check-in/check-out
+                        const isCheckInOutQuestion = 
+                            modifiedPrompt.toLowerCase().includes("jadwal") && 
+                            (modifiedPrompt.toLowerCase().includes("check in") || 
+                             modifiedPrompt.toLowerCase().includes("checkin") || 
+                             modifiedPrompt.toLowerCase().includes("check out") || 
+                             modifiedPrompt.toLowerCase().includes("checkout"));
+                        
+                        // Deteksi pertanyaan tentang status check-in/out pengguna
+                        const isUserCheckInOutStatusQuestion = 
+                            (modifiedPrompt.toLowerCase().includes("saya") || 
+                             modifiedPrompt.toLowerCase().includes("sudah")) && 
+                            (modifiedPrompt.toLowerCase().includes("check in") || 
+                             modifiedPrompt.toLowerCase().includes("checkin") || 
+                             modifiedPrompt.toLowerCase().includes("check out") || 
+                             modifiedPrompt.toLowerCase().includes("checkout"));
+                            
                         // Cek apakah ada keyword spesifik user di prompt
                         const containsUserSpecificKeyword = userSpecificKeywords.some(keyword => 
                             modifiedPrompt.toLowerCase().includes(keyword)
@@ -1264,6 +1301,210 @@ JAWABAN KAMU (HANYA JUDUL):`
                         // Add chatTitleId if available (important: only add for existing chats, not for new ones)
                         if (currentChatTitleId && !isNewChat) {
                             requestBody.chatTitleId = currentChatTitleId;
+                        }
+                        
+                        // Untuk pertanyaan jadwal check-in/out, coba akses dari DOM
+                        if (isCheckInOutQuestion) {
+                            console.log("Detected check-in/out schedule question");
+                            try {
+                                let answer = "";
+                                
+                                // Get check-in date
+                                const checkInDateElement = document.querySelector('.notification-box p b[th\\:text="${formattedMulaiTglCo}"]');
+                                const checkOutDateElement = document.querySelector('.notification-box p b[th\\:text="${formattedSelesaiTglCo}"]');
+                                
+                                // Get building name
+                                const buildingNameElement = document.querySelector('.notification-box p b[th\\:text="${konfigurasi[\'web-nama-gedung\']}"]');
+                                
+                                let checkInDate = checkInDateElement ? checkInDateElement.textContent : null;
+                                let checkOutDate = checkOutDateElement ? checkOutDateElement.textContent : null;
+                                let buildingName = buildingNameElement ? buildingNameElement.textContent : "asrama";
+                                
+                                if (!checkInDate || !checkOutDate) {
+                                    // Fallback ke data yang dirender
+                                    const notificationBoxes = document.querySelectorAll('.notification-box p');
+                                    for (const box of notificationBoxes) {
+                                        const text = box.textContent;
+                                        if (text.includes('check-in')) {
+                                            const dateMatch = text.match(/tanggal\s+(\d+\s+\w+\s+\d+)/i);
+                                            if (dateMatch && dateMatch[1]) {
+                                                checkInDate = dateMatch[1];
+                                            }
+                                        }
+                                        if (text.includes('check-out')) {
+                                            const dateMatch = text.match(/tanggal\s+(\d+\s+\w+\s+\d+)/i);
+                                            if (dateMatch && dateMatch[1]) {
+                                                checkOutDate = dateMatch[1];
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // Mencoba mendapatkan dari elemen lain
+                                if (!buildingName || buildingName === "asrama") {
+                                    const titleElement = document.querySelector('.text-logo');
+                                    if (titleElement) {
+                                        buildingName = titleElement.textContent.trim() || "asrama";
+                                    }
+                                }
+                                
+                                if (modifiedPrompt.toLowerCase().includes("check in") || 
+                                    modifiedPrompt.toLowerCase().includes("checkin")) {
+                                    
+                                    if (checkInDate) {
+                                        answer = `Jadwal check-in di ${buildingName} adalah pada tanggal ${checkInDate}. Pastikan Anda melakukan check-in tepat waktu.`;
+                                    } else {
+                                        // Jika tidak bisa mendapatkan dari DOM, gunakan detail-query API
+                                        return await fallbackToQueryAPI(modifiedPrompt);
+                                    }
+                                    
+                                } else if (modifiedPrompt.toLowerCase().includes("check out") || 
+                                           modifiedPrompt.toLowerCase().includes("checkout")) {
+                                           
+                                    if (checkOutDate) {
+                                        answer = `Jadwal check-out di ${buildingName} adalah pada tanggal ${checkOutDate}. Pastikan Anda sudah menyelesaikan semua kewajiban sebelum check-out.`;
+                                    } else {
+                                        // Jika tidak bisa mendapatkan dari DOM, gunakan detail-query API
+                                        return await fallbackToQueryAPI(modifiedPrompt);
+                                    }
+                                    
+                                } else {
+                                    // Jadwal keduanya
+                                    if (checkInDate && checkOutDate) {
+                                        answer = `Jadwal check-in di ${buildingName} adalah pada tanggal ${checkInDate} dan jadwal check-out adalah pada tanggal ${checkOutDate}. Pastikan Anda mengikuti jadwal ini.`;
+                                    } else {
+                                        // Jika tidak bisa mendapatkan dari DOM, gunakan detail-query API
+                                        return await fallbackToQueryAPI(modifiedPrompt);
+                                    }
+                                }
+                                
+                                if (answer) {
+                                    console.log("Found check-in/out schedule info in DOM:", answer);
+                                    return answer;
+                                }
+                            } catch (e) {
+                                console.error("Error parsing check-in/out dates from DOM:", e);
+                            }
+                        }
+                        
+                        // Untuk pertanyaan status check-in/out pengguna
+                        if (isUserCheckInOutStatusQuestion) {
+                            console.log("Detected user check-in/out status question");
+                            try {
+                                let answer = "";
+                                
+                                // Check for user check-in status
+                                const userCheckinStatus = document.querySelector('.notification-box p b:not([th\\:text])');
+                                if (userCheckinStatus) {
+                                    const statusText = userCheckinStatus.textContent;
+                                    
+                                    if (modifiedPrompt.toLowerCase().includes("check in") || 
+                                        modifiedPrompt.toLowerCase().includes("checkin")) {
+                                        
+                                        if (statusText.includes("Belum melakukan check-in")) {
+                                            answer = "Anda belum melakukan check-in.";
+                                        } else {
+                                            answer = `Anda sudah melakukan check-in pada ${statusText}.`;
+                                        }
+                                        
+                                    } else if (modifiedPrompt.toLowerCase().includes("check out") || 
+                                               modifiedPrompt.toLowerCase().includes("checkout")) {
+                                        
+                                        // For check-out, look for a different element
+                                        const userCheckoutStatus = document.querySelectorAll('.notification-box p b:not([th\\:text])');
+                                        let checkoutText = null;
+                                        
+                                        for (const status of userCheckoutStatus) {
+                                            if (status.textContent.includes("check-out")) {
+                                                checkoutText = status.textContent;
+                                                break;
+                                            }
+                                        }
+                                        
+                                        if (checkoutText && checkoutText.includes("Belum melakukan check-out")) {
+                                            answer = "Anda belum melakukan check-out.";
+                                        } else if (checkoutText) {
+                                            answer = `Anda sudah melakukan check-out pada ${checkoutText.replace("Belum melakukan check-out", "")}.`;
+                                        }
+                                    }
+                                }
+                                
+                                if (answer) {
+                                    console.log("Found user check-in/out status info in DOM:", answer);
+                                    return answer;
+                                }
+                            } catch (e) {
+                                console.error("Error parsing user check-in/out status from DOM:", e);
+                            }
+                        }
+                        
+                        // Helper function to fallback to query APIs
+                        async function fallbackToQueryAPI(prompt) {
+                            // Try detail-query API first
+                            try {
+                                const detailQueryResponse = await fetch('/api/chatbot/detail-query', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ question: prompt }),
+                                    credentials: 'include'
+                                });
+                                
+                                if (detailQueryResponse.ok) {
+                                    const detailResult = await detailQueryResponse.json();
+                                    if (detailResult.answer && 
+                                        !detailResult.answer.startsWith("Maaf, tidak dapat")) {
+                                        return detailResult.answer;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error("Error using detail-query API:", e);
+                            }
+                            
+                            // Then try general-query API
+                            try {
+                                const generalQueryResponse = await fetch('/api/chatbot/general-query', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ question: prompt }),
+                                    credentials: 'include'
+                                });
+                                
+                                if (generalQueryResponse.ok) {
+                                    const generalResult = await generalQueryResponse.json();
+                                    if (generalResult.answer) {
+                                        return generalResult.answer;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error("Error using general-query API:", e);
+                            }
+                            
+                            // Finally, direct-query as last resort
+                            try {
+                                const directQueryResponse = await fetch('/api/chatbot/direct-query', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ question: prompt }),
+                                    credentials: 'include'
+                                });
+                                
+                                if (directQueryResponse.ok) {
+                                    const directResult = await directQueryResponse.json();
+                                    if (directResult.answer) {
+                                        return directResult.answer;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error("Error using direct-query API:", e);
+                            }
+                            
+                            return null;
                         }
                         
                         // Jika pertanyaan tentang data spesifik pengguna, gunakan detail-query API

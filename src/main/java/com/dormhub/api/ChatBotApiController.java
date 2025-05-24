@@ -602,12 +602,31 @@ public class ChatBotApiController {
             
             ChatTitle chatTitle = chatTitleOpt.get();
             
-            // Save user message
-            ChatMessage userChatMessage = new ChatMessage();
-            userChatMessage.setTitle(chatTitle);
-            userChatMessage.setSenderType(ChatMessage.SenderType.user);
-            userChatMessage.setMessageContent(userMessage);
-            chatMessageRepository.save(userChatMessage);
+            // Check for existing messages with the same content to avoid duplicates
+            List<ChatMessage> existingMessages = chatMessageRepository.findByTitleOrderByCreatedAtDesc(chatTitle);
+            
+            // Check if user message already exists
+            boolean userMessageExists = false;
+            if (!existingMessages.isEmpty()) {
+                for (ChatMessage msg : existingMessages) {
+                    if (msg.getSenderType() == ChatMessage.SenderType.user && 
+                        msg.getMessageContent().equals(userMessage)) {
+                        userMessageExists = true;
+                        logger.debug("User message already exists, skipping save: {}", userMessage);
+                        break;
+                    }
+                }
+            }
+            
+            // Save user message if it doesn't exist
+            if (!userMessageExists) {
+                ChatMessage userChatMessage = new ChatMessage();
+                userChatMessage.setTitle(chatTitle);
+                userChatMessage.setSenderType(ChatMessage.SenderType.user);
+                userChatMessage.setMessageContent(userMessage);
+                chatMessageRepository.save(userChatMessage);
+                logger.debug("Saved user message to database: {}", userMessage);
+            }
             
             // Extract AI response text
             String aiResponseText = null;
@@ -624,18 +643,34 @@ public class ChatBotApiController {
             }
             
             if (aiResponseText != null) {
-                // Save AI response
-                ChatMessage aiChatMessage = new ChatMessage();
-                aiChatMessage.setTitle(chatTitle);
-                aiChatMessage.setSenderType(ChatMessage.SenderType.ai);
-                aiChatMessage.setMessageContent(aiResponseText);
-                chatMessageRepository.save(aiChatMessage);
+                // Check if AI response already exists
+                boolean aiResponseExists = false;
+                if (!existingMessages.isEmpty()) {
+                    for (ChatMessage msg : existingMessages) {
+                        if (msg.getSenderType() == ChatMessage.SenderType.ai && 
+                            msg.getMessageContent().equals(aiResponseText)) {
+                            aiResponseExists = true;
+                            logger.debug("AI response already exists, skipping save: {}", aiResponseText);
+                            break;
+                        }
+                    }
+                }
+                
+                // Save AI response if it doesn't exist
+                if (!aiResponseExists) {
+                    ChatMessage aiChatMessage = new ChatMessage();
+                    aiChatMessage.setTitle(chatTitle);
+                    aiChatMessage.setSenderType(ChatMessage.SenderType.ai);
+                    aiChatMessage.setMessageContent(aiResponseText);
+                    chatMessageRepository.save(aiChatMessage);
+                    logger.debug("Saved AI response to database: {}", aiResponseText);
+                }
                 
                 // Update chat title's updatedAt timestamp
                 chatTitle.setUpdatedAt(LocalDateTime.now());
                 chatTitleRepository.save(chatTitle);
                 
-                logger.debug("Saved chat messages to database for chat title ID: {}", chatTitleId);
+                logger.debug("Updated chat title timestamp for ID: {}", chatTitleId);
             } else {
                 logger.warn("Could not extract AI response text from response");
             }

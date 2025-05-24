@@ -17,6 +17,9 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     // Find all messages for a specific chat title, ordered by creation time
     List<ChatMessage> findByTitleOrderByCreatedAtAsc(ChatTitle title);
     
+    // Find all messages for a specific chat title, ordered by creation time descending
+    List<ChatMessage> findByTitleOrderByCreatedAtDesc(ChatTitle title);
+    
     // Find the last N messages for a chat title using correct JPQL syntax
     @Query("SELECT m FROM ChatMessage m WHERE m.title = :title ORDER BY m.createdAt DESC")
     List<ChatMessage> findLatestMessages(@Param("title") ChatTitle title, Pageable pageable);
