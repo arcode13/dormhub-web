@@ -80,7 +80,7 @@ public class ChatBotApiController {
             HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(geminiRequestBody), headers);
             
             // Kirim request ke Gemini API
-            String geminiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" + geminiApiKey;
+            String geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + geminiApiKey;
             logger.info("Sending request to Gemini API");
             
             ResponseEntity<JsonNode> geminiResponse = restTemplate.exchange(
