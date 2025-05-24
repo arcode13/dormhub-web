@@ -10078,3 +10078,461 @@ org.springframework.web.client.HttpClientErrorException$BadRequest: 400 Bad Requ
 2025-05-24T19:29:22.612Z  INFO 11968 --- [DormHub] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-05-24T19:29:22.612Z  INFO 11968 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-05-24T19:29:22.612Z  INFO 11968 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-05-24T19:29:31.508Z  INFO 4220 --- [DormHub] [main] com.dormhub.DormHubApplication           : Starting DormHubApplication using Java 17.0.2 with PID 4220 (C:\Users\arul\Downloads\dormhub-web\target\classes started by arul in C:\Users\arul\Downloads\dormhub-web)
+2025-05-24T19:29:31.508Z DEBUG 4220 --- [DormHub] [main] com.dormhub.DormHubApplication           : Running with Spring Boot v3.4.0, Spring v6.2.0
+2025-05-24T19:29:31.508Z  INFO 4220 --- [DormHub] [main] com.dormhub.DormHubApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-05-24T19:29:32.461Z  INFO 4220 --- [DormHub] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-24T19:29:32.555Z  INFO 4220 --- [DormHub] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 91 ms. Found 12 JPA repository interfaces.
+2025-05-24T19:29:33.086Z  INFO 4220 --- [DormHub] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-05-24T19:29:33.102Z  INFO 4220 --- [DormHub] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-24T19:29:33.102Z  INFO 4220 --- [DormHub] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2025-05-24T19:29:33.164Z  INFO 4220 --- [DormHub] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-24T19:29:33.164Z  INFO 4220 --- [DormHub] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1593 ms
+2025-05-24T19:29:33.289Z  INFO 4220 --- [DormHub] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-24T19:29:33.336Z  INFO 4220 --- [DormHub] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.2.Final
+2025-05-24T19:29:33.367Z  INFO 4220 --- [DormHub] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-05-24T19:29:33.617Z  INFO 4220 --- [DormHub] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-24T19:29:33.648Z  INFO 4220 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-05-24T19:29:33.805Z  INFO 4220 --- [DormHub] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4bdb04c8
+2025-05-24T19:29:33.805Z  INFO 4220 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-05-24T19:29:33.820Z  WARN 4220 --- [DormHub] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-24T19:29:33.820Z  WARN 4220 --- [DormHub] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-05-24T19:29:33.852Z  INFO 4220 --- [DormHub] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-24T19:29:34.945Z  INFO 4220 --- [DormHub] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-24T19:29:35.133Z  INFO 4220 --- [DormHub] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-24T19:29:35.383Z  INFO 4220 --- [DormHub] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-24T19:29:35.836Z DEBUG 4220 --- [DormHub] [main] com.dormhub.security.JwtAuthFilter       : Filter 'jwtAuthFilter' configured for use
+2025-05-24T19:29:36.352Z  WARN 4220 --- [DormHub] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-24T19:29:36.383Z  INFO 4220 --- [DormHub] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-05-24T19:29:36.570Z DEBUG 4220 --- [DormHub] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 111 mappings in 'requestMappingHandlerMapping'
+2025-05-24T19:29:36.648Z DEBUG 4220 --- [DormHub] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-05-24T19:29:36.664Z  INFO 4220 --- [DormHub] [main] com.dormhub.config.SecurityConfig        : SecurityFilterChain configuration completed with JWT support
+2025-05-24T19:29:36.695Z DEBUG 4220 --- [DormHub] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-05-24T19:29:36.758Z DEBUG 4220 --- [DormHub] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-05-24T19:29:36.820Z DEBUG 4220 --- [DormHub] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-05-24T19:29:36.961Z  INFO 4220 --- [DormHub] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-05-24T19:29:36.977Z  INFO 4220 --- [DormHub] [main] com.dormhub.DormHubApplication           : Started DormHubApplication in 6.0 seconds (process running for 6.393)
+2025-05-24T19:29:40.309Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-24T19:29:40.310Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-24T19:29:40.310Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2025-05-24T19:29:40.311Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2025-05-24T19:29:40.311Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2025-05-24T19:29:40.312Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@22f0d1e0
+2025-05-24T19:29:40.312Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@119aabf3
+2025-05-24T19:29:40.313Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-05-24T19:29:40.313Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-05-24T19:29:40.328Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /mahasiswa/dashboard
+2025-05-24T19:29:40.545Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:40.550Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Secured GET /mahasiswa/dashboard
+2025-05-24T19:29:40.552Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : GET "/mahasiswa/dashboard", parameters={}
+2025-05-24T19:29:40.556Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.controller.DashboardController#mahasiswaDashboard(Model, RedirectAttributes)
+2025-05-24T19:29:40.586Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Masuk ke metode mahasiswaDashboard.
+2025-05-24T19:29:40.588Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Email pengguna yang login: mahasiswa@dormhub.my.id
+2025-05-24T19:29:40.596Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : User ditemukan dengan ID: 1
+2025-05-24T19:29:40.631Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Jumlah laporan izin: 0
+2025-05-24T19:29:40.631Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Jumlah laporan keluhan: 0
+2025-05-24T19:29:40.631Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Total laporan: 0
+2025-05-24T19:29:40.676Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Selesai menjalankan metode mahasiswaDashboard.
+2025-05-24T19:29:40.686Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.w.s.v.ContentNegotiatingViewResolver : Selected 'text/html' given [text/html, application/xhtml+xml, image/avif, image/webp, image/apng, application/xml;q=0.9, */*;q=0.8, application/signed-exchange;v=b3;q=0.7]
+2025-05-24T19:29:41.025Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /assets/css/bootstrap.min.css
+2025-05-24T19:29:41.025Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /assets/css/app.min.css
+2025-05-24T19:29:41.025Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /assets/css/style.css
+2025-05-24T19:29:41.025Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.security.web.FilterChainProxy        : Securing GET /assets/css/icons.min.css
+2025-05-24T19:29:41.028Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/1735768726586_logo.png
+2025-05-24T19:29:41.059Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.060Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.062Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.063Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.064Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.068Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /assets/css/app.min.css
+2025-05-24T19:29:41.068Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /assets/css/style.css
+2025-05-24T19:29:41.068Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /assets/css/bootstrap.min.css
+2025-05-24T19:29:41.070Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.security.web.FilterChainProxy        : Secured GET /assets/css/icons.min.css
+2025-05-24T19:29:41.075Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : GET "/assets/css/icons.min.css", parameters={}
+2025-05-24T19:29:41.073Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /assets/js/vendor.min.js
+2025-05-24T19:29:41.073Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/assets/css/app.min.css", parameters={}
+2025-05-24T19:29:41.074Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : GET "/assets/css/style.css", parameters={}
+2025-05-24T19:29:41.077Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.077Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.074Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : GET "/assets/css/bootstrap.min.css", parameters={}
+2025-05-24T19:29:41.078Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.076Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.089Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.094Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/users/1735784235367_DormHub.drawio.png?v=null
+2025-05-24T19:29:41.099Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.100Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/1735768726586_logo.png
+2025-05-24T19:29:41.100Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/1735768726586_logo.png", parameters={}
+2025-05-24T19:29:41.101Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.111Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.116Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.116Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/users/1735784235367_DormHub.drawio.png?v=null
+2025-05-24T19:29:41.117Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/users/1735784235367_DormHub.drawio.png?v=null", parameters={masked}
+2025-05-24T19:29:41.118Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.125Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.132Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.126Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.146Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/chat-icon.png
+2025-05-24T19:29:41.143Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.158Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.199Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Secured GET /assets/js/vendor.min.js
+2025-05-24T19:29:41.199Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : GET "/assets/js/vendor.min.js", parameters={}
+2025-05-24T19:29:41.200Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.161Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /assets/js/app.min.js
+2025-05-24T19:29:41.207Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.198Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/laporan-barang/1735813374919_logo.png
+2025-05-24T19:29:41.271Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.272Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.285Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.286Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/laporan-barang/1735813374919_logo.png
+2025-05-24T19:29:41.286Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/chat-icon.png
+2025-05-24T19:29:41.287Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /assets/js/app.min.js
+2025-05-24T19:29:41.287Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/laporan-barang/1735813374919_logo.png", parameters={}
+2025-05-24T19:29:41.287Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/chat-icon.png", parameters={}
+2025-05-24T19:29:41.287Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : GET "/assets/js/app.min.js", parameters={}
+2025-05-24T19:29:41.289Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.293Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.308Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] o.s.w.s.r.ResourceHttpRequestHandler     : Resource not found
+2025-05-24T19:29:41.311Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource assets/images/chat-icon.png.]
+2025-05-24T19:29:41.312Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 404 NOT_FOUND
+2025-05-24T19:29:41.293Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.296Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.320Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /error
+2025-05-24T19:29:41.318Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.340Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-05-24T19:29:41.340Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/chat/titles
+2025-05-24T19:29:41.343Z  WARN 4220 --- [DormHub] [http-nio-8080-exec-8] com.dormhub.config.SecurityConfig        : Akses tidak sah: Full authentication is required to access this resource
+2025-05-24T19:29:41.351Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /login?error=tidak-terautentikasi
+2025-05-24T19:29:41.358Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.359Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/chat/titles
+2025-05-24T19:29:41.360Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : GET "/api/chat/titles", parameters={}
+2025-05-24T19:29:41.361Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatHistoryApiController#getChatTitles()
+2025-05-24T19:29:41.377Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-5] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.377Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-5] o.s.security.web.FilterChainProxy        : Secured GET /login?error=tidak-terautentikasi
+2025-05-24T19:29:41.378Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet        : GET "/login?error=tidak-terautentikasi", parameters={masked}
+2025-05-24T19:29:41.379Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-5] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.controller.LoginController#loginPage(String, Model)
+2025-05-24T19:29:41.398Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-5] o.s.w.s.v.ContentNegotiatingViewResolver : Selected '*/*' given [image/avif, image/webp, image/apng, image/svg+xml, image/*, */*;q=0.8]
+2025-05-24T19:29:41.418Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.442Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T19:29:41.444Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [[{createdAt=2025-05-24T19:24:04, id=1, title=Chat 24/05/2025, 19:24:04, updatedAt=2025-05-24T19:25:4 (truncated)...]
+2025-05-24T19:29:41.465Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/1735768726294_favicon.ico
+2025-05-24T19:29:41.469Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:41.474Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-10] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:41.478Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/1735768726294_favicon.ico
+2025-05-24T19:29:41.488Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/1735768726294_favicon.ico", parameters={}
+2025-05-24T19:29:41.490Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-10] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T19:29:41.495Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:42.410Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-9] o.s.security.web.FilterChainProxy        : Securing GET /api/chat/titles
+2025-05-24T19:29:42.420Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-9] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:42.424Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-9] o.s.security.web.FilterChainProxy        : Secured GET /api/chat/titles
+2025-05-24T19:29:42.424Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet        : GET "/api/chat/titles", parameters={}
+2025-05-24T19:29:42.425Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-9] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatHistoryApiController#getChatTitles()
+2025-05-24T19:29:42.430Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T19:29:42.430Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-9] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [[{createdAt=2025-05-24T19:24:04, id=1, title=Chat 24/05/2025, 19:24:04, updatedAt=2025-05-24T19:25:4 (truncated)...]
+2025-05-24T19:29:42.431Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:50.054Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.security.web.FilterChainProxy        : Securing POST /api/chatbot/message
+2025-05-24T19:29:50.063Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:50.063Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.security.web.FilterChainProxy        : Secured POST /api/chatbot/message
+2025-05-24T19:29:50.063Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/chatbot/message", parameters={}
+2025-05-24T19:29:50.064Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatBotApiController#processMessage(JsonNode, HttpServletRequest)
+2025-05-24T19:29:50.086Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [{"message":"cara masak"}]
+2025-05-24T19:29:50.087Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Received chatbot request
+2025-05-24T19:29:50.088Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : User message: cara masak
+2025-05-24T19:29:50.089Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found authenticated user in SecurityContext: mahasiswa@dormhub.my.id
+2025-05-24T19:29:50.093Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found user from SecurityContext: Andi Nugraha
+2025-05-24T19:29:50.098Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found mahasiswa record from SecurityContext - kamar: 101, kasur: 1
+2025-05-24T19:29:50.112Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Generated user-specific info for Gemini prompt
+2025-05-24T19:29:50.115Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Request body: {"contents":[{"parts":[{"text":"Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa bernama TEMBAK DOR. Berikan jawaban natural dan ramah dalam Bahasa Indonesia. Ini informasi tentang pengguna yang sedang kamu ajak bicara: Informasi pengguna: Nama: Andi Nugraha, Email: mahasiswa@dormhub.my.id, Jurusan: Informatika, Nomor Kamar: 101, Nomor Kasur: 1, Total Laporan Umum: 2, Total Laporan Keluhan: 0, Total Laporan Izin: 0, Total Paket/Barang: 1. Gunakan namanya dalam percakapan untuk sentuhan personal. Kamu bisa mengobrol tentang berbagai topik dan menjawab pertanyaan umum pengguna. Beri respons yang natural, ramah dan personal seperti teman mengobrol. Hindari bahasa formal dan kaku. Gunakan bahasa yang santai namun tetap sopan. Berikut adalah pesan pengguna: cara masak"}]}],"generationConfig":{"temperature":0.7,"maxOutputTokens":300}}
+2025-05-24T19:29:50.115Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Sending request to Gemini API
+2025-05-24T19:29:50.201Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.web.client.RestTemplate              : HTTP POST https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyDwXyvtZDCYdYNBHJFuBxy5Ta7j8jgIwBE
+2025-05-24T19:29:50.208Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+2025-05-24T19:29:50.208Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.web.client.RestTemplate              : Writing [{"contents":[{"parts":[{"text":"Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa bernama TEMBAK DOR. Berikan jawaban natural dan ramah dalam Bahasa Indonesia. Ini informasi tentang pengguna yang sedang kamu ajak bicara: Informasi pengguna: Nama: Andi Nugraha, Email: mahasiswa@dormhub.my.id, Jurusan: Informatika, Nomor Kamar: 101, Nomor Kasur: 1, Total Laporan Umum: 2, Total Laporan Keluhan: 0, Total Laporan Izin: 0, Total Paket/Barang: 1. Gunakan namanya dalam percakapan untuk sentuhan personal. Kamu bisa mengobrol tentang berbagai topik dan menjawab pertanyaan umum pengguna. Beri respons yang natural, ramah dan personal seperti teman mengobrol. Hindari bahasa formal dan kaku. Gunakan bahasa yang santai namun tetap sopan. Berikut adalah pesan pengguna: cara masak"}]}],"generationConfig":{"temperature":0.7,"maxOutputTokens":300}}] as "application/json"
+2025-05-24T19:29:51.481Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.web.client.RestTemplate              : Response 400 BAD_REQUEST
+2025-05-24T19:29:51.487Z ERROR 4220 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Error processing chatbot message
+
+org.springframework.web.client.HttpClientErrorException$BadRequest: 400 Bad Request on POST request for "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent": "{<EOL>  "error": {<EOL>    "code": 400,<EOL>    "message": "User location is not supported for the API use.",<EOL>    "status": "FAILED_PRECONDITION"<EOL>  }<EOL>}<EOL>"
+	at org.springframework.web.client.HttpClientErrorException.create(HttpClientErrorException.java:103) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:225) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:163) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:953) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:902) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:801) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:683) ~[spring-web-6.2.0.jar:6.2.0]
+	at com.dormhub.api.ChatBotApiController.processMessage(ChatBotApiController.java:560) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1088) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:978) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.33.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.33.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at com.dormhub.security.JwtAuthFilter.doFilterInternal(JwtAuthFilter.java:71) ~[classes/:na]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:243) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:238) ~[spring-security-config-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na]
+
+2025-05-24T19:29:51.494Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T19:29:51.494Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{"error":"Terjadi kesalahan saat memproses pesan","message":"400 Bad Request on POST request for \"h (truncated)...]
+2025-05-24T19:29:51.495Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2025-05-24T19:29:51.499Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.security.web.FilterChainProxy        : Securing POST /api/chatbot/message
+2025-05-24T19:29:51.507Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:51.508Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.security.web.FilterChainProxy        : Secured POST /api/chatbot/message
+2025-05-24T19:29:51.508Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : POST "/api/chatbot/message", parameters={}
+2025-05-24T19:29:51.508Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatBotApiController#processMessage(JsonNode, HttpServletRequest)
+2025-05-24T19:29:51.515Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [{"message":"Buatkan judul chat yang singkat dan bermakna (tidak lebih dari 50 karakter) berdasarkan  (truncated)...]
+2025-05-24T19:29:51.516Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : Received chatbot request
+2025-05-24T19:29:51.516Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : User message: Buatkan judul chat yang singkat dan bermakna (tidak lebih dari 50 karakter) berdasarkan pesan ini: "cara masak". 
+                                      Judul harus mencerminkan inti dari pertanyaan atau topik. 
+                                      Jangan sertakan tanda kutip, tanda petik, atau karakter khusus. 
+                                      Jawab hanya dengan judul, tanpa penjelasan tambahan.
+2025-05-24T19:29:51.516Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : Found authenticated user in SecurityContext: mahasiswa@dormhub.my.id
+2025-05-24T19:29:51.519Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : Found user from SecurityContext: Andi Nugraha
+2025-05-24T19:29:51.521Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : Found mahasiswa record from SecurityContext - kamar: 101, kasur: 1
+2025-05-24T19:29:51.527Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : Generated user-specific info for Gemini prompt
+2025-05-24T19:29:51.528Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : Request body: {"contents":[{"parts":[{"text":"Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa bernama TEMBAK DOR. Berikan jawaban natural dan ramah dalam Bahasa Indonesia. Ini informasi tentang pengguna yang sedang kamu ajak bicara: Informasi pengguna: Nama: Andi Nugraha, Email: mahasiswa@dormhub.my.id, Jurusan: Informatika, Nomor Kamar: 101, Nomor Kasur: 1, Total Laporan Umum: 2, Total Laporan Keluhan: 0, Total Laporan Izin: 0, Total Paket/Barang: 1. Gunakan namanya dalam percakapan untuk sentuhan personal. Kamu bisa mengobrol tentang berbagai topik dan menjawab pertanyaan umum pengguna. Beri respons yang natural, ramah dan personal seperti teman mengobrol. Hindari bahasa formal dan kaku. Gunakan bahasa yang santai namun tetap sopan. Berikut adalah pesan pengguna: Buatkan judul chat yang singkat dan bermakna (tidak lebih dari 50 karakter) berdasarkan pesan ini: \"cara masak\". \n                                      Judul harus mencerminkan inti dari pertanyaan atau topik. \n                                      Jangan sertakan tanda kutip, tanda petik, atau karakter khusus. \n                                      Jawab hanya dengan judul, tanpa penjelasan tambahan."}]}],"generationConfig":{"temperature":0.7,"maxOutputTokens":300}}
+2025-05-24T19:29:51.530Z  INFO 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : Sending request to Gemini API
+2025-05-24T19:29:51.531Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.client.RestTemplate              : HTTP POST https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyDwXyvtZDCYdYNBHJFuBxy5Ta7j8jgIwBE
+2025-05-24T19:29:51.532Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.client.RestTemplate              : Accept=[application/json, application/*+json]
+2025-05-24T19:29:51.532Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.client.RestTemplate              : Writing [{"contents":[{"parts":[{"text":"Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa bernama TEMBAK DOR. Berikan jawaban natural dan ramah dalam Bahasa Indonesia. Ini informasi tentang pengguna yang sedang kamu ajak bicara: Informasi pengguna: Nama: Andi Nugraha, Email: mahasiswa@dormhub.my.id, Jurusan: Informatika, Nomor Kamar: 101, Nomor Kasur: 1, Total Laporan Umum: 2, Total Laporan Keluhan: 0, Total Laporan Izin: 0, Total Paket/Barang: 1. Gunakan namanya dalam percakapan untuk sentuhan personal. Kamu bisa mengobrol tentang berbagai topik dan menjawab pertanyaan umum pengguna. Beri respons yang natural, ramah dan personal seperti teman mengobrol. Hindari bahasa formal dan kaku. Gunakan bahasa yang santai namun tetap sopan. Berikut adalah pesan pengguna: Buatkan judul chat yang singkat dan bermakna (tidak lebih dari 50 karakter) berdasarkan pesan ini: \"cara masak\". \n                                      Judul harus mencerminkan inti dari pertanyaan atau topik. \n                                      Jangan sertakan tanda kutip, tanda petik, atau karakter khusus. \n                                      Jawab hanya dengan judul, tanpa penjelasan tambahan."}]}],"generationConfig":{"temperature":0.7,"maxOutputTokens":300}}] as "application/json"
+2025-05-24T19:29:51.759Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.client.RestTemplate              : Response 400 BAD_REQUEST
+2025-05-24T19:29:51.760Z ERROR 4220 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.api.ChatBotApiController     : Error processing chatbot message
+
+org.springframework.web.client.HttpClientErrorException$BadRequest: 400 Bad Request on POST request for "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent": "{<EOL>  "error": {<EOL>    "code": 400,<EOL>    "message": "User location is not supported for the API use.",<EOL>    "status": "FAILED_PRECONDITION"<EOL>  }<EOL>}<EOL>"
+	at org.springframework.web.client.HttpClientErrorException.create(HttpClientErrorException.java:103) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:225) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.DefaultResponseErrorHandler.handleError(DefaultResponseErrorHandler.java:163) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.RestTemplate.handleResponse(RestTemplate.java:953) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:902) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:801) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:683) ~[spring-web-6.2.0.jar:6.2.0]
+	at com.dormhub.api.ChatBotApiController.processMessage(ChatBotApiController.java:560) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:255) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:188) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1088) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:978) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.33.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.33.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:110) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:231) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:365) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:131) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:85) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:179) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at com.dormhub.security.JwtAuthFilter.doFilterInternal(JwtAuthFilter.java:71) ~[classes/:na]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:243) ~[spring-webmvc-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:238) ~[spring-security-config-6.4.1.jar:6.4.1]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.33.jar:10.1.33]
+	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na]
+
+2025-05-24T19:29:51.765Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T19:29:51.765Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{"error":"Terjadi kesalahan saat memproses pesan","message":"400 Bad Request on POST request for \"h (truncated)...]
+2025-05-24T19:29:51.766Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 400 BAD_REQUEST
+2025-05-24T19:29:51.769Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.security.web.FilterChainProxy        : Securing POST /api/chat/new
+2025-05-24T19:29:51.775Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:51.776Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.security.web.FilterChainProxy        : Secured POST /api/chat/new
+2025-05-24T19:29:51.777Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : POST "/api/chat/new", parameters={}
+2025-05-24T19:29:51.777Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatHistoryApiController#createNewChat(Map)
+2025-05-24T19:29:51.780Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [{title=Chat 24/05/2025, 19:29:51}]
+2025-05-24T19:29:51.833Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T19:29:51.833Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{createdAt=2025-05-24T19:29:51.787153700, messages=[{createdAt=2025-05-24T19:29:51.823446200, sender (truncated)...]
+2025-05-24T19:29:51.848Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:51.851Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Securing POST /api/chat/save-messages
+2025-05-24T19:29:51.861Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:51.862Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Secured POST /api/chat/save-messages
+2025-05-24T19:29:51.862Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/chat/save-messages", parameters={}
+2025-05-24T19:29:51.862Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatHistoryApiController#saveMessages(Map)
+2025-05-24T19:29:51.864Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [{titleId=2, messages=[{content=cara masak, senderType=user}, {content=Maaf, terjadi kesalahan saat m (truncated)...]
+2025-05-24T19:29:51.908Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T19:29:51.909Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{success=true}]
+2025-05-24T19:29:51.910Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:29:54.431Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/chat/titles
+2025-05-24T19:29:54.447Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T19:29:54.447Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/chat/titles
+2025-05-24T19:29:54.448Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/api/chat/titles", parameters={}
+2025-05-24T19:29:54.448Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatHistoryApiController#getChatTitles()
+2025-05-24T19:29:54.455Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T19:29:54.455Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [[{createdAt=2025-05-24T19:29:51, id=2, title=Chat 24/05/2025, 19:29:51, updatedAt=2025-05-24T19:29:5 (truncated)...]
+2025-05-24T19:29:54.459Z DEBUG 4220 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T19:48:03.534Z  INFO 4220 --- [DormHub] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-24T19:48:03.555Z  INFO 4220 --- [DormHub] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-05-24T19:48:03.563Z  INFO 4220 --- [DormHub] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-24T19:48:03.568Z  INFO 4220 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-05-24T19:48:03.580Z  INFO 4220 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

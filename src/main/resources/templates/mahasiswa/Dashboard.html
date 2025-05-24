@@ -154,6 +154,7 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
                 border-left: 4px solid #ff5c75;
+                margin-bottom: 8px;
             }
             
             .history-item:hover {
@@ -167,6 +168,9 @@
                 font-size: 14px;
                 color: #333;
                 font-weight: 600;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
             
             .history-item p {
@@ -815,7 +819,108 @@
                     }
                 }
                 
-                // Function to create a new chat - now only called when sending the first message
+                // Send message function
+                async function sendMessage() {
+                    const message = chatbotInput.value.trim();
+                    if (message !== '') {
+                        // Tambahkan class loading
+                        chatbotSend.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                        chatbotSend.disabled = true;
+                        chatbotInput.disabled = true;
+                        
+                        // Add user message to chat
+                        const userMessageElement = document.createElement('div');
+                        userMessageElement.className = 'chatbot-message user-message';
+                        userMessageElement.textContent = message;
+                        chatbotBody.appendChild(userMessageElement);
+                        
+                        // Store user message in temp array if this is a new chat
+                        if (isNewChat) {
+                            tempMessages.push({
+                                content: message,
+                                senderType: 'user'
+                            });
+                        }
+                        
+                        // Clear input
+                        chatbotInput.value = '';
+                        
+                        // Scroll to bottom
+                        chatbotBody.scrollTop = chatbotBody.scrollHeight;
+                        
+                        try {
+                            // Generate response from backend
+                            const botResponse = await generateResponse(message);
+                            
+                            // Add bot response to chat
+                            const botMessageElement = document.createElement('div');
+                            botMessageElement.className = 'chatbot-message bot-message';
+                            botMessageElement.textContent = botResponse;
+                            chatbotBody.appendChild(botMessageElement);
+                            
+                            // Handle chat state
+                            if (isNewChat) {
+                                // For new chats, store bot message in temp array and create a new chat
+                                tempMessages.push({
+                                    content: botResponse,
+                                    senderType: 'ai'
+                                });
+                                
+                                // Create a new chat in the database with the first exchange
+                                await createNewChat(message, botResponse);
+                                
+                                // Refresh the history list after creating a new chat
+                                setTimeout(() => {
+                                    loadChatHistory();
+                                }, 1000);
+                            } else if (currentChatTitleId) {
+                                // For existing chats, save messages to database
+                                try {
+                                    await fetch('/api/chat/save-messages', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                            titleId: currentChatTitleId,
+                                            messages: [
+                                                {
+                                                    content: message,
+                                                    senderType: 'user'
+                                                },
+                                                {
+                                                    content: botResponse,
+                                                    senderType: 'ai'
+                                                }
+                                            ]
+                                        }),
+                                        credentials: 'include'
+                                    });
+                                } catch (error) {
+                                    console.error("Error saving messages to database:", error);
+                                }
+                            }
+                        } catch (error) {
+                            console.error("Error in sendMessage:", error);
+                            
+                            // Add error message
+                            const errorMessageElement = document.createElement('div');
+                            errorMessageElement.className = 'chatbot-message bot-message error-message';
+                            errorMessageElement.textContent = "Maaf, terjadi kesalahan. Silakan coba lagi nanti.";
+                            chatbotBody.appendChild(errorMessageElement);
+                        } finally {
+                            // Kembalikan tombol kirim ke keadaan semula
+                            chatbotSend.innerHTML = '<i class="fa fa-paper-plane"></i>';
+                            chatbotSend.disabled = false;
+                            chatbotInput.disabled = false;
+                            
+                            // Scroll to bottom
+                            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+                        }
+                    }
+                }
+                
+                // Function to create a new chat with initial messages
                 async function createNewChat(firstUserMessage, firstBotResponse) {
                     try {
                         // Generate a better title based on the first user message using Gemini
@@ -826,7 +931,10 @@
                             chatTitle = "Chat " + new Date().toLocaleString();
                         }
                         
-                        const response = await fetch('/api/chat/new', {
+                        console.log("Creating new chat with title:", chatTitle);
+                        
+                        // Create a new chat title
+                        const titleResponse = await fetch('/api/chat/new', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -835,17 +943,23 @@
                             credentials: 'include'
                         });
                         
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        if (!titleResponse.ok) {
+                            throw new Error(`HTTP error! Status: ${titleResponse.status}`);
                         }
                         
-                        const data = await response.json();
-                        currentChatTitleId = data.id;
+                        const titleData = await titleResponse.json();
+                        console.log("New chat created:", titleData);
+                        
+                        // Update current chat title ID
+                        currentChatTitleId = titleData.id;
                         isNewChat = false;
                         
-                        // Save the messages to the database
+                        // Now we have a new chat title, let's save our initial messages
+                        // This is done AFTER creating the chat title to avoid duplicating messages
+                        // We do NOT pass chatTitleId to the API when generating responses for new chats
                         try {
-                            await fetch('/api/chat/save-messages', {
+                            console.log("Saving initial messages for chat ID:", currentChatTitleId);
+                            const saveResponse = await fetch('/api/chat/save-messages', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -865,8 +979,14 @@
                                 }),
                                 credentials: 'include'
                             });
+                            
+                            if (!saveResponse.ok) {
+                                console.error("Error saving initial messages:", await saveResponse.json());
+                            } else {
+                                console.log("Initial messages saved successfully");
+                            }
                         } catch (error) {
-                            console.error("Error saving messages to database:", error);
+                            console.error("Error saving initial messages:", error);
                         }
                         
                         return true;
@@ -886,10 +1006,11 @@
                         
                         // Prepare the prompt for Gemini
                         const titlePrompt = {
-                            message: `Buatkan judul chat yang singkat dan bermakna (tidak lebih dari 50 karakter) berdasarkan pesan ini: "${userMessage}". 
-                                      Judul harus mencerminkan inti dari pertanyaan atau topik. 
-                                      Jangan sertakan tanda kutip, tanda petik, atau karakter khusus. 
-                                      Jawab hanya dengan judul, tanpa penjelasan tambahan.`
+                            message: `SISTEM: Kamu adalah AI yang bertugas mengekstrak judul dari pesan. Kamu HANYA mengembalikan judul pendek (10-30 karakter) tanpa kalimat tambahan, tanpa sapaan, dan tanpa tanda kutip. Contoh: jika input "Bagaimana cara mendaftar asrama?", kamu HANYA menjawab "Cara Mendaftar Asrama".
+
+PENGGUNA: "${userMessage}"
+
+JAWABAN KAMU (HANYA JUDUL):`
                         };
                         
                         // Call Gemini API to generate the title
@@ -918,9 +1039,28 @@
                             
                             let title = result.candidates[0].content.parts[0].text.trim();
                             
+                            // Remove any introductory text before the actual title
+                            if (title.includes("\n")) {
+                                title = title.split("\n").pop().trim();
+                            }
+                            
+                            // Remove phrases like "Judul:", "Title:", etc.
+                            const prefixesToRemove = ["judul:", "title:", "judul chat:", "chat title:"];
+                            for (const prefix of prefixesToRemove) {
+                                if (title.toLowerCase().startsWith(prefix)) {
+                                    title = title.substring(prefix.length).trim();
+                                    break;
+                                }
+                            }
+                            
                             // If the title is too long, truncate it
                             if (title.length > 50) {
                                 title = title.substring(0, 47) + "...";
+                            }
+                            
+                            // If the title is just punctuation or empty after cleaning, return null
+                            if (!title || title.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim().length === 0) {
+                                return null;
                             }
                             
                             return title;
@@ -968,13 +1108,21 @@
                             
                             const formattedTime = date.toLocaleTimeString('id-ID', {
                                 hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit'
+                                minute: '2-digit'
                             });
                             
+                            // Use default title if none is provided or it's just a timestamp
+                            let displayTitle = title.title;
+                            if (!displayTitle || 
+                                displayTitle.trim() === '' || 
+                                /^Chat \d{1,2}\/\d{1,2}\/\d{4}/.test(displayTitle) ||
+                                /^Chat \d{1,2}[-/]\d{1,2}[-/]\d{4}/.test(displayTitle)) {
+                                displayTitle = `Chat ${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`;
+                            }
+                            
                             historyItem.innerHTML = `
-                                <h4>Chat ${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}, ${formattedTime}</h4>
-                                <p>${formattedDate}, ${formattedTime.substring(0, 5)}</p>
+                                <h4>${displayTitle}</h4>
+                                <p>${formattedDate}, ${formattedTime}</p>
                             `;
                             
                             historyItem.addEventListener('click', function() {
@@ -1113,8 +1261,8 @@
                             message: modifiedPrompt
                         };
                         
-                        // Add chatTitleId if available
-                        if (currentChatTitleId) {
+                        // Add chatTitleId if available (important: only add for existing chats, not for new ones)
+                        if (currentChatTitleId && !isNewChat) {
                             requestBody.chatTitleId = currentChatTitleId;
                         }
                         
@@ -1306,101 +1454,6 @@
                     } catch (error) {
                         console.error("Error calling API:", error);
                         return "Maaf, terjadi kesalahan saat menghubungi asisten. Silakan coba lagi nanti.";
-                    }
-                }
-                
-                // Send message function
-                async function sendMessage() {
-                    const message = chatbotInput.value.trim();
-                    if (message !== '') {
-                        // Tambahkan class loading
-                        chatbotSend.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
-                        chatbotSend.disabled = true;
-                        chatbotInput.disabled = true;
-                        
-                        // Add user message to chat
-                        const userMessageElement = document.createElement('div');
-                        userMessageElement.className = 'chatbot-message user-message';
-                        userMessageElement.textContent = message;
-                        chatbotBody.appendChild(userMessageElement);
-                        
-                        // Store user message in temp array if this is a new chat
-                        if (isNewChat) {
-                            tempMessages.push({
-                                content: message,
-                                senderType: 'user'
-                            });
-                        }
-                        
-                        // Clear input
-                        chatbotInput.value = '';
-                        
-                        // Scroll to bottom
-                        chatbotBody.scrollTop = chatbotBody.scrollHeight;
-                        
-                        try {
-                            // Generate response from backend
-                            const botResponse = await generateResponse(message);
-                            
-                            // Add bot response to chat
-                            const botMessageElement = document.createElement('div');
-                            botMessageElement.className = 'chatbot-message bot-message';
-                            botMessageElement.textContent = botResponse;
-                            chatbotBody.appendChild(botMessageElement);
-                            
-                            // Store bot message in temp array if this is a new chat
-                            if (isNewChat) {
-                                tempMessages.push({
-                                    content: botResponse,
-                                    senderType: 'ai'
-                                });
-                                
-                                // Create a new chat in the database with the first exchange
-                                await createNewChat(message, botResponse);
-                            } else if (currentChatTitleId) {
-                                // For existing chats, save messages to database
-                                try {
-                                    await fetch('/api/chat/save-messages', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({
-                                            titleId: currentChatTitleId,
-                                            messages: [
-                                                {
-                                                    content: message,
-                                                    senderType: 'user'
-                                                },
-                                                {
-                                                    content: botResponse,
-                                                    senderType: 'ai'
-                                                }
-                                            ]
-                                        }),
-                                        credentials: 'include'
-                                    });
-                                } catch (error) {
-                                    console.error("Error saving messages to database:", error);
-                                }
-                            }
-                        } catch (error) {
-                            console.error("Error in sendMessage:", error);
-                            
-                            // Add error message
-                            const errorMessageElement = document.createElement('div');
-                            errorMessageElement.className = 'chatbot-message bot-message error-message';
-                            errorMessageElement.textContent = "Maaf, terjadi kesalahan. Silakan coba lagi nanti.";
-                            chatbotBody.appendChild(errorMessageElement);
-                        } finally {
-                            // Kembalikan tombol kirim ke keadaan semula
-                            chatbotSend.innerHTML = '<i class="fa fa-paper-plane"></i>';
-                            chatbotSend.disabled = false;
-                            chatbotInput.disabled = false;
-                            
-                            // Scroll to bottom
-                            chatbotBody.scrollTop = chatbotBody.scrollHeight;
-                        }
                     }
                 }
                 
