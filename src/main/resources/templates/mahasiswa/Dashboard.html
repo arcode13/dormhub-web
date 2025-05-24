@@ -476,6 +476,8 @@
                 <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Laporan saya ada berapa?')">Laporan Saya?</button>
                 <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Paket saya ada berapa?')">Paket Saya?</button>
                 <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Nama saya siapa?')">Nama Saya?</button>
+                <button class="btn btn-sm btn-outline-secondary m-1" onclick="sendQuickQuestion('Kamu siapa?')">Tentang Bot</button>
+                <button class="btn btn-sm btn-outline-secondary m-1" onclick="sendQuickQuestion('Kamu bisa apa?')">Kemampuan Bot</button>
             </div>
         </div>
         
@@ -553,7 +555,29 @@
                             }
                         }
                         
-                        // Jika bukan pertanyaan spesifik atau detail-query gagal, gunakan direct-query API
+                        // Untuk pertanyaan umum, gunakan general-query API
+                        console.log("Using general-query API for general questions");
+                        const generalQueryResponse = await fetch('/api/chatbot/general-query', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ question: prompt }),
+                            credentials: 'include' // Include cookies in the request
+                        });
+                        
+                        if (!generalQueryResponse.ok) {
+                            throw new Error(`HTTP error! Status: ${generalQueryResponse.status}`);
+                        }
+                        
+                        const generalQueryResult = await generalQueryResponse.json();
+                        console.log("General Query API Response:", generalQueryResult);
+                        
+                        if (generalQueryResult.answer) {
+                            return generalQueryResult.answer;
+                        }
+                        
+                        // Jika bukan pertanyaan spesifik atau general-query gagal, gunakan direct-query API
                         console.log("Using direct-query API as fallback");
                         const directQueryResponse = await fetch('/api/chatbot/direct-query', {
                             method: 'POST',
@@ -575,8 +599,8 @@
                             return directQueryResult.answer;
                         }
                         
-                        // Jika direct-query gagal, gunakan Gemini API
-                        console.log("Using Gemini API");
+                        // Jika semua endpoint lokal gagal, gunakan Gemini API
+                        console.log("Using Gemini API as last resort");
                         const geminiResponse = await fetch('/api/chatbot/message', {
                             method: 'POST',
                             headers: {

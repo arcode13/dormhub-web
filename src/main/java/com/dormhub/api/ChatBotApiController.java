@@ -1148,4 +1148,160 @@ public class ChatBotApiController {
         
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/general-query")
+    public ResponseEntity<Map<String, String>> generalQuery(@RequestBody Map<String, String> request) {
+        Map<String, String> response = new HashMap<>();
+        String question = request.get("question");
+        
+        logger.info("Received general query: {}", question);
+        
+        // Default response
+        response.put("answer", "Maaf, saya tidak dapat memahami pertanyaan Anda.");
+        
+        if (question == null || question.trim().isEmpty()) {
+            return ResponseEntity.ok(response);
+        }
+        
+        // Lowercase question for easier matching
+        String lowercaseQuestion = question.toLowerCase();
+        
+        try {
+            // Get configuration data
+            Map<String, String> konfigurasi = new HashMap<>();
+            try {
+                List<Object[]> konfigurasiList = entityManager.createNativeQuery(
+                    "SELECT k_key, k_value FROM konfigurasi"
+                ).getResultList();
+                
+                for (Object[] row : konfigurasiList) {
+                    konfigurasi.put((String) row[0], (String) row[1]);
+                }
+            } catch (Exception e) {
+                logger.warn("Could not load configuration data", e);
+            }
+            
+            // Get building name and other info from configuration
+            String websiteName = konfigurasi.getOrDefault("web-nama-website", "DormHub");
+            String buildingName = konfigurasi.getOrDefault("web-nama-gedung", "asrama");
+            
+            // Handle general questions about the chatbot or system
+            if (lowercaseQuestion.contains("siapa kamu") || 
+                lowercaseQuestion.contains("kamu siapa") || 
+                lowercaseQuestion.contains("siapa anda") ||
+                lowercaseQuestion.contains("anda siapa") ||
+                lowercaseQuestion.contains("siapa namamu") ||
+                lowercaseQuestion.contains("chatbot")) {
+                
+                response.put("answer", String.format(
+                    "Saya adalah asisten %s, chatbot yang membantu mahasiswa dengan informasi tentang asrama, laporan, dan paket. Saya dapat menjawab pertanyaan tentang data kamar, laporan, dan informasi lainnya yang Anda butuhkan.",
+                    websiteName
+                ));
+            } 
+            // Questions about what the bot can do
+            else if (lowercaseQuestion.contains("bisa apa") || 
+                     lowercaseQuestion.contains("bisa membantu") || 
+                     lowercaseQuestion.contains("bisa melakukan") ||
+                     lowercaseQuestion.contains("apa yang bisa") ||
+                     lowercaseQuestion.contains("membantu apa")) {
+                
+                response.put("answer", String.format(
+                    "Saya dapat membantu Anda dengan informasi tentang:\n" +
+                    "- Nomor kamar dan kasur Anda\n" +
+                    "- Jumlah dan status laporan Anda\n" +
+                    "- Informasi paket/barang Anda\n" +
+                    "- Informasi umum tentang %s\n" +
+                    "Silakan tanyakan apa yang Anda butuhkan!",
+                    websiteName
+                ));
+            }
+            // Greetings
+            else if (lowercaseQuestion.contains("halo") || 
+                     lowercaseQuestion.contains("hai") || 
+                     lowercaseQuestion.contains("hi") ||
+                     lowercaseQuestion.contains("hello") ||
+                     lowercaseQuestion.contains("pagi") ||
+                     lowercaseQuestion.contains("siang") ||
+                     lowercaseQuestion.contains("sore") ||
+                     lowercaseQuestion.contains("malam")) {
+                
+                response.put("answer", String.format(
+                    "Halo! Selamat datang di %s. Ada yang bisa saya bantu terkait informasi asrama, laporan, atau paket Anda?",
+                    websiteName
+                ));
+            }
+            // About the dormitory
+            else if (lowercaseQuestion.contains("asrama") || 
+                     lowercaseQuestion.contains("gedung") || 
+                     lowercaseQuestion.contains("dormhub") ||
+                     lowercaseQuestion.contains("dorm") ||
+                     lowercaseQuestion.contains("hub")) {
+                
+                response.put("answer", String.format(
+                    "%s adalah sistem manajemen asrama yang membantu mahasiswa dalam proses check-in, check-out, pengelolaan laporan, dan penerimaan paket di %s.",
+                    websiteName, buildingName
+                ));
+            }
+            // About the check-in process
+            else if (lowercaseQuestion.contains("check-in") || 
+                     lowercaseQuestion.contains("checkin")) {
+                
+                response.put("answer", 
+                    "Untuk check-in, Anda perlu login ke sistem dan mengikuti petunjuk pada halaman beranda. " +
+                    "Check-in biasanya dilakukan pada awal semester atau periode tertentu sesuai kebijakan asrama."
+                );
+            }
+            // About the check-out process
+            else if (lowercaseQuestion.contains("check-out") || 
+                     lowercaseQuestion.contains("checkout")) {
+                
+                response.put("answer", 
+                    "Untuk check-out, silakan perhatikan notifikasi pada dashboard Anda. " +
+                    "Pastikan Anda tidak memiliki tunggakan dan sudah menyelesaikan semua kewajiban sebelum melakukan check-out."
+                );
+            }
+            // About reports
+            else if (lowercaseQuestion.contains("lapor") || 
+                     lowercaseQuestion.contains("keluhan") ||
+                     lowercaseQuestion.contains("izin")) {
+                
+                response.put("answer", 
+                    "Untuk membuat laporan baru (keluhan atau izin), silakan akses menu 'Laporan' > 'Buat Laporan' di sidebar kiri. " +
+                    "Anda dapat melihat status laporan yang sudah dibuat di menu 'Laporan' > 'Daftar Laporan'."
+                );
+            }
+            // About packages
+            else if (lowercaseQuestion.contains("paket") || 
+                     lowercaseQuestion.contains("barang")) {
+                
+                response.put("answer", 
+                    "Paket atau barang yang diterima oleh petugas helpdesk akan dicatat dalam sistem. " +
+                    "Anda akan mendapatkan notifikasi di dashboard dan bisa melihat detail paket/barang Anda di sana."
+                );
+            }
+            // About room information
+            else if (lowercaseQuestion.contains("informasi kamar") || 
+                     lowercaseQuestion.contains("info kamar")) {
+                
+                response.put("answer", 
+                    "Untuk melihat informasi detail tentang kamar Anda, silakan akses menu 'Informasi Kamar' di sidebar kiri. " +
+                    "Di sana Anda dapat melihat lokasi kamar, detail fasilitas, dan informasi lainnya."
+                );
+            }
+            // Default response for other questions
+            else {
+                response.put("answer", 
+                    "Maaf, saya tidak dapat memahami pertanyaan Anda. Silakan tanyakan tentang informasi kamar, laporan, paket, " +
+                    "atau gunakan menu yang tersedia di dashboard untuk navigasi."
+                );
+            }
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("Error processing general query", e);
+            response.put("answer", "Terjadi kesalahan saat memproses pertanyaan Anda. Silakan coba lagi nanti.");
+            return ResponseEntity.ok(response);
+        }
+    }
 } 
