@@ -17,7 +17,7 @@ public class LaporanUmum {
     @Column(name = "jenis", nullable = false)
     private String jenis;
 
-    @Column(name = "alasan", nullable = false)
+    @Column(name = "alasan", nullable = false, columnDefinition = "TEXT")
     private String alasan;
 
     @Column(name = "bukti_foto", nullable = true)

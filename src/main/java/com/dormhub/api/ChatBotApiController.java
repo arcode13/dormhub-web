@@ -19,16 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.dormhub.models.Jurusan;
-import com.dormhub.models.LaporanBarang;
-import com.dormhub.models.LaporanUmum;
-import com.dormhub.models.Mahasiswa;
-import com.dormhub.models.User;
-import com.dormhub.repositories.JurusanRepository;
-import com.dormhub.repositories.LaporanBarangRepository;
-import com.dormhub.repositories.LaporanUmumRepository;
-import com.dormhub.repositories.MahasiswaRepository;
-import com.dormhub.repositories.UserRepository;
+import com.dormhub.model.Jurusan;
+import com.dormhub.model.LaporanBarang;
+import com.dormhub.model.LaporanUmum;
+import com.dormhub.model.Mahasiswa;
+import com.dormhub.model.User;
+import com.dormhub.repository.JurusanRepository;
+import com.dormhub.repository.LaporanBarangRepository;
+import com.dormhub.repository.LaporanUmumRepository;
+import com.dormhub.repository.MahasiswaRepository;
+import com.dormhub.repository.UserRepository;
 import com.dormhub.security.JwtTokenProvider;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,27 +95,22 @@ public class ChatBotApiController {
                         currentUser = userOpt.get();
                         
                         // Check if user is a student
-                        if (currentUser.getLevelId() == 1) { // assuming 1 is for Mahasiswa
+                        if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
                             Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
                             if (mahasiswaOpt.isPresent()) {
                                 mahasiswa = mahasiswaOpt.get();
                                 
-                                // Get jurusan info
-                                Optional<Jurusan> jurusanOpt = jurusanRepository.findById(mahasiswa.getJurusanId());
-                                String jurusanName = jurusanOpt.isPresent() ? jurusanOpt.get().getNama() : "tidak diketahui";
+                                // Get jurusan info directly from the mahasiswa entity
+                                String jurusanName = mahasiswa.getJurusan().getNama();
                                 
                                 // Count reports
-                                List<LaporanUmum> laporanUmumList = laporanUmumRepository.findByMahasiswaId(mahasiswa.getId());
-                                List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaId(mahasiswa.getId());
+                                List<LaporanUmum> laporanUmumList = laporanUmumRepository.findAllByMahasiswaId(mahasiswa.getId());
+                                List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaIdAndStatus(mahasiswa.getId(), "menunggu");
                                 
                                 int totalLaporanUmum = laporanUmumList.size();
                                 int totalLaporanBarang = laporanBarangList.size();
-                                int totalLaporanKeluhan = (int) laporanUmumList.stream()
-                                    .filter(l -> "Keluhan".equals(l.getJenis()))
-                                    .count();
-                                int totalLaporanIzin = (int) laporanUmumList.stream()
-                                    .filter(l -> "Izin".equals(l.getJenis()))
-                                    .count();
+                                int totalLaporanKeluhan = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
+                                int totalLaporanIzin = laporanUmumRepository.countLaporanIzin(mahasiswa.getId());
                                 
                                 // Add user-specific data to be included in the prompt
                                 userSpecificInfo = String.format(
@@ -230,7 +225,7 @@ public class ChatBotApiController {
                         currentUser = userOpt.get();
                         
                         // Check if user is a student
-                        if (currentUser.getLevelId() == 1) { // assuming 1 is for Mahasiswa
+                        if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
                             Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
                             if (mahasiswaOpt.isPresent()) {
                                 mahasiswa = mahasiswaOpt.get();
@@ -254,17 +249,17 @@ public class ChatBotApiController {
                     mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
             } else if ((lowercaseMessage.contains("paket") || lowercaseMessage.contains("barang")) && 
                       lowercaseMessage.contains("saya") && mahasiswa != null) {
-                List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaId(mahasiswa.getId());
+                List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaIdAndStatus(mahasiswa.getId(), "menunggu");
                 response = String.format("Anda memiliki %d paket/barang yang tercatat dalam sistem.", laporanBarangList.size());
             } else if (lowercaseMessage.contains("laporan") && lowercaseMessage.contains("saya") && mahasiswa != null) {
-                List<LaporanUmum> laporanUmumList = laporanUmumRepository.findByMahasiswaId(mahasiswa.getId());
+                List<LaporanUmum> laporanUmumList = laporanUmumRepository.findAllByMahasiswaId(mahasiswa.getId());
                 response = String.format("Anda memiliki total %d laporan yang tercatat dalam sistem.", laporanUmumList.size());
             } else if (lowercaseMessage.contains("keluhan") && lowercaseMessage.contains("saya") && mahasiswa != null) {
-                List<LaporanUmum> laporanKeluhanList = laporanUmumRepository.findByMahasiswaIdAndJenis(mahasiswa.getId(), "Keluhan");
-                response = String.format("Anda memiliki %d laporan keluhan yang tercatat dalam sistem.", laporanKeluhanList.size());
+                int totalKeluhanCount = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
+                response = String.format("Anda memiliki %d laporan keluhan yang tercatat dalam sistem.", totalKeluhanCount);
             } else if (lowercaseMessage.contains("izin") && lowercaseMessage.contains("saya") && mahasiswa != null) {
-                List<LaporanUmum> laporanIzinList = laporanUmumRepository.findByMahasiswaIdAndJenis(mahasiswa.getId(), "Izin");
-                response = String.format("Anda memiliki %d laporan izin yang tercatat dalam sistem.", laporanIzinList.size());
+                int totalIzinCount = laporanUmumRepository.countLaporanIzin(mahasiswa.getId());
+                response = String.format("Anda memiliki %d laporan izin yang tercatat dalam sistem.", totalIzinCount);
             } else if (lowercaseMessage.contains("kamar")) {
                 response = "Untuk informasi kamar, Anda bisa mengakses menu 'Informasi Kamar' di sidebar kiri.";
             } else if (lowercaseMessage.contains("laporan") || lowercaseMessage.contains("keluhan")) {

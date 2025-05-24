@@ -65,7 +65,7 @@ public class UserService {
             // Set Level default (Mahasiswa)
             if (user.getLevel() == null) {
                 Level level = new Level();
-                level.setId(1L); // Pastikan ID 1 untuk "Mahasiswa"
+                level.setId(1); // Pastikan ID 1 untuk "Mahasiswa"
                 user.setLevel(level);
             }
     

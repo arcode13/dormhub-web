@@ -189,7 +189,7 @@ public class MahasiswaController {
             
             // Set level mahasiswa
             Level level = new Level();
-            level.setId(1L); // ID 1 untuk Mahasiswa
+            level.setId(1); // ID 1 untuk Mahasiswa
             newUser.setLevel(level);
             
             // Upload foto profil jika ada
