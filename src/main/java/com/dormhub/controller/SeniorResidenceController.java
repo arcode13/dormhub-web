@@ -65,7 +65,7 @@ public class SeniorResidenceController {
     @GetMapping("/admin/senior-residence/delete/{id}")
     public String deleteSeniorResidence(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
         try {
-            seniorResidenceService.deleteSeniorResidence(id);
+        seniorResidenceService.deleteSeniorResidence(id);
             redirectAttributes.addFlashAttribute("success", "Senior Residence berhasil dihapus.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Gagal menghapus Senior Residence: " + e.getMessage());

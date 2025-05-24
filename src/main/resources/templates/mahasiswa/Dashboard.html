@@ -469,6 +469,14 @@
                     <i class="fa fa-paper-plane"></i>
                 </button>
             </div>
+            
+            <!-- Tombol pertanyaan cepat -->
+            <div class="d-flex flex-wrap p-2 border-top" style="background-color: #f5f7fb;">
+                <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Kamar saya nomor berapa?')">Kamar Saya?</button>
+                <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Laporan saya ada berapa?')">Laporan Saya?</button>
+                <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Paket saya ada berapa?')">Paket Saya?</button>
+                <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Nama saya siapa?')">Nama Saya?</button>
+            </div>
         </div>
         
         <!-- Vendor JS -->
@@ -508,6 +516,9 @@
                 // Generate response menggunakan backend API
                 async function generateResponse(prompt) {
                     try {
+                        // Tambahkan log untuk debugging
+                        console.log("Mengirim pesan ke chatbot API:", prompt);
+                        
                         // Coba panggil endpoint utama terlebih dahulu
                         const response = await fetch('/api/chatbot/message', {
                             method: 'POST',
@@ -679,6 +690,17 @@
                         sendMessage();
                     }
                 });
+                
+                // Fungsi untuk mengirim pertanyaan cepat
+                window.sendQuickQuestion = function(question) {
+                    chatbotInput.value = question;
+                    sendMessage();
+                    
+                    // Tampilkan chatbot jika belum tampil
+                    if (chatbotPopup.style.display !== 'flex') {
+                        chatbotPopup.style.display = 'flex';
+                    }
+                }
             });
         </script>
     </body>
