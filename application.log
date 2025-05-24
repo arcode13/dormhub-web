@@ -6612,3 +6612,104 @@ Identify and stop the process that's listening on port 8080 or configure this ap
 2025-05-24T13:17:31.513Z DEBUG 11632 --- [DormHub] [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
 2025-05-24T13:17:31.513Z DEBUG 11632 --- [DormHub] [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{answer=Maaf, saya tidak memahami pertanyaan Anda. Silakan tanyakan tentang kamar, laporan, atau pak (truncated)...]
 2025-05-24T13:17:31.514Z DEBUG 11632 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:34:40.647Z  INFO 9436 --- [DormHub] [main] com.dormhub.DormHubApplication           : Starting DormHubApplication using Java 17.0.2 with PID 9436 (C:\Users\arul\Downloads\dormhub-web\target\classes started by arul in C:\Users\arul\Downloads\dormhub-web)
+2025-05-24T14:34:40.656Z DEBUG 9436 --- [DormHub] [main] com.dormhub.DormHubApplication           : Running with Spring Boot v3.4.0, Spring v6.2.0
+2025-05-24T14:34:40.657Z  INFO 9436 --- [DormHub] [main] com.dormhub.DormHubApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-05-24T14:34:41.630Z  INFO 9436 --- [DormHub] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-24T14:34:41.734Z  INFO 9436 --- [DormHub] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 94 ms. Found 10 JPA repository interfaces.
+2025-05-24T14:34:42.344Z  INFO 9436 --- [DormHub] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-05-24T14:34:42.355Z  INFO 9436 --- [DormHub] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-24T14:34:42.356Z  INFO 9436 --- [DormHub] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2025-05-24T14:34:42.446Z  INFO 9436 --- [DormHub] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-24T14:34:42.448Z  INFO 9436 --- [DormHub] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1715 ms
+2025-05-24T14:34:42.637Z  INFO 9436 --- [DormHub] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-24T14:34:42.699Z  INFO 9436 --- [DormHub] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.2.Final
+2025-05-24T14:34:42.756Z  INFO 9436 --- [DormHub] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-05-24T14:34:43.028Z  INFO 9436 --- [DormHub] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-24T14:34:43.101Z  INFO 9436 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-05-24T14:34:43.267Z  INFO 9436 --- [DormHub] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1d637673
+2025-05-24T14:34:43.270Z  INFO 9436 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-05-24T14:34:43.292Z  WARN 9436 --- [DormHub] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-24T14:34:43.295Z  WARN 9436 --- [DormHub] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-05-24T14:34:43.330Z  INFO 9436 --- [DormHub] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-24T14:34:44.403Z  INFO 9436 --- [DormHub] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-24T14:34:44.579Z  INFO 9436 --- [DormHub] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-24T14:34:44.837Z  INFO 9436 --- [DormHub] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-24T14:34:45.352Z DEBUG 9436 --- [DormHub] [main] com.dormhub.security.JwtAuthFilter       : Filter 'jwtAuthFilter' configured for use
+2025-05-24T14:34:45.891Z  WARN 9436 --- [DormHub] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-24T14:34:45.928Z  INFO 9436 --- [DormHub] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-05-24T14:34:46.142Z DEBUG 9436 --- [DormHub] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 106 mappings in 'requestMappingHandlerMapping'
+2025-05-24T14:34:46.241Z DEBUG 9436 --- [DormHub] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-05-24T14:34:46.259Z  INFO 9436 --- [DormHub] [main] com.dormhub.config.SecurityConfig        : SecurityFilterChain configuration completed with JWT support
+2025-05-24T14:34:46.282Z DEBUG 9436 --- [DormHub] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-05-24T14:34:46.623Z DEBUG 9436 --- [DormHub] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-05-24T14:34:46.844Z DEBUG 9436 --- [DormHub] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-05-24T14:34:46.989Z  INFO 9436 --- [DormHub] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-05-24T14:34:47.002Z  INFO 9436 --- [DormHub] [main] com.dormhub.DormHubApplication           : Started DormHubApplication in 6.906 seconds (process running for 7.353)
+2025-05-24T14:51:03.401Z  INFO 7684 --- [DormHub] [main] com.dormhub.DormHubApplication           : Starting DormHubApplication using Java 17.0.2 with PID 7684 (C:\Users\arul\Downloads\dormhub-web\target\classes started by arul in C:\Users\arul\Downloads\dormhub-web)
+2025-05-24T14:51:03.401Z DEBUG 7684 --- [DormHub] [main] com.dormhub.DormHubApplication           : Running with Spring Boot v3.4.0, Spring v6.2.0
+2025-05-24T14:51:03.401Z  INFO 7684 --- [DormHub] [main] com.dormhub.DormHubApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-05-24T14:51:04.339Z  INFO 7684 --- [DormHub] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-24T14:51:04.432Z  INFO 7684 --- [DormHub] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 81 ms. Found 10 JPA repository interfaces.
+2025-05-24T14:51:04.995Z  INFO 7684 --- [DormHub] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-05-24T14:51:04.995Z  INFO 7684 --- [DormHub] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-24T14:51:04.995Z  INFO 7684 --- [DormHub] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2025-05-24T14:51:05.057Z  INFO 7684 --- [DormHub] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-24T14:51:05.057Z  INFO 7684 --- [DormHub] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1593 ms
+2025-05-24T14:51:05.182Z  INFO 7684 --- [DormHub] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-24T14:51:05.245Z  INFO 7684 --- [DormHub] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.2.Final
+2025-05-24T14:51:05.276Z  INFO 7684 --- [DormHub] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-05-24T14:51:05.526Z  INFO 7684 --- [DormHub] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-24T14:51:05.573Z  INFO 7684 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-05-24T14:51:05.729Z  INFO 7684 --- [DormHub] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2109a691
+2025-05-24T14:51:05.729Z  INFO 7684 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-05-24T14:51:05.760Z  WARN 7684 --- [DormHub] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-24T14:51:05.760Z  WARN 7684 --- [DormHub] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-05-24T14:51:05.776Z  INFO 7684 --- [DormHub] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-24T14:51:06.823Z  INFO 7684 --- [DormHub] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-24T14:51:06.995Z  INFO 7684 --- [DormHub] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-24T14:51:07.245Z  INFO 7684 --- [DormHub] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-24T14:51:07.714Z DEBUG 7684 --- [DormHub] [main] com.dormhub.security.JwtAuthFilter       : Filter 'jwtAuthFilter' configured for use
+2025-05-24T14:51:08.182Z  WARN 7684 --- [DormHub] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-24T14:51:08.214Z  INFO 7684 --- [DormHub] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-05-24T14:51:08.401Z DEBUG 7684 --- [DormHub] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 106 mappings in 'requestMappingHandlerMapping'
+2025-05-24T14:51:08.464Z DEBUG 7684 --- [DormHub] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-05-24T14:51:08.495Z  INFO 7684 --- [DormHub] [main] com.dormhub.config.SecurityConfig        : SecurityFilterChain configuration completed with JWT support
+2025-05-24T14:51:08.510Z DEBUG 7684 --- [DormHub] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-05-24T14:51:08.573Z DEBUG 7684 --- [DormHub] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-05-24T14:51:08.682Z DEBUG 7684 --- [DormHub] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-05-24T14:51:08.792Z  WARN 7684 --- [DormHub] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-05-24T14:51:08.792Z  INFO 7684 --- [DormHub] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-24T14:51:08.792Z  INFO 7684 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-05-24T14:51:08.792Z  INFO 7684 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-05-24T14:51:08.807Z  INFO 7684 --- [DormHub] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-05-24T14:51:08.823Z ERROR 7684 --- [DormHub] [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+

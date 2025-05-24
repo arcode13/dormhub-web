@@ -50,8 +50,8 @@
                 position: fixed;
                 bottom: 100px;
                 right: 30px;
-                width: 320px;
-                height: 400px;
+                width: 360px;
+                height: 500px;
                 background-color: #fff;
                 border-radius: 12px;
                 box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
@@ -79,13 +79,15 @@
             
             .chatbot-body {
                 flex: 1;
-                padding: 15px;
+                padding: 18px;
                 overflow-y: auto;
                 background-color: #f5f7fb;
+                font-size: 14px;
+                line-height: 1.5;
             }
             
             .chatbot-input-container {
-                padding: 10px;
+                padding: 15px;
                 border-top: 1px solid #e0e0e0;
                 display: flex;
             }
@@ -94,8 +96,9 @@
                 flex: 1;
                 border: 1px solid #e0e0e0;
                 border-radius: 20px;
-                padding: 8px 15px;
+                padding: 12px 18px;
                 outline: none;
+                font-size: 14px;
             }
             
             .chatbot-send {
@@ -113,11 +116,12 @@
             }
             
             .chatbot-message {
-                margin-bottom: 10px;
-                max-width: 80%;
-                padding: 10px;
-                border-radius: 10px;
+                margin-bottom: 12px;
+                max-width: 85%;
+                padding: 12px 15px;
+                border-radius: 12px;
                 clear: both;
+                font-size: 14px;
             }
             
             .bot-message {
@@ -161,6 +165,7 @@
             @media (max-width: 768px) {
                 .chatbot-popup {
                     width: 90%;
+                    height: 70vh;
                     right: 5%;
                     left: 5%;
                     bottom: 80px;
@@ -460,7 +465,14 @@
             </div>
             <div class="chatbot-body" id="chatbotBody">
                 <div class="chatbot-message bot-message">
-                    Halo! Saya asisten DormHub yang didukung oleh Gemini AI. Ada yang bisa saya bantu?
+                    Halo! Saya asisten DormHub yang didukung oleh Gemini AI. Anda dapat bertanya langsung tentang:
+                    
+                    • Info kamar dan kasur Anda
+                    • Jumlah laporan atau keluhan
+                    • Paket/barang Anda
+                    • Informasi pribadi Anda
+                    
+                    Silakan langsung ketik pertanyaan Anda di bawah ini.
                 </div>
             </div>
             <div class="chatbot-input-container">
@@ -468,16 +480,6 @@
                 <button class="chatbot-send" id="chatbotSend">
                     <i class="fa fa-paper-plane"></i>
                 </button>
-            </div>
-            
-            <!-- Tombol pertanyaan cepat -->
-            <div class="d-flex flex-wrap p-2 border-top" style="background-color: #f5f7fb;">
-                <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Kamar saya nomor berapa?')">Kamar Saya?</button>
-                <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Laporan saya ada berapa?')">Laporan Saya?</button>
-                <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Paket saya ada berapa?')">Paket Saya?</button>
-                <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickQuestion('Nama saya siapa?')">Nama Saya?</button>
-                <button class="btn btn-sm btn-outline-secondary m-1" onclick="sendQuickQuestion('Kamu siapa?')">Tentang Bot</button>
-                <button class="btn btn-sm btn-outline-secondary m-1" onclick="sendQuickQuestion('Kamu bisa apa?')">Kemampuan Bot</button>
             </div>
         </div>
         
@@ -726,107 +728,6 @@
                         sendMessage();
                     }
                 });
-                
-                // Fungsi untuk mengirim pertanyaan cepat
-                window.sendQuickQuestion = function(question) {
-                    chatbotInput.value = question;
-                    sendMessage();
-                    
-                    // Tampilkan chatbot jika belum tampil
-                    if (chatbotPopup.style.display !== 'flex') {
-                        chatbotPopup.style.display = 'flex';
-                    }
-                }
-
-                // Function to test auth and data
-                async function testAuth() {
-                    try {
-                        console.log("Testing authentication and data access...");
-                        const response = await fetch('/api/chatbot/test-query', {
-                            method: 'GET',
-                            credentials: 'include' // Include cookies in the request
-                        });
-                        
-                        if (response.ok) {
-                            const result = await response.json();
-                            console.log("Auth Test Result:", result);
-                            
-                            if (result.tokenPresent) {
-                                const botMessageElement = document.createElement('div');
-                                botMessageElement.className = 'chatbot-message bot-message';
-                                
-                                if (result.user) {
-                                    botMessageElement.textContent = `Autentikasi berhasil! Selamat datang ${result.user}. Kamar ${result.kamar}, kasur ${result.kasur}. Laporan: ${result.jumlahLaporan}, Paket: ${result.jumlahPaket}`;
-                                } else {
-                                    botMessageElement.textContent = `Token terdeteksi tapi data tidak lengkap: ${JSON.stringify(result)}`;
-                                }
-                                
-                                chatbotBody.appendChild(botMessageElement);
-                                chatbotBody.scrollTop = chatbotBody.scrollHeight;
-                            } else {
-                                const botMessageElement = document.createElement('div');
-                                botMessageElement.className = 'chatbot-message bot-message error-message';
-                                botMessageElement.textContent = `Tidak ada token: ${result.error}`;
-                                chatbotBody.appendChild(botMessageElement);
-                                chatbotBody.scrollTop = chatbotBody.scrollHeight;
-                            }
-                        } else {
-                            console.error("Auth test failed:", response.status);
-                        }
-                    } catch (error) {
-                        console.error("Error testing auth:", error);
-                    }
-                }
-                
-                // Add debug button
-                const debugButton = document.createElement('button');
-                debugButton.innerText = 'Debug Auth';
-                debugButton.className = 'btn btn-sm btn-secondary m-1';
-                debugButton.onclick = testAuth;
-                document.querySelector('.d-flex.flex-wrap.p-2.border-top').appendChild(debugButton);
-
-                // Function to check cookies
-                async function checkCookies() {
-                    try {
-                        console.log("Checking cookies...");
-                        const response = await fetch('/api/chatbot/check-cookies', {
-                            method: 'GET',
-                            credentials: 'include' // Include cookies in the request
-                        });
-                        
-                        if (response.ok) {
-                            const result = await response.json();
-                            console.log("Cookie Check Result:", result);
-                            
-                            const botMessageElement = document.createElement('div');
-                            botMessageElement.className = 'chatbot-message bot-message';
-                            
-                            if (result.hasCookies) {
-                                if (result.jwtFound) {
-                                    botMessageElement.textContent = `JWT ditemukan dengan nama cookie: ${result.jwtCookieName}. User: ${result.userName || 'tidak diketahui'}`;
-                                } else {
-                                    botMessageElement.textContent = `Cookies ditemukan tapi tidak ada JWT. Cookies: ${Object.keys(result.cookies).join(', ')}`;
-                                }
-                            } else {
-                                botMessageElement.textContent = 'Tidak ada cookies yang ditemukan';
-                            }
-                            
-                            chatbotBody.appendChild(botMessageElement);
-                            chatbotBody.scrollTop = chatbotBody.scrollHeight;
-                        } else {
-                            console.error("Cookie check failed:", response.status);
-                        }
-                    } catch (error) {
-                        console.error("Error checking cookies:", error);
-                    }
-                }
-                
-                // Add cookie check button
-                const cookieButton = document.createElement('button');
-                cookieButton.innerText = 'Cek Cookie';
-                cookieButton.className = 'btn btn-sm btn-warning m-1';
-                cookieButton.onclick = checkCookies;
-                document.querySelector('.d-flex.flex-wrap.p-2.border-top').appendChild(cookieButton);
             });
         </script>
     </body>
