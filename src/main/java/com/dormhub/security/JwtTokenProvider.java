@@ -3,6 +3,8 @@ package com.dormhub.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,8 @@ import java.util.function.Function;
 @Component
 public class JwtTokenProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+
     @Value("${jwt.secret:dormhubSecretKey}")
     private String secret;
 
@@ -23,8 +27,12 @@ public class JwtTokenProvider {
 
     public String getUsername(String token) {
         try {
-            return extractClaim(token, Claims::getSubject);
+            logger.debug("Attempting to extract username from token");
+            String username = extractClaim(token, Claims::getSubject);
+            logger.debug("Extracted username: {}", username);
+            return username;
         } catch (Exception e) {
+            logger.error("Error extracting username from token", e);
             return null;
         }
     }

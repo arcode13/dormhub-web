@@ -520,7 +520,7 @@
                         console.log("Mengirim pesan ke chatbot API:", prompt);
                         
                         // Coba panggil endpoint utama terlebih dahulu
-                        const response = await fetch('/api/chatbot/message', {
+                        const response = await fetch('/api/chatbot/fallback', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -530,35 +530,11 @@
                         });
                         
                         if (!response.ok) {
-                            console.warn("Primary endpoint failed, trying fallback...");
-                            // Jika endpoint utama gagal, gunakan endpoint fallback
-                            const fallbackResponse = await fetch('/api/chatbot/fallback', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ message: prompt }),
-                                credentials: 'include' // Include cookies in the request
-                            });
-                            
-                            if (!fallbackResponse.ok) {
-                                throw new Error(`Fallback HTTP error! Status: ${fallbackResponse.status}`);
-                            }
-                            
-                            const fallbackResult = await fallbackResponse.json();
-                            console.log("Fallback API Response:", fallbackResult);
-                            
-                            if (fallbackResult.candidates && fallbackResult.candidates[0] && fallbackResult.candidates[0].content && 
-                                fallbackResult.candidates[0].content.parts && fallbackResult.candidates[0].content.parts[0] && 
-                                fallbackResult.candidates[0].content.parts[0].text) {
-                                return fallbackResult.candidates[0].content.parts[0].text;
-                            } else {
-                                return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba lagi nanti.";
-                            }
+                            throw new Error(`HTTP error! Status: ${response.status}`);
                         }
                         
                         const result = await response.json();
-                        console.log("Primary API Response:", result);
+                        console.log("API Response:", result);
                         
                         // Periksa respons yang valid
                         if (result.candidates && result.candidates[0] && result.candidates[0].content && 
@@ -566,57 +542,11 @@
                             result.candidates[0].content.parts[0].text) {
                             return result.candidates[0].content.parts[0].text;
                         } else {
-                            // Jika struktur data tidak sesuai, coba endpoint fallback
-                            console.warn("Invalid response structure from primary endpoint, trying fallback...");
-                            return generateFallbackResponse(prompt);
+                            return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba lagi nanti.";
                         }
                     } catch (error) {
                         console.error("Error calling API:", error);
-                        
-                        try {
-                            // Coba gunakan endpoint fallback
-                            console.warn("Error in primary endpoint, trying fallback...");
-                            return await generateFallbackResponse(prompt);
-                        } catch (fallbackError) {
-                            console.error("Fallback also failed:", fallbackError);
-                            
-                            // Fallback responses jika API tidak tersedia
-                            const fallbackResponses = [
-                                "Maaf, terjadi kesalahan saat menghubungi asisten. Silakan coba lagi nanti.",
-                                "Sepertinya ada masalah dengan koneksi. Coba lagi dalam beberapa saat.",
-                                "Saya tidak dapat menjawab saat ini. Mohon coba lagi nanti."
-                            ];
-                            
-                            // Pilih fallback response secara random
-                            return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
-                        }
-                    }
-                }
-                
-                // Fungsi untuk memanggil endpoint fallback
-                async function generateFallbackResponse(prompt) {
-                    const fallbackResponse = await fetch('/api/chatbot/fallback', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ message: prompt }),
-                        credentials: 'include' // Include cookies in the request
-                    });
-                    
-                    if (!fallbackResponse.ok) {
-                        throw new Error(`Fallback HTTP error! Status: ${fallbackResponse.status}`);
-                    }
-                    
-                    const fallbackResult = await fallbackResponse.json();
-                    console.log("Fallback API Response:", fallbackResult);
-                    
-                    if (fallbackResult.candidates && fallbackResult.candidates[0] && fallbackResult.candidates[0].content && 
-                        fallbackResult.candidates[0].content.parts && fallbackResult.candidates[0].content.parts[0] && 
-                        fallbackResult.candidates[0].content.parts[0].text) {
-                        return fallbackResult.candidates[0].content.parts[0].text;
-                    } else {
-                        return "Maaf, saya tidak dapat memproses permintaan Anda saat ini. Silakan coba lagi nanti.";
+                        return "Maaf, terjadi kesalahan saat menghubungi asisten. Silakan coba lagi nanti.";
                     }
                 }
                 

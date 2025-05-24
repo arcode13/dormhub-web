@@ -218,21 +218,37 @@ public class ChatBotApiController {
             Mahasiswa mahasiswa = null;
             
             if (token != null && !token.isEmpty()) {
+                logger.debug("JWT token present: {}", token);
                 String email = jwtTokenProvider.getUsername(token);
+                logger.debug("Extracted email from token: {}", email);
+                
                 if (email != null) {
                     Optional<User> userOpt = userRepository.findByEmail(email);
                     if (userOpt.isPresent()) {
                         currentUser = userOpt.get();
+                        logger.debug("Found user: {}", currentUser.getNamaLengkap());
                         
                         // Check if user is a student
                         if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
                             Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
                             if (mahasiswaOpt.isPresent()) {
                                 mahasiswa = mahasiswaOpt.get();
+                                logger.debug("Found mahasiswa record with kamar: {}, kasur: {}", 
+                                    mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
+                            } else {
+                                logger.warn("Mahasiswa record not found for user ID: {}", currentUser.getId());
                             }
+                        } else {
+                            logger.debug("User is not a student, level: {}", currentUser.getLevel().getId());
                         }
+                    } else {
+                        logger.warn("User not found for email: {}", email);
                     }
+                } else {
+                    logger.warn("Could not extract email from token");
                 }
+            } else {
+                logger.warn("No JWT token provided");
             }
             
             ObjectNode responseNode = objectMapper.createObjectNode();
@@ -244,22 +260,30 @@ public class ChatBotApiController {
             String response;
             String lowercaseMessage = userMessage.toLowerCase();
             
-            if (lowercaseMessage.contains("kamar") && lowercaseMessage.contains("saya") && mahasiswa != null) {
+            if (lowercaseMessage.contains("nama") && lowercaseMessage.contains("saya") && currentUser != null) {
+                response = String.format("Nama Anda adalah %s.", currentUser.getNamaLengkap());
+                logger.debug("Responding with user name: {}", response);
+            } else if (lowercaseMessage.contains("kamar") && lowercaseMessage.contains("saya") && mahasiswa != null) {
                 response = String.format("Nomor kamar Anda adalah %d dan nomor kasur Anda adalah %d.", 
                     mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
+                logger.debug("Responding with room info: {}", response);
             } else if ((lowercaseMessage.contains("paket") || lowercaseMessage.contains("barang")) && 
                       lowercaseMessage.contains("saya") && mahasiswa != null) {
                 List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaIdAndStatus(mahasiswa.getId(), "menunggu");
                 response = String.format("Anda memiliki %d paket/barang yang tercatat dalam sistem.", laporanBarangList.size());
+                logger.debug("Responding with package count: {}", response);
             } else if (lowercaseMessage.contains("laporan") && lowercaseMessage.contains("saya") && mahasiswa != null) {
                 List<LaporanUmum> laporanUmumList = laporanUmumRepository.findAllByMahasiswaId(mahasiswa.getId());
                 response = String.format("Anda memiliki total %d laporan yang tercatat dalam sistem.", laporanUmumList.size());
+                logger.debug("Responding with report count: {}", response);
             } else if (lowercaseMessage.contains("keluhan") && lowercaseMessage.contains("saya") && mahasiswa != null) {
                 int totalKeluhanCount = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
                 response = String.format("Anda memiliki %d laporan keluhan yang tercatat dalam sistem.", totalKeluhanCount);
+                logger.debug("Responding with complaint count: {}", response);
             } else if (lowercaseMessage.contains("izin") && lowercaseMessage.contains("saya") && mahasiswa != null) {
                 int totalIzinCount = laporanUmumRepository.countLaporanIzin(mahasiswa.getId());
                 response = String.format("Anda memiliki %d laporan izin yang tercatat dalam sistem.", totalIzinCount);
+                logger.debug("Responding with permission count: {}", response);
             } else if (lowercaseMessage.contains("kamar")) {
                 response = "Untuk informasi kamar, Anda bisa mengakses menu 'Informasi Kamar' di sidebar kiri.";
             } else if (lowercaseMessage.contains("laporan") || lowercaseMessage.contains("keluhan")) {
