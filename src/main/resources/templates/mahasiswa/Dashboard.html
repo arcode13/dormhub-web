@@ -513,14 +513,49 @@
                     chatbotPopup.style.display = 'none';
                 });
                 
-                // Generate response menggunakan backend API
+                // Function to generate response
                 async function generateResponse(prompt) {
                     try {
-                        // Tambahkan log untuk debugging
-                        console.log("Mengirim pesan ke chatbot API:", prompt);
+                        console.log("Generating response for:", prompt);
                         
-                        // Coba gunakan direct-query endpoint yang lebih sederhana
-                        const response = await fetch('/api/chatbot/direct-query', {
+                        // Cek apakah ini pertanyaan spesifik tentang data pengguna
+                        const userSpecificKeywords = [
+                            'kamar', 'lantai', 'kasur', 'paket', 'barang', 'laporan', 
+                            'keluhan', 'izin', 'jurusan', 'nama', 'saya', 'berapa'
+                        ];
+                        
+                        // Cek apakah ada keyword spesifik user di prompt
+                        const containsUserSpecificKeyword = userSpecificKeywords.some(keyword => 
+                            prompt.toLowerCase().includes(keyword)
+                        );
+                        
+                        // Jika pertanyaan tentang data spesifik pengguna, gunakan detail-query API
+                        if (containsUserSpecificKeyword) {
+                            console.log("Using detail-query API for enhanced user-specific response");
+                            const detailQueryResponse = await fetch('/api/chatbot/detail-query', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ question: prompt }),
+                                credentials: 'include' // Include cookies in the request
+                            });
+                            
+                            if (!detailQueryResponse.ok) {
+                                throw new Error(`HTTP error! Status: ${detailQueryResponse.status}`);
+                            }
+                            
+                            const detailQueryResult = await detailQueryResponse.json();
+                            console.log("Detail Query API Response:", detailQueryResult);
+                            
+                            if (detailQueryResult.answer) {
+                                return detailQueryResult.answer;
+                            }
+                        }
+                        
+                        // Jika bukan pertanyaan spesifik atau detail-query gagal, gunakan direct-query API
+                        console.log("Using direct-query API as fallback");
+                        const directQueryResponse = await fetch('/api/chatbot/direct-query', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -529,17 +564,44 @@
                             credentials: 'include' // Include cookies in the request
                         });
                         
-                        if (response.ok) {
-                            const result = await response.json();
-                            console.log("Direct Query API Response:", result);
-                            
-                            if (result.answer) {
-                                return result.answer;
-                            }
+                        if (!directQueryResponse.ok) {
+                            throw new Error(`HTTP error! Status: ${directQueryResponse.status}`);
                         }
                         
-                        // Fallback to normal chatbot response if direct query fails
-                        console.log("Direct query failed or didn't match, trying fallback...");
+                        const directQueryResult = await directQueryResponse.json();
+                        console.log("Direct Query API Response:", directQueryResult);
+                        
+                        if (directQueryResult.answer) {
+                            return directQueryResult.answer;
+                        }
+                        
+                        // Jika direct-query gagal, gunakan Gemini API
+                        console.log("Using Gemini API");
+                        const geminiResponse = await fetch('/api/chatbot/message', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ message: prompt }),
+                            credentials: 'include' // Include cookies in the request
+                        });
+                        
+                        if (!geminiResponse.ok) {
+                            throw new Error(`HTTP error! Status: ${geminiResponse.status}`);
+                        }
+                        
+                        const geminiResult = await geminiResponse.json();
+                        console.log("Gemini API Response:", geminiResult);
+                        
+                        // Periksa respons yang valid dari Gemini API
+                        if (geminiResult.candidates && geminiResult.candidates[0] && geminiResult.candidates[0].content && 
+                            geminiResult.candidates[0].content.parts && geminiResult.candidates[0].content.parts[0] && 
+                            geminiResult.candidates[0].content.parts[0].text) {
+                            return geminiResult.candidates[0].content.parts[0].text;
+                        }
+                        
+                        // Jika Gemini API gagal, gunakan fallback API
+                        console.log("Using fallback API");
                         const fallbackResponse = await fetch('/api/chatbot/fallback', {
                             method: 'POST',
                             headers: {

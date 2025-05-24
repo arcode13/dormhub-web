@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DormHub Chat Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .chat-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .user-info {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .message-input {
+            display: flex;
+            margin-top: 20px;
+        }
+        input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .messages {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .user-message {
+            background-color: #e3f2fd;
+            text-align: right;
+            margin-left: 20%;
+        }
+        .bot-message {
+            background-color: #f1f1f1;
+            margin-right: 20%;
+        }
+        .debug-section {
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .debug-button {
+            background-color: #f5ad42;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>DormHub Chat Demo</h1>
+    
+    <div class="user-info">
+        <h2>User Information</h2>
+        <div th:if="${user != null}">
+            <p><strong>Name:</strong> <span th:text="${user.namaLengkap}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+            <p><strong>User Level:</strong> <span th:text="${user.level.nama}"></span></p>
+            
+            <div th:if="${mahasiswa != null}">
+                <h3>Mahasiswa Information</h3>
+                <p><strong>Room Number:</strong> <span th:text="${noKamar}"></span></p>
+                <p><strong>Bed Number:</strong> <span th:text="${noKasur}"></span></p>
+                <p><strong>Jurusan:</strong> <span th:text="${jurusan}"></span></p>
+            </div>
+        </div>
+        <div th:unless="${user != null}">
+            <p>No user information available. Please log in.</p>
+        </div>
+    </div>
+    
+    <div class="chat-container">
+        <h2>Chat with DormHub Assistant</h2>
+        <div class="messages" id="messages">
+            <div class="message bot-message">Halo! Saya asisten DormHub. Ada yang bisa saya bantu?</div>
+        </div>
+        <div class="message-input">
+            <input type="text" id="user-input" placeholder="Type your message here...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Debug Tools</h2>
+        <button class="debug-button" onclick="checkAuth()">Check Authentication</button>
+        <button class="debug-button" onclick="checkCookies()">Check Cookies</button>
+        <button class="debug-button" onclick="testQuery('Kamar saya nomor berapa?')">Ask Room Number</button>
+        <button class="debug-button" onclick="testQuery('Paket saya ada berapa?')">Ask Package Count</button>
+        <div id="debug-result" style="margin-top: 15px; background-color: #f9f9f9; padding: 10px; border-radius: 4px; white-space: pre-wrap;"></div>
+    </div>
+    
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const message = userInput.value.trim();
+            
+            if (message === '') return;
+            
+            // Add user message to chat
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `<div class="message user-message">${message}</div>`;
+            
+            // Clear input
+            userInput.value = '';
+            
+            // Call the direct-query API
+            fetch('/api/chatbot/direct-query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question: message }),
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Add bot response to chat
+                messagesDiv.innerHTML += `<div class="message bot-message">${data.answer}</div>`;
+                
+                // Scroll to bottom
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messagesDiv.innerHTML += `<div class="message bot-message">Sorry, there was an error processing your request.</div>`;
+            });
+            
+            // Scroll to bottom
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Listen for Enter key
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function checkAuth() {
+            fetch('/api/test/current-user', {
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('debug-result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('debug-result').textContent = 'Error: ' + error.message;
+            });
+        }
+        
+        function checkCookies() {
+            fetch('/api/chatbot/check-cookies', {
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('debug-result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('debug-result').textContent = 'Error: ' + error.message;
+            });
+        }
+        
+        function testQuery(question) {
+            fetch('/api/chatbot/direct-query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ question: question }),
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML += `<div class="message user-message">${question}</div>`;
+                messagesDiv.innerHTML += `<div class="message bot-message">${data.answer}</div>`;
+                
+                // Also show raw response in debug
+                document.getElementById('debug-result').textContent = JSON.stringify(data, null, 2);
+                
+                // Scroll to bottom
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(error => {
+                document.getElementById('debug-result').textContent = 'Error: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html> 

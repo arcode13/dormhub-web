@@ -27,12 +27,23 @@ public class JwtTokenProvider {
 
     public String getUsername(String token) {
         try {
-            logger.debug("Attempting to extract username from token");
+            logger.debug("Attempting to extract username from token: {}", token);
+            logger.debug("Secret key being used: {}", secret);
+            
+            // Inspect token structure
+            String[] parts = token.split("\\.");
+            if (parts.length == 3) {
+                logger.debug("Token has proper JWT structure with 3 parts");
+            } else {
+                logger.warn("Token does not have standard JWT format with 3 parts: {}", parts.length);
+            }
+            
             String username = extractClaim(token, Claims::getSubject);
             logger.debug("Extracted username: {}", username);
             return username;
         } catch (Exception e) {
-            logger.error("Error extracting username from token", e);
+            logger.error("Error extracting username from token: {}", e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

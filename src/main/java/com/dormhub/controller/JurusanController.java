@@ -102,7 +102,7 @@ public class JurusanController {
         } else {
             redirectAttributes.addFlashAttribute("error", "Jurusan tidak ditemukan");
         }
-        return "redirect:/admin/jurusan";
+        return "redirect:/admin/jurusan"; 
     }
 
     @GetMapping("/tambah")
@@ -145,7 +145,7 @@ public class JurusanController {
 
         jurusanService.saveJurusan(jurusan);
         redirectAttributes.addFlashAttribute("success", "Jurusan berhasil ditambah");
-        return "redirect:/admin/jurusan";
+        return "redirect:/admin/jurusan"; 
     }
 
     @GetMapping("/delete/{id}")
@@ -153,7 +153,7 @@ public class JurusanController {
         try {
             Jurusan jurusan = jurusanService.findById(id);
             if (jurusan != null) {
-                jurusanService.deleteJurusan(id);
+        jurusanService.deleteJurusan(id);
                 redirectAttributes.addFlashAttribute("success", "Jurusan berhasil dihapus");
             } else {
                 redirectAttributes.addFlashAttribute("error", "Jurusan tidak ditemukan");
@@ -161,6 +161,6 @@ public class JurusanController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Tidak dapat menghapus jurusan karena sedang digunakan");
         }
-        return "redirect:/admin/jurusan";
+        return "redirect:/admin/jurusan"; 
     }
 }

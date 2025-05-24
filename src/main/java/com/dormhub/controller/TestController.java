@@ -26,7 +26,7 @@ public class TestController {
     private UserRepository userRepository;
 
     @GetMapping("/token")
-    public ResponseEntity<Map<String, Object>> checkToken(@CookieValue(name = "jwt", required = false) String token) {
+    public ResponseEntity<Map<String, Object>> checkToken(@CookieValue(name = "jwt_token", required = false) String token) {
         Map<String, Object> response = new HashMap<>();
         
         response.put("hasToken", token != null && !token.isEmpty());
