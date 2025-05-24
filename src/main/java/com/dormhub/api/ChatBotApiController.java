@@ -96,170 +96,197 @@ public class ChatBotApiController {
             String userMessage = requestBody.get("message").asText();
             logger.debug("User message: {}", userMessage);
             
+            // Cek apakah ini pertanyaan spesifik tentang data pengguna
+            boolean isUserSpecificQuestion = false;
+            String[] userSpecificKeywords = {"kamar", "lantai", "kasur", "paket", "barang", "laporan", 
+                                            "keluhan", "izin", "jurusan", "nama", "saya", "berapa"};
+            
+            for (String keyword : userSpecificKeywords) {
+                if (userMessage.toLowerCase().contains(keyword)) {
+                    isUserSpecificQuestion = true;
+                    break;
+                }
+            }
+            
             // Get user info from SecurityContextHolder first
             User currentUser = null;
             Mahasiswa mahasiswa = null;
             String userSpecificInfo = "";
             
-            // Try SecurityContextHolder first
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
-                String email = auth.getName();
-                logger.info("Found authenticated user in SecurityContext: {}", email);
-                
-                Optional<User> userOpt = userRepository.findByEmail(email);
-                if (userOpt.isPresent()) {
-                    currentUser = userOpt.get();
-                    logger.debug("Found user from SecurityContext: {}", currentUser.getNamaLengkap());
+            // Hanya ambil data pengguna jika pertanyaan terkait data spesifik
+            if (isUserSpecificQuestion) {
+                // Try SecurityContextHolder first
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+                    String email = auth.getName();
+                    logger.info("Found authenticated user in SecurityContext: {}", email);
                     
-                    // Check if user is a student
-                    if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
-                        Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
-                        if (mahasiswaOpt.isPresent()) {
-                            mahasiswa = mahasiswaOpt.get();
-                            logger.debug("Found mahasiswa record from SecurityContext - kamar: {}, kasur: {}", 
-                                mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
-                        }
-                    }
-                }
-            } else {
-                logger.warn("No authenticated user found in SecurityContext, trying cookies");
-            }
-            
-            // If SecurityContextHolder fails, try cookies
-            if (currentUser == null) {
-                Cookie[] cookies = httpRequest.getCookies();
-                if (cookies != null) {
-                    // Try common JWT cookie names
-                    String[] possibleNames = {"jwt_token", "jwt", "JWT", "access_token", "Authorization", "auth_token", "token", "JSESSIONID"};
-                    String jwtToken = null;
-                    String foundCookieName = null;
-                    
-                    for (Cookie cookie : cookies) {
-                        logger.debug("Found cookie: {}={}", cookie.getName(), cookie.getValue());
-                        for (String name : possibleNames) {
-                            if (name.equals(cookie.getName())) {
-                                jwtToken = cookie.getValue();
-                                foundCookieName = name;
-                                logger.info("Found potential JWT in cookie: {}", name);
-                                break;
+                    Optional<User> userOpt = userRepository.findByEmail(email);
+                    if (userOpt.isPresent()) {
+                        currentUser = userOpt.get();
+                        logger.debug("Found user from SecurityContext: {}", currentUser.getNamaLengkap());
+                        
+                        // Check if user is a student
+                        if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
+                            Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
+                            if (mahasiswaOpt.isPresent()) {
+                                mahasiswa = mahasiswaOpt.get();
+                                logger.debug("Found mahasiswa record from SecurityContext - kamar: {}, kasur: {}", 
+                                    mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
                             }
                         }
-                        if (jwtToken != null) break;
                     }
-                    
-                    if (jwtToken != null) {
-                        logger.info("Using JWT from cookie: {}", foundCookieName);
+                } else {
+                    logger.warn("No authenticated user found in SecurityContext, trying cookies");
+                }
+                
+                // If SecurityContextHolder fails, try cookies
+                if (currentUser == null) {
+                    Cookie[] cookies = httpRequest.getCookies();
+                    if (cookies != null) {
+                        // Try common JWT cookie names
+                        String[] possibleNames = {"jwt_token", "jwt", "JWT", "access_token", "Authorization", "auth_token", "token", "JSESSIONID"};
+                        String jwtToken = null;
+                        String foundCookieName = null;
                         
-                        // First try with JwtUtil
-                        try {
-                            if (jwtUtil.validateToken(jwtToken)) {
-                                String email = jwtUtil.extractEmail(jwtToken);
-                                logger.debug("JwtUtil extracted email: {}", email);
-                                
-                                if (email != null) {
-                                    Optional<User> userOpt = userRepository.findByEmail(email);
-                                    if (userOpt.isPresent()) {
-                                        currentUser = userOpt.get();
-                                        logger.debug("Found user with JwtUtil: {}", currentUser.getNamaLengkap());
-                                        
-                                        // Check if user is a student
-                                        if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
-                                            Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
-                                            if (mahasiswaOpt.isPresent()) {
-                                                mahasiswa = mahasiswaOpt.get();
-                                                logger.debug("Found mahasiswa record with JwtUtil - kamar: {}, kasur: {}", 
-                                                    mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
-                                            }
-                                        }
-                                    }
+                        for (Cookie cookie : cookies) {
+                            logger.debug("Found cookie: {}={}", cookie.getName(), cookie.getValue());
+                            for (String name : possibleNames) {
+                                if (name.equals(cookie.getName())) {
+                                    jwtToken = cookie.getValue();
+                                    foundCookieName = name;
+                                    logger.info("Found potential JWT in cookie: {}", name);
+                                    break;
                                 }
                             }
-                        } catch (Exception e) {
-                            logger.warn("JwtUtil failed to decode token: {}", e.getMessage());
+                            if (jwtToken != null) break;
                         }
                         
-                        // If JwtUtil failed, try with JwtTokenProvider as backup
-                        if (currentUser == null) {
+                        if (jwtToken != null) {
+                            logger.info("Using JWT from cookie: {}", foundCookieName);
+                            
+                            // First try with JwtUtil
                             try {
-                                String email = jwtTokenProvider.getUsername(jwtToken);
-                                logger.debug("Extracted email from token: {}", email);
-                                
-                                if (email != null) {
-                                    Optional<User> userOpt = userRepository.findByEmail(email);
-                                    if (userOpt.isPresent()) {
-                                        currentUser = userOpt.get();
-                                        logger.debug("Found user with JwtTokenProvider: {}", currentUser.getNamaLengkap());
-                                        
-                                        // Check if user is a student
-                                        if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
-                                            Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
-                                            if (mahasiswaOpt.isPresent()) {
-                                                mahasiswa = mahasiswaOpt.get();
-                                                logger.debug("Found mahasiswa record with kamar: {}, kasur: {}", 
-                                                    mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
+                                if (jwtUtil.validateToken(jwtToken)) {
+                                    String email = jwtUtil.extractEmail(jwtToken);
+                                    logger.debug("JwtUtil extracted email: {}", email);
+                                    
+                                    if (email != null) {
+                                        Optional<User> userOpt = userRepository.findByEmail(email);
+                                        if (userOpt.isPresent()) {
+                                            currentUser = userOpt.get();
+                                            logger.debug("Found user with JwtUtil: {}", currentUser.getNamaLengkap());
+                                            
+                                            // Check if user is a student
+                                            if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
+                                                Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
+                                                if (mahasiswaOpt.isPresent()) {
+                                                    mahasiswa = mahasiswaOpt.get();
+                                                    logger.debug("Found mahasiswa record with JwtUtil - kamar: {}, kasur: {}", 
+                                                        mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
+                                                }
                                             }
                                         }
                                     }
                                 }
                             } catch (Exception e) {
-                                logger.error("JwtTokenProvider failed to decode token: {}", e.getMessage());
+                                logger.warn("JwtUtil failed to decode token: {}", e.getMessage());
+                            }
+                            
+                            // If JwtUtil failed, try with JwtTokenProvider as backup
+                            if (currentUser == null) {
+                                try {
+                                    String email = jwtTokenProvider.getUsername(jwtToken);
+                                    logger.debug("Extracted email from token: {}", email);
+                                    
+                                    if (email != null) {
+                                        Optional<User> userOpt = userRepository.findByEmail(email);
+                                        if (userOpt.isPresent()) {
+                                            currentUser = userOpt.get();
+                                            logger.debug("Found user with JwtTokenProvider: {}", currentUser.getNamaLengkap());
+                                            
+                                            // Check if user is a student
+                                            if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
+                                                Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
+                                                if (mahasiswaOpt.isPresent()) {
+                                                    mahasiswa = mahasiswaOpt.get();
+                                                    logger.debug("Found mahasiswa record with kamar: {}, kasur: {}", 
+                                                        mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
+                                                }
+                                            }
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    logger.error("JwtTokenProvider failed to decode token: {}", e.getMessage());
+                                }
                             }
                         }
                     }
                 }
-            }
-            
-            // Jika berhasil mendapatkan data mahasiswa, siapkan info spesifik pengguna
-            if (mahasiswa != null && currentUser != null) {
-                // Get jurusan info directly from the mahasiswa entity
-                String jurusanName = mahasiswa.getJurusan().getNama();
                 
-                // Count reports
-                List<LaporanUmum> laporanUmumList = laporanUmumRepository.findAllByMahasiswaId(mahasiswa.getId());
-                List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaIdAndStatus(mahasiswa.getId(), "menunggu");
-                
-                int totalLaporanUmum = laporanUmumList.size();
-                int totalLaporanBarang = laporanBarangList.size();
-                int totalLaporanKeluhan = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
-                int totalLaporanIzin = laporanUmumRepository.countLaporanIzin(mahasiswa.getId());
-                
-                // Add user-specific data to be included in the prompt
-                userSpecificInfo = String.format(
-                    "Informasi pengguna: Nama: %s, Email: %s, Jurusan: %s, " +
-                    "Nomor Kamar: %d, Nomor Kasur: %d, " +
-                    "Total Laporan Umum: %d, Total Laporan Keluhan: %d, Total Laporan Izin: %d, " +
-                    "Total Paket/Barang: %d",
-                    currentUser.getNamaLengkap(),
-                    currentUser.getEmail(),
-                    jurusanName,
-                    mahasiswa.getNoKamar(),
-                    mahasiswa.getNoKasur(),
-                    totalLaporanUmum,
-                    totalLaporanKeluhan,
-                    totalLaporanIzin,
-                    totalLaporanBarang
-                );
-                
-                logger.info("Generated user-specific info for Gemini prompt");
-            } else {
-                logger.warn("Could not generate user-specific info - mahasiswa: {}, user: {}", 
-                    (mahasiswa != null), (currentUser != null));
+                // Jika berhasil mendapatkan data mahasiswa, siapkan info spesifik pengguna
+                if (mahasiswa != null && currentUser != null) {
+                    // Get jurusan info directly from the mahasiswa entity
+                    String jurusanName = mahasiswa.getJurusan().getNama();
+                    
+                    // Count reports
+                    List<LaporanUmum> laporanUmumList = laporanUmumRepository.findAllByMahasiswaId(mahasiswa.getId());
+                    List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaIdAndStatus(mahasiswa.getId(), "menunggu");
+                    
+                    int totalLaporanUmum = laporanUmumList.size();
+                    int totalLaporanBarang = laporanBarangList.size();
+                    int totalLaporanKeluhan = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
+                    int totalLaporanIzin = laporanUmumRepository.countLaporanIzin(mahasiswa.getId());
+                    
+                    // Add user-specific data to be included in the prompt
+                    userSpecificInfo = String.format(
+                        "Informasi pengguna: Nama: %s, Email: %s, Jurusan: %s, " +
+                        "Nomor Kamar: %d, Nomor Kasur: %d, " +
+                        "Total Laporan Umum: %d, Total Laporan Keluhan: %d, Total Laporan Izin: %d, " +
+                        "Total Paket/Barang: %d",
+                        currentUser.getNamaLengkap(),
+                        currentUser.getEmail(),
+                        jurusanName,
+                        mahasiswa.getNoKamar(),
+                        mahasiswa.getNoKasur(),
+                        totalLaporanUmum,
+                        totalLaporanKeluhan,
+                        totalLaporanIzin,
+                        totalLaporanBarang
+                    );
+                    
+                    logger.info("Generated user-specific info for Gemini prompt");
+                } else {
+                    logger.warn("Could not generate user-specific info - mahasiswa: {}, user: {}", 
+                        (mahasiswa != null), (currentUser != null));
+                }
             }
             
             // Tambahkan konteks untuk Gemini
-            String fullPrompt = "Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa. Berikan jawaban singkat dan padat dalam Bahasa Indonesia. ";
-            fullPrompt += "Informasi tentang DormHub: DormHub adalah aplikasi manajemen asrama yang memiliki fitur check-in, check-out, laporan keluhan, dan informasi kamar. ";
+            String fullPrompt;
             
-            // Add user-specific info if available
-            if (!userSpecificInfo.isEmpty()) {
-                fullPrompt += userSpecificInfo + ". ";
-                fullPrompt += "Gunakan informasi pengguna ini untuk menjawab pertanyaan yang relevan. ";
-                fullPrompt += "Jika ditanya tentang informasi spesifik pengguna seperti 'kamar saya berapa?' atau 'berapa jumlah laporan saya?', berikan jawaban berdasarkan data yang tersedia. ";
+            if (isUserSpecificQuestion) {
+                // Jika pertanyaan tentang data spesifik pengguna, tambahkan data pribadi ke prompt
+                fullPrompt = "Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa. Berikan jawaban singkat dan padat dalam Bahasa Indonesia. ";
+                fullPrompt += "Informasi tentang DormHub: DormHub adalah aplikasi manajemen asrama yang memiliki fitur check-in, check-out, laporan keluhan, dan informasi kamar. ";
+                
+                // Add user-specific info if available
+                if (!userSpecificInfo.isEmpty()) {
+                    fullPrompt += userSpecificInfo + ". ";
+                    fullPrompt += "Gunakan informasi pengguna ini untuk menjawab pertanyaan yang relevan. ";
+                    fullPrompt += "Jika ditanya tentang informasi spesifik pengguna seperti 'kamar saya berapa?' atau 'berapa jumlah laporan saya?', berikan jawaban berdasarkan data yang tersedia. ";
+                }
+                
+                fullPrompt += "Jika ditanya tentang informasi kamar, saran untuk memeriksa menu 'Informasi Kamar'. ";
+                fullPrompt += "Jika ditanya tentang laporan, saran untuk membuat laporan di menu 'Laporan' > 'Buat Laporan'. ";
+            } else {
+                // Untuk percakapan umum, gunakan prompt sederhana tanpa data pribadi
+                fullPrompt = "Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa. Berikan jawaban natural dalam Bahasa Indonesia. ";
+                fullPrompt += "Kamu bisa mengobrol tentang berbagai topik dan menjawab pertanyaan umum pengguna. ";
+                fullPrompt += "Jangan menyarankan menu-menu dalam aplikasi kecuali ditanya. ";
+                fullPrompt += "Jangan memberi jawaban template, beri respons yang natural dan personal. ";
             }
             
-            fullPrompt += "Jika ditanya tentang informasi kamar, saran untuk memeriksa menu 'Informasi Kamar'. ";
-            fullPrompt += "Jika ditanya tentang laporan, saran untuk membuat laporan di menu 'Laporan' > 'Buat Laporan'. ";
             fullPrompt += "Berikut adalah pesan pengguna: " + userMessage;
             
             // Buat request body untuk Gemini API
@@ -274,8 +301,8 @@ public class ChatBotApiController {
             
             // Konfigurasi generasi
             ObjectNode generationConfig = objectMapper.createObjectNode();
-            generationConfig.put("temperature", 0.7);
-            generationConfig.put("maxOutputTokens", 150);
+            generationConfig.put("temperature", isUserSpecificQuestion ? 0.2 : 0.7); // Lower temperature for data questions, higher for chat
+            generationConfig.put("maxOutputTokens", isUserSpecificQuestion ? 150 : 250); // Longer responses for chat
             geminiRequestBody.set("generationConfig", generationConfig);
             
             // Log request body

@@ -465,14 +465,15 @@
             </div>
             <div class="chatbot-body" id="chatbotBody">
                 <div class="chatbot-message bot-message">
-                    Halo! Saya asisten DormHub yang didukung oleh Gemini AI. Anda dapat bertanya langsung tentang:
+                    Halo! Saya asisten DormHub yang didukung oleh Gemini AI.
                     
+                    Anda dapat bertanya tentang:
                     • Info kamar dan kasur Anda
                     • Jumlah laporan atau keluhan
                     • Paket/barang Anda
                     • Informasi pribadi Anda
                     
-                    Silakan langsung ketik pertanyaan Anda di bawah ini.
+                    Atau, silakan ajak saya mengobrol tentang apa saja! Saya juga bisa menjawab pertanyaan umum dan berdiskusi berbagai topik dengan Anda.
                 </div>
             </div>
             <div class="chatbot-input-container">
@@ -528,8 +529,19 @@
                             'keluhan', 'izin', 'jurusan', 'nama', 'saya', 'berapa'
                         ];
                         
+                        // Cek apakah ini pertanyaan umum tentang sistem
+                        const systemKeywords = [
+                            'dormhub', 'kamu siapa', 'anda siapa', 'bisa apa', 'check-in', 
+                            'checkout', 'membantu', 'asrama', 'gedung'
+                        ];
+                        
                         // Cek apakah ada keyword spesifik user di prompt
                         const containsUserSpecificKeyword = userSpecificKeywords.some(keyword => 
+                            prompt.toLowerCase().includes(keyword)
+                        );
+                        
+                        // Cek apakah ada keyword tentang sistem di prompt
+                        const containsSystemKeyword = systemKeywords.some(keyword => 
                             prompt.toLowerCase().includes(keyword)
                         );
                         
@@ -557,29 +569,61 @@
                             }
                         }
                         
-                        // Untuk pertanyaan umum, gunakan general-query API
-                        console.log("Using general-query API for general questions");
-                        const generalQueryResponse = await fetch('/api/chatbot/general-query', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ question: prompt }),
-                            credentials: 'include' // Include cookies in the request
-                        });
-                        
-                        if (!generalQueryResponse.ok) {
-                            throw new Error(`HTTP error! Status: ${generalQueryResponse.status}`);
+                        // Untuk pertanyaan umum tentang sistem, gunakan general-query API
+                        if (containsSystemKeyword) {
+                            console.log("Using general-query API for system-related questions");
+                            const generalQueryResponse = await fetch('/api/chatbot/general-query', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ question: prompt }),
+                                credentials: 'include' // Include cookies in the request
+                            });
+                            
+                            if (!generalQueryResponse.ok) {
+                                throw new Error(`HTTP error! Status: ${generalQueryResponse.status}`);
+                            }
+                            
+                            const generalQueryResult = await generalQueryResponse.json();
+                            console.log("General Query API Response:", generalQueryResult);
+                            
+                            if (generalQueryResult.answer) {
+                                return generalQueryResult.answer;
+                            }
                         }
                         
-                        const generalQueryResult = await generalQueryResponse.json();
-                        console.log("General Query API Response:", generalQueryResult);
-                        
-                        if (generalQueryResult.answer) {
-                            return generalQueryResult.answer;
+                        // Untuk percakapan umum, gunakan langsung Gemini API
+                        // Prioritaskan ini jika tidak ada keyword spesifik
+                        if (!containsUserSpecificKeyword && !containsSystemKeyword) {
+                            console.log("Using Gemini API for general conversation");
+                            const geminiResponse = await fetch('/api/chatbot/message', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ message: prompt }),
+                                credentials: 'include' // Include cookies in the request
+                            });
+                            
+                            if (!geminiResponse.ok) {
+                                throw new Error(`HTTP error! Status: ${geminiResponse.status}`);
+                            }
+                            
+                            const geminiResult = await geminiResponse.json();
+                            console.log("Gemini API Response:", geminiResult);
+                            
+                            // Periksa respons yang valid dari Gemini API
+                            if (geminiResult.candidates && geminiResult.candidates[0] && 
+                                geminiResult.candidates[0].content && 
+                                geminiResult.candidates[0].content.parts && 
+                                geminiResult.candidates[0].content.parts[0] && 
+                                geminiResult.candidates[0].content.parts[0].text) {
+                                return geminiResult.candidates[0].content.parts[0].text;
+                            }
                         }
                         
-                        // Jika bukan pertanyaan spesifik atau general-query gagal, gunakan direct-query API
+                        // Jika belum ada respons, coba direct-query API
                         console.log("Using direct-query API as fallback");
                         const directQueryResponse = await fetch('/api/chatbot/direct-query', {
                             method: 'POST',
@@ -601,9 +645,9 @@
                             return directQueryResult.answer;
                         }
                         
-                        // Jika semua endpoint lokal gagal, gunakan Gemini API
+                        // Sebagai fallback terakhir, coba lagi Gemini API
                         console.log("Using Gemini API as last resort");
-                        const geminiResponse = await fetch('/api/chatbot/message', {
+                        const fallbackGeminiResponse = await fetch('/api/chatbot/message', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -612,21 +656,23 @@
                             credentials: 'include' // Include cookies in the request
                         });
                         
-                        if (!geminiResponse.ok) {
-                            throw new Error(`HTTP error! Status: ${geminiResponse.status}`);
+                        if (!fallbackGeminiResponse.ok) {
+                            throw new Error(`HTTP error! Status: ${fallbackGeminiResponse.status}`);
                         }
                         
-                        const geminiResult = await geminiResponse.json();
-                        console.log("Gemini API Response:", geminiResult);
+                        const fallbackGeminiResult = await fallbackGeminiResponse.json();
+                        console.log("Fallback Gemini API Response:", fallbackGeminiResult);
                         
                         // Periksa respons yang valid dari Gemini API
-                        if (geminiResult.candidates && geminiResult.candidates[0] && geminiResult.candidates[0].content && 
-                            geminiResult.candidates[0].content.parts && geminiResult.candidates[0].content.parts[0] && 
-                            geminiResult.candidates[0].content.parts[0].text) {
-                            return geminiResult.candidates[0].content.parts[0].text;
+                        if (fallbackGeminiResult.candidates && fallbackGeminiResult.candidates[0] && 
+                            fallbackGeminiResult.candidates[0].content && 
+                            fallbackGeminiResult.candidates[0].content.parts && 
+                            fallbackGeminiResult.candidates[0].content.parts[0] && 
+                            fallbackGeminiResult.candidates[0].content.parts[0].text) {
+                            return fallbackGeminiResult.candidates[0].content.parts[0].text;
                         }
                         
-                        // Jika Gemini API gagal, gunakan fallback API
+                        // Jika semua gagal, gunakan fallback API
                         console.log("Using fallback API");
                         const fallbackResponse = await fetch('/api/chatbot/fallback', {
                             method: 'POST',
@@ -645,8 +691,10 @@
                         console.log("Fallback API Response:", fallbackResult);
                         
                         // Periksa respons yang valid
-                        if (fallbackResult.candidates && fallbackResult.candidates[0] && fallbackResult.candidates[0].content && 
-                            fallbackResult.candidates[0].content.parts && fallbackResult.candidates[0].content.parts[0] && 
+                        if (fallbackResult.candidates && fallbackResult.candidates[0] && 
+                            fallbackResult.candidates[0].content && 
+                            fallbackResult.candidates[0].content.parts && 
+                            fallbackResult.candidates[0].content.parts[0] && 
                             fallbackResult.candidates[0].content.parts[0].text) {
                             return fallbackResult.candidates[0].content.parts[0].text;
                         } else {

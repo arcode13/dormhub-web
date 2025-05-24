@@ -6713,3 +6713,119 @@ Action:
 
 Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
 
+2025-05-24T14:51:12.810Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-24T14:51:12.820Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-24T14:51:12.821Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected StandardServletMultipartResolver
+2025-05-24T14:51:12.822Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected AcceptHeaderLocaleResolver
+2025-05-24T14:51:12.824Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected FixedThemeResolver
+2025-05-24T14:51:12.828Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@7b81283
+2025-05-24T14:51:12.832Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Detected org.springframework.web.servlet.support.SessionFlashMapManager@6c6c7ee5
+2025-05-24T14:51:12.833Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-05-24T14:51:12.834Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 13 ms
+2025-05-24T14:51:12.859Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /mahasiswa/dashboard
+2025-05-24T14:51:13.124Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:13.129Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Secured GET /mahasiswa/dashboard
+2025-05-24T14:51:13.132Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : GET "/mahasiswa/dashboard", parameters={}
+2025-05-24T14:51:13.134Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.controller.DashboardController#mahasiswaDashboard(Model, RedirectAttributes)
+2025-05-24T14:51:13.161Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Masuk ke metode mahasiswaDashboard.
+2025-05-24T14:51:13.162Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Email pengguna yang login: mahasiswa@dormhub.my.id
+2025-05-24T14:51:13.177Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : User ditemukan dengan ID: 1
+2025-05-24T14:51:13.252Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Jumlah laporan izin: 0
+2025-05-24T14:51:13.253Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Jumlah laporan keluhan: 0
+2025-05-24T14:51:13.253Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Total laporan: 0
+2025-05-24T14:51:13.326Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-1] c.d.controller.DashboardController       : Selesai menjalankan metode mahasiswaDashboard.
+2025-05-24T14:51:13.340Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.w.s.v.ContentNegotiatingViewResolver : Selected 'text/html' given [text/html, application/xhtml+xml, image/avif, image/webp, image/apng, application/xml;q=0.9, */*;q=0.8, application/signed-exchange;v=b3;q=0.7]
+2025-05-24T14:51:13.788Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:13.804Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /assets/css/bootstrap.min.css
+2025-05-24T14:51:13.807Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /assets/css/app.min.css
+2025-05-24T14:51:13.804Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-4] o.s.security.web.FilterChainProxy        : Securing GET /assets/css/icons.min.css
+2025-05-24T14:51:13.811Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/1735768726586_logo.png
+2025-05-24T14:51:13.812Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /assets/css/style.css
+2025-05-24T14:51:13.866Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-3] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:13.885Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:13.889Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /assets/css/app.min.css
+2025-05-24T14:51:13.816Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /assets/js/vendor.min.js
+2025-05-24T14:51:13.886Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-4] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:13.890Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/assets/css/app.min.css", parameters={}
+2025-05-24T14:51:13.889Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /assets/css/bootstrap.min.css
+2025-05-24T14:51:13.891Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-4] o.s.security.web.FilterChainProxy        : Secured GET /assets/css/icons.min.css
+2025-05-24T14:51:13.892Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : GET "/assets/css/icons.min.css", parameters={}
+2025-05-24T14:51:13.893Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-4] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:13.891Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : GET "/assets/css/bootstrap.min.css", parameters={}
+2025-05-24T14:51:13.895Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-3] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:13.894Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:13.921Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-6] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:13.922Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:13.922Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/1735768726586_logo.png
+2025-05-24T14:51:13.923Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /assets/js/vendor.min.js
+2025-05-24T14:51:13.923Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/1735768726586_logo.png", parameters={}
+2025-05-24T14:51:13.923Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : GET "/assets/js/vendor.min.js", parameters={}
+2025-05-24T14:51:13.924Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-6] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:13.924Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:13.937Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:13.959Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-5] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:13.972Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-5] o.s.security.web.FilterChainProxy        : Secured GET /assets/css/style.css
+2025-05-24T14:51:13.947Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:13.973Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet        : GET "/assets/css/style.css", parameters={}
+2025-05-24T14:51:13.974Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-5] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:13.944Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:13.978Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-5] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:13.985Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-9] o.s.security.web.FilterChainProxy        : Securing GET /assets/js/app.min.js
+2025-05-24T14:51:13.990Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/users/1735784235367_DormHub.drawio.png?v=null
+2025-05-24T14:51:13.991Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:13.983Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/laporan-barang/1735813374919_logo.png
+2025-05-24T14:51:14.006Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-6] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:14.118Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-9] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:14.133Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-9] o.s.security.web.FilterChainProxy        : Secured GET /assets/js/app.min.js
+2025-05-24T14:51:14.134Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet        : GET "/assets/js/app.min.js", parameters={}
+2025-05-24T14:51:14.134Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-9] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:14.138Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-9] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:14.161Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:14.162Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/users/1735784235367_DormHub.drawio.png?v=null
+2025-05-24T14:51:14.163Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/users/1735784235367_DormHub.drawio.png?v=null", parameters={masked}
+2025-05-24T14:51:14.165Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:14.171Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:14.184Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-8] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:14.186Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-8] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/laporan-barang/1735813374919_logo.png
+2025-05-24T14:51:14.187Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/laporan-barang/1735813374919_logo.png", parameters={}
+2025-05-24T14:51:14.188Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-8] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:14.192Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-8] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:14.228Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /assets/images/1735768726294_favicon.ico
+2025-05-24T14:51:14.306Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-10] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:14.314Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /assets/images/1735768726294_favicon.ico
+2025-05-24T14:51:14.315Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet        : GET "/assets/images/1735768726294_favicon.ico", parameters={}
+2025-05-24T14:51:14.316Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-10] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-05-24T14:51:14.323Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-10] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:20.375Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Securing POST /api/chatbot/general-query
+2025-05-24T14:51:20.385Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:20.387Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.security.web.FilterChainProxy        : Secured POST /api/chatbot/general-query
+2025-05-24T14:51:20.388Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : POST "/api/chatbot/general-query", parameters={}
+2025-05-24T14:51:20.388Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatBotApiController#generalQuery(Map)
+2025-05-24T14:51:20.413Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [{question=hallo}]
+2025-05-24T14:51:20.415Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-1] com.dormhub.api.ChatBotApiController     : Received general query: hallo
+2025-05-24T14:51:20.424Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T14:51:20.426Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{answer=Maaf, saya tidak dapat memahami pertanyaan Anda. Silakan tanyakan tentang informasi kamar, l (truncated)...]
+2025-05-24T14:51:20.439Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:51:26.674Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.security.web.FilterChainProxy        : Securing POST /api/chatbot/detail-query
+2025-05-24T14:51:26.692Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.security.JwtAuthFilter       : Autentikasi berhasil untuk user: mahasiswa@dormhub.my.id
+2025-05-24T14:51:26.693Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.security.web.FilterChainProxy        : Secured POST /api/chatbot/detail-query
+2025-05-24T14:51:26.694Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : POST "/api/chatbot/detail-query", parameters={}
+2025-05-24T14:51:26.694Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to com.dormhub.api.ChatBotApiController#detailQuery(Map, HttpServletRequest)
+2025-05-24T14:51:26.696Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [{question=kamar}]
+2025-05-24T14:51:26.697Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Received detail query: kamar
+2025-05-24T14:51:26.697Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found authenticated user in SecurityContext: mahasiswa@dormhub.my.id
+2025-05-24T14:51:26.701Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found user from SecurityContext: Andi Nugraha
+2025-05-24T14:51:26.707Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found mahasiswa record from SecurityContext - kamar: 101, kasur: 1
+2025-05-24T14:51:26.713Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Loaded configuration data: {web-nama-website=DormHub, web-kasur=4, web-lantai=4, web-footer=Copyright © 2024 DormHub. All Rights Reserved., web-favicon=1735768726294_favicon.ico, web-kamar=14, web-nama-gedung=TEMBAK DOR, web-logo=1735768726586_logo.png, web-selesai-tgl-co=2025-01-06, web-mulai-tgl-co=2025-01-09}
+2025-05-24T14:51:26.717Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Received direct query: kamar
+2025-05-24T14:51:26.717Z  INFO 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found authenticated user in SecurityContext: mahasiswa@dormhub.my.id
+2025-05-24T14:51:26.724Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found user from SecurityContext: Andi Nugraha
+2025-05-24T14:51:26.727Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] com.dormhub.api.ChatBotApiController     : Found mahasiswa record from SecurityContext - kamar: 101, kasur: 1
+2025-05-24T14:51:26.728Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-05-24T14:51:26.728Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [{answer=Maaf, saya tidak memahami pertanyaan Anda. Silakan tanyakan tentang kamar, laporan, atau pak (truncated)...]
+2025-05-24T14:51:26.730Z DEBUG 9436 --- [DormHub] [http-nio-8080-exec-7] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
+2025-05-24T14:55:01.492Z  INFO 9436 --- [DormHub] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-24T14:55:01.513Z  INFO 9436 --- [DormHub] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-05-24T14:55:01.518Z  INFO 9436 --- [DormHub] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-24T14:55:01.520Z  INFO 9436 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-05-24T14:55:01.528Z  INFO 9436 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
