@@ -98,13 +98,197 @@ public class ChatBotApiController {
             
             // Cek apakah ini pertanyaan spesifik tentang data pengguna
             boolean isUserSpecificQuestion = false;
+            boolean isSystemQuestion = false;
+            
+            // Kata kunci untuk pertanyaan spesifik pengguna
             String[] userSpecificKeywords = {"kamar", "lantai", "kasur", "paket", "barang", "laporan", 
                                             "keluhan", "izin", "jurusan", "nama", "saya", "berapa"};
             
-            for (String keyword : userSpecificKeywords) {
-                if (userMessage.toLowerCase().contains(keyword)) {
-                    isUserSpecificQuestion = true;
-                    break;
+            // Kata kunci untuk pertanyaan tentang sistem
+            String[] systemKeywords = {"dormhub", "asrama", "gedung", "siapa kamu", "kamu siapa", 
+                                      "anda siapa", "bisa apa", "check-in", "checkout"};
+            
+            // Perbaikan untuk kata kunci sederhana
+            String lowercaseMessage = userMessage.toLowerCase().trim();
+            String modifiedMessage = userMessage;
+            
+            // Konversi kata kunci sederhana menjadi pertanyaan lengkap
+            if (lowercaseMessage.equals("kamar")) {
+                modifiedMessage = "Kamar saya nomor berapa?";
+                logger.debug("Modified simple keyword 'kamar' to full question");
+                isUserSpecificQuestion = true;
+            } else if (lowercaseMessage.equals("laporan") || lowercaseMessage.equals("lap")) {
+                modifiedMessage = "Laporan saya ada berapa?";
+                logger.debug("Modified simple keyword 'laporan' to full question");
+                isUserSpecificQuestion = true;
+            } else if (lowercaseMessage.equals("paket") || lowercaseMessage.equals("barang")) {
+                modifiedMessage = "Paket saya ada berapa?";
+                logger.debug("Modified simple keyword 'paket' to full question");
+                isUserSpecificQuestion = true;
+            } else if (lowercaseMessage.equals("nama")) {
+                modifiedMessage = "Nama saya siapa?";
+                logger.debug("Modified simple keyword 'nama' to full question");
+                isUserSpecificQuestion = true;
+            } else if (lowercaseMessage.equals("checkin") || lowercaseMessage.equals("check in")) {
+                modifiedMessage = "Informasi tentang check in";
+                logger.debug("Modified to check-in information request");
+                isSystemQuestion = true;
+            } else if (lowercaseMessage.equals("checkout") || lowercaseMessage.equals("check out")) {
+                modifiedMessage = "Informasi tentang check out";
+                logger.debug("Modified to check-out information request");
+                isSystemQuestion = true;
+            } else if (lowercaseMessage.equals("dormhub") || lowercaseMessage.equals("asrama")) {
+                modifiedMessage = "Apa itu DormHub?";
+                logger.debug("Modified to question about DormHub");
+                isSystemQuestion = true;
+            }
+            
+            // Cek apakah ada kata kunci spesifik pengguna dalam pesan
+            if (!isUserSpecificQuestion) {
+                for (String keyword : userSpecificKeywords) {
+                    if (lowercaseMessage.contains(keyword)) {
+                        isUserSpecificQuestion = true;
+                        break;
+                    }
+                }
+            }
+            
+            // Cek apakah ada kata kunci tentang sistem dalam pesan
+            if (!isSystemQuestion) {
+                for (String keyword : systemKeywords) {
+                    if (lowercaseMessage.contains(keyword)) {
+                        isSystemQuestion = true;
+                        break;
+                    }
+                }
+            }
+            
+            // Proses pertanyaan berdasarkan jenisnya
+            if (isUserSpecificQuestion) {
+                logger.info("Processing user-specific question with detail-query API");
+                try {
+                    // Gunakan detail-query API untuk pertanyaan spesifik tentang data pengguna
+                    Map<String, String> requestMap = new HashMap<>();
+                    requestMap.put("question", modifiedMessage);
+                    
+                    ResponseEntity<Map<String, String>> detailQueryResponse = detailQuery(requestMap, httpRequest);
+                    Map<String, String> detailResult = detailQueryResponse.getBody();
+                    
+                    if (detailResult != null && detailResult.containsKey("answer") && 
+                        !detailResult.get("answer").startsWith("Maaf, tidak dapat")) {
+                        
+                        // Dapatkan respons data
+                        String dataResponse = detailResult.get("answer");
+                        logger.debug("Got response from detail-query API: {}", dataResponse);
+                        
+                        // Gunakan Gemini untuk membuatnya lebih natural, tapi simpan data utamanya
+                        String personalizedPrompt = String.format(
+                            "Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa. Buat respons natural dan ramah dalam Bahasa Indonesia " +
+                            "berdasarkan informasi berikut: '%s'. Pastikan semua data faktual tetap utuh dan akurat, " +
+                            "tapi berikan respons yang ramah dan natural. Jangan memperkenalkan diri atau menggunakan format template. " +
+                            "Langsung jawab dengan santai seperti obrolan asisten virtual yang ramah. " +
+                            "Pengguna bertanya: '%s'", dataResponse, userMessage);
+                        
+                        // Kirim ke Gemini untuk naturalisasi respons
+                        ObjectNode geminiRequestBody = objectMapper.createObjectNode();
+                        ObjectNode content = objectMapper.createObjectNode();
+                        ObjectNode part = objectMapper.createObjectNode();
+                        part.put("text", personalizedPrompt);
+                        
+                        // Struktur JSON untuk Gemini API v1
+                        content.set("parts", objectMapper.createArrayNode().add(part));
+                        geminiRequestBody.set("contents", objectMapper.createArrayNode().add(content));
+                        
+                        // Konfigurasi generasi
+                        ObjectNode generationConfig = objectMapper.createObjectNode();
+                        generationConfig.put("temperature", 0.4); // Lower temperature for factual accuracy
+                        generationConfig.put("maxOutputTokens", 200);
+                        geminiRequestBody.set("generationConfig", generationConfig);
+                        
+                        // Set headers
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.setContentType(MediaType.APPLICATION_JSON);
+                        
+                        // Buat HTTP entity dengan body dan headers
+                        HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(geminiRequestBody), headers);
+                        
+                        // Kirim request ke Gemini API
+                        String geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + geminiApiKey;
+                        logger.info("Sending personalization request to Gemini API");
+                        
+                        ResponseEntity<JsonNode> geminiResponse = restTemplate.exchange(
+                            geminiUrl,
+                            HttpMethod.POST,
+                            entity,
+                            JsonNode.class
+                        );
+                        
+                        return geminiResponse;
+                    }
+                } catch (Exception e) {
+                    logger.warn("Error using detail-query API, falling back to direct Gemini call", e);
+                }
+            } else if (isSystemQuestion) {
+                logger.info("Processing system question with general-query API");
+                try {
+                    // Gunakan general-query API untuk pertanyaan tentang sistem
+                    Map<String, String> requestMap = new HashMap<>();
+                    requestMap.put("question", modifiedMessage);
+                    
+                    ResponseEntity<Map<String, String>> generalQueryResponse = generalQuery(requestMap);
+                    Map<String, String> generalResult = generalQueryResponse.getBody();
+                    
+                    if (generalResult != null && generalResult.containsKey("answer")) {
+                        // Dapatkan respons data
+                        String dataResponse = generalResult.get("answer");
+                        logger.debug("Got response from general-query API: {}", dataResponse);
+                        
+                        // Gunakan Gemini untuk membuatnya lebih natural, tapi simpan data utamanya
+                        String personalizedPrompt = String.format(
+                            "Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa. Buat respons natural dan ramah dalam Bahasa Indonesia " +
+                            "berdasarkan informasi berikut: '%s'. Pastikan semua data faktual tetap utuh dan akurat, " +
+                            "tapi berikan respons yang ramah dan natural. Jangan memperkenalkan diri atau menggunakan format template. " +
+                            "Langsung jawab dengan santai seperti obrolan asisten virtual yang ramah. " +
+                            "Pengguna bertanya: '%s'", dataResponse, userMessage);
+                        
+                        // Kirim ke Gemini untuk naturalisasi respons
+                        ObjectNode geminiRequestBody = objectMapper.createObjectNode();
+                        ObjectNode content = objectMapper.createObjectNode();
+                        ObjectNode part = objectMapper.createObjectNode();
+                        part.put("text", personalizedPrompt);
+                        
+                        // Struktur JSON untuk Gemini API v1
+                        content.set("parts", objectMapper.createArrayNode().add(part));
+                        geminiRequestBody.set("contents", objectMapper.createArrayNode().add(content));
+                        
+                        // Konfigurasi generasi
+                        ObjectNode generationConfig = objectMapper.createObjectNode();
+                        generationConfig.put("temperature", 0.5); // Medium temperature for balance between accuracy and naturalness
+                        generationConfig.put("maxOutputTokens", 200);
+                        geminiRequestBody.set("generationConfig", generationConfig);
+                        
+                        // Set headers
+                        HttpHeaders headers = new HttpHeaders();
+                        headers.setContentType(MediaType.APPLICATION_JSON);
+                        
+                        // Buat HTTP entity dengan body dan headers
+                        HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(geminiRequestBody), headers);
+                        
+                        // Kirim request ke Gemini API
+                        String geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + geminiApiKey;
+                        logger.info("Sending personalization request to Gemini API");
+                        
+                        ResponseEntity<JsonNode> geminiResponse = restTemplate.exchange(
+                            geminiUrl,
+                            HttpMethod.POST,
+                            entity,
+                            JsonNode.class
+                        );
+                        
+                        return geminiResponse;
+                    }
+                } catch (Exception e) {
+                    logger.warn("Error using general-query API, falling back to direct Gemini call", e);
                 }
             }
             
@@ -113,162 +297,178 @@ public class ChatBotApiController {
             Mahasiswa mahasiswa = null;
             String userSpecificInfo = "";
             
-            // Hanya ambil data pengguna jika pertanyaan terkait data spesifik
-            if (isUserSpecificQuestion) {
-                // Try SecurityContextHolder first
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
-                    String email = auth.getName();
-                    logger.info("Found authenticated user in SecurityContext: {}", email);
+            // Try SecurityContextHolder first
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+                String email = auth.getName();
+                logger.info("Found authenticated user in SecurityContext: {}", email);
+                
+                Optional<User> userOpt = userRepository.findByEmail(email);
+                if (userOpt.isPresent()) {
+                    currentUser = userOpt.get();
+                    logger.debug("Found user from SecurityContext: {}", currentUser.getNamaLengkap());
                     
-                    Optional<User> userOpt = userRepository.findByEmail(email);
-                    if (userOpt.isPresent()) {
-                        currentUser = userOpt.get();
-                        logger.debug("Found user from SecurityContext: {}", currentUser.getNamaLengkap());
-                        
-                        // Check if user is a student
-                        if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
-                            Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
-                            if (mahasiswaOpt.isPresent()) {
-                                mahasiswa = mahasiswaOpt.get();
-                                logger.debug("Found mahasiswa record from SecurityContext - kamar: {}, kasur: {}", 
-                                    mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
-                            }
+                    // Check if user is a student
+                    if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
+                        Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
+                        if (mahasiswaOpt.isPresent()) {
+                            mahasiswa = mahasiswaOpt.get();
+                            logger.debug("Found mahasiswa record from SecurityContext - kamar: {}, kasur: {}", 
+                                mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
                         }
                     }
-                } else {
-                    logger.warn("No authenticated user found in SecurityContext, trying cookies");
                 }
-                
-                // If SecurityContextHolder fails, try cookies
-                if (currentUser == null) {
-                    Cookie[] cookies = httpRequest.getCookies();
-                    if (cookies != null) {
-                        // Try common JWT cookie names
-                        String[] possibleNames = {"jwt_token", "jwt", "JWT", "access_token", "Authorization", "auth_token", "token", "JSESSIONID"};
-                        String jwtToken = null;
-                        String foundCookieName = null;
+            } else {
+                logger.warn("No authenticated user found in SecurityContext, trying cookies");
+            }
+            
+            // If SecurityContextHolder fails, try cookies
+            if (currentUser == null) {
+                Cookie[] cookies = httpRequest.getCookies();
+                if (cookies != null) {
+                    // Try common JWT cookie names
+                    String[] possibleNames = {"jwt_token", "jwt", "JWT", "access_token", "Authorization", "auth_token", "token", "JSESSIONID"};
+                    String jwtToken = null;
+                    String foundCookieName = null;
+                    
+                    for (Cookie cookie : cookies) {
+                        logger.debug("Found cookie: {}={}", cookie.getName(), cookie.getValue());
+                        for (String name : possibleNames) {
+                            if (name.equals(cookie.getName())) {
+                                jwtToken = cookie.getValue();
+                                foundCookieName = name;
+                                logger.info("Found potential JWT in cookie: {}", name);
+                                break;
+                            }
+                        }
+                        if (jwtToken != null) break;
+                    }
+                    
+                    if (jwtToken != null) {
+                        logger.info("Using JWT from cookie: {}", foundCookieName);
                         
-                        for (Cookie cookie : cookies) {
-                            logger.debug("Found cookie: {}={}", cookie.getName(), cookie.getValue());
-                            for (String name : possibleNames) {
-                                if (name.equals(cookie.getName())) {
-                                    jwtToken = cookie.getValue();
-                                    foundCookieName = name;
-                                    logger.info("Found potential JWT in cookie: {}", name);
-                                    break;
+                        // First try with JwtUtil
+                        try {
+                            if (jwtUtil.validateToken(jwtToken)) {
+                                String email = jwtUtil.extractEmail(jwtToken);
+                                logger.debug("JwtUtil extracted email: {}", email);
+                                
+                                if (email != null) {
+                                    Optional<User> userOpt = userRepository.findByEmail(email);
+                                    if (userOpt.isPresent()) {
+                                        currentUser = userOpt.get();
+                                        logger.debug("Found user with JwtUtil: {}", currentUser.getNamaLengkap());
+                                        
+                                        // Check if user is a student
+                                        if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
+                                            Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
+                                            if (mahasiswaOpt.isPresent()) {
+                                                mahasiswa = mahasiswaOpt.get();
+                                                logger.debug("Found mahasiswa record with JwtUtil - kamar: {}, kasur: {}", 
+                                                    mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                            if (jwtToken != null) break;
+                        } catch (Exception e) {
+                            logger.warn("JwtUtil failed to decode token: {}", e.getMessage());
                         }
                         
-                        if (jwtToken != null) {
-                            logger.info("Using JWT from cookie: {}", foundCookieName);
-                            
-                            // First try with JwtUtil
+                        // If JwtUtil failed, try with JwtTokenProvider as backup
+                        if (currentUser == null) {
                             try {
-                                if (jwtUtil.validateToken(jwtToken)) {
-                                    String email = jwtUtil.extractEmail(jwtToken);
-                                    logger.debug("JwtUtil extracted email: {}", email);
-                                    
-                                    if (email != null) {
-                                        Optional<User> userOpt = userRepository.findByEmail(email);
-                                        if (userOpt.isPresent()) {
-                                            currentUser = userOpt.get();
-                                            logger.debug("Found user with JwtUtil: {}", currentUser.getNamaLengkap());
-                                            
-                                            // Check if user is a student
-                                            if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
-                                                Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
-                                                if (mahasiswaOpt.isPresent()) {
-                                                    mahasiswa = mahasiswaOpt.get();
-                                                    logger.debug("Found mahasiswa record with JwtUtil - kamar: {}, kasur: {}", 
-                                                        mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
-                                                }
+                                String email = jwtTokenProvider.getUsername(jwtToken);
+                                logger.debug("Extracted email from token: {}", email);
+                                
+                                if (email != null) {
+                                    Optional<User> userOpt = userRepository.findByEmail(email);
+                                    if (userOpt.isPresent()) {
+                                        currentUser = userOpt.get();
+                                        logger.debug("Found user with JwtTokenProvider: {}", currentUser.getNamaLengkap());
+                                        
+                                        // Check if user is a student
+                                        if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
+                                            Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
+                                            if (mahasiswaOpt.isPresent()) {
+                                                mahasiswa = mahasiswaOpt.get();
+                                                logger.debug("Found mahasiswa record with kamar: {}, kasur: {}", 
+                                                    mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
                                             }
                                         }
                                     }
                                 }
                             } catch (Exception e) {
-                                logger.warn("JwtUtil failed to decode token: {}", e.getMessage());
-                            }
-                            
-                            // If JwtUtil failed, try with JwtTokenProvider as backup
-                            if (currentUser == null) {
-                                try {
-                                    String email = jwtTokenProvider.getUsername(jwtToken);
-                                    logger.debug("Extracted email from token: {}", email);
-                                    
-                                    if (email != null) {
-                                        Optional<User> userOpt = userRepository.findByEmail(email);
-                                        if (userOpt.isPresent()) {
-                                            currentUser = userOpt.get();
-                                            logger.debug("Found user with JwtTokenProvider: {}", currentUser.getNamaLengkap());
-                                            
-                                            // Check if user is a student
-                                            if (currentUser.getLevel().getId().intValue() == 1) { // assuming 1 is for Mahasiswa
-                                                Optional<Mahasiswa> mahasiswaOpt = mahasiswaRepository.findByUserId(currentUser.getId());
-                                                if (mahasiswaOpt.isPresent()) {
-                                                    mahasiswa = mahasiswaOpt.get();
-                                                    logger.debug("Found mahasiswa record with kamar: {}, kasur: {}", 
-                                                        mahasiswa.getNoKamar(), mahasiswa.getNoKasur());
-                                                }
-                                            }
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    logger.error("JwtTokenProvider failed to decode token: {}", e.getMessage());
-                                }
+                                logger.error("JwtTokenProvider failed to decode token: {}", e.getMessage());
                             }
                         }
                     }
                 }
-                
-                // Jika berhasil mendapatkan data mahasiswa, siapkan info spesifik pengguna
-                if (mahasiswa != null && currentUser != null) {
-                    // Get jurusan info directly from the mahasiswa entity
-                    String jurusanName = mahasiswa.getJurusan().getNama();
-                    
-                    // Count reports
-                    List<LaporanUmum> laporanUmumList = laporanUmumRepository.findAllByMahasiswaId(mahasiswa.getId());
-                    List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaIdAndStatus(mahasiswa.getId(), "menunggu");
-                    
-                    int totalLaporanUmum = laporanUmumList.size();
-                    int totalLaporanBarang = laporanBarangList.size();
-                    int totalLaporanKeluhan = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
-                    int totalLaporanIzin = laporanUmumRepository.countLaporanIzin(mahasiswa.getId());
-                    
-                    // Add user-specific data to be included in the prompt
-                    userSpecificInfo = String.format(
-                        "Informasi pengguna: Nama: %s, Email: %s, Jurusan: %s, " +
-                        "Nomor Kamar: %d, Nomor Kasur: %d, " +
-                        "Total Laporan Umum: %d, Total Laporan Keluhan: %d, Total Laporan Izin: %d, " +
-                        "Total Paket/Barang: %d",
-                        currentUser.getNamaLengkap(),
-                        currentUser.getEmail(),
-                        jurusanName,
-                        mahasiswa.getNoKamar(),
-                        mahasiswa.getNoKasur(),
-                        totalLaporanUmum,
-                        totalLaporanKeluhan,
-                        totalLaporanIzin,
-                        totalLaporanBarang
-                    );
-                    
-                    logger.info("Generated user-specific info for Gemini prompt");
-                } else {
-                    logger.warn("Could not generate user-specific info - mahasiswa: {}, user: {}", 
-                        (mahasiswa != null), (currentUser != null));
-                }
             }
+            
+            // Jika berhasil mendapatkan data mahasiswa, siapkan info spesifik pengguna
+            if (mahasiswa != null && currentUser != null) {
+                // Get jurusan info directly from the mahasiswa entity
+                String jurusanName = mahasiswa.getJurusan().getNama();
+                
+                // Count reports
+                List<LaporanUmum> laporanUmumList = laporanUmumRepository.findAllByMahasiswaId(mahasiswa.getId());
+                List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaIdAndStatus(mahasiswa.getId(), "menunggu");
+                
+                int totalLaporanUmum = laporanUmumList.size();
+                int totalLaporanBarang = laporanBarangList.size();
+                int totalLaporanKeluhan = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
+                int totalLaporanIzin = laporanUmumRepository.countLaporanIzin(mahasiswa.getId());
+                
+                // Add user-specific data to be included in the prompt
+                userSpecificInfo = String.format(
+                    "Informasi pengguna: Nama: %s, Email: %s, Jurusan: %s, " +
+                    "Nomor Kamar: %d, Nomor Kasur: %d, " +
+                    "Total Laporan Umum: %d, Total Laporan Keluhan: %d, Total Laporan Izin: %d, " +
+                    "Total Paket/Barang: %d",
+                    currentUser.getNamaLengkap(),
+                    currentUser.getEmail(),
+                    jurusanName,
+                    mahasiswa.getNoKamar(),
+                    mahasiswa.getNoKasur(),
+                    totalLaporanUmum,
+                    totalLaporanKeluhan,
+                    totalLaporanIzin,
+                    totalLaporanBarang
+                );
+                
+                logger.info("Generated user-specific info for Gemini prompt");
+            } else {
+                logger.warn("Could not generate user-specific info - mahasiswa: {}, user: {}", 
+                    (mahasiswa != null), (currentUser != null));
+            }
+            
+            // Get configuration data
+            Map<String, String> konfigurasi = new HashMap<>();
+            try {
+                List<Object[]> konfigurasiList = entityManager.createNativeQuery(
+                    "SELECT k_key, k_value FROM konfigurasi"
+                ).getResultList();
+                
+                for (Object[] row : konfigurasiList) {
+                    konfigurasi.put((String) row[0], (String) row[1]);
+                }
+            } catch (Exception e) {
+                logger.warn("Could not load configuration data", e);
+            }
+            
+            // Get building name and other info from configuration
+            String websiteName = konfigurasi.getOrDefault("web-nama-website", "DormHub");
+            String buildingName = konfigurasi.getOrDefault("web-nama-gedung", "asrama");
             
             // Tambahkan konteks untuk Gemini
             String fullPrompt;
             
             if (isUserSpecificQuestion) {
                 // Jika pertanyaan tentang data spesifik pengguna, tambahkan data pribadi ke prompt
-                fullPrompt = "Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa. Berikan jawaban singkat dan padat dalam Bahasa Indonesia. ";
-                fullPrompt += "Informasi tentang DormHub: DormHub adalah aplikasi manajemen asrama yang memiliki fitur check-in, check-out, laporan keluhan, dan informasi kamar. ";
+                fullPrompt = String.format("Kamu adalah asisten %s, sebuah aplikasi asrama mahasiswa. Berikan jawaban natural dan ramah dalam Bahasa Indonesia. ", websiteName);
+                fullPrompt += String.format("Informasi tentang %s: %s adalah aplikasi manajemen asrama bernama %s yang memiliki fitur check-in, check-out, laporan keluhan, dan informasi kamar. ", 
+                    websiteName, websiteName, buildingName);
                 
                 // Add user-specific info if available
                 if (!userSpecificInfo.isEmpty()) {
@@ -277,14 +477,21 @@ public class ChatBotApiController {
                     fullPrompt += "Jika ditanya tentang informasi spesifik pengguna seperti 'kamar saya berapa?' atau 'berapa jumlah laporan saya?', berikan jawaban berdasarkan data yang tersedia. ";
                 }
                 
-                fullPrompt += "Jika ditanya tentang informasi kamar, saran untuk memeriksa menu 'Informasi Kamar'. ";
-                fullPrompt += "Jika ditanya tentang laporan, saran untuk membuat laporan di menu 'Laporan' > 'Buat Laporan'. ";
+                fullPrompt += "Beri jawaban ramah dan natural seperti teman mengobrol, bukan seperti sistem formal. ";
+                fullPrompt += "Jangan saran menggunakan menu-menu kecuali jika pengguna langsung bertanya tentang cara melakukan sesuatu. ";
             } else {
                 // Untuk percakapan umum, gunakan prompt sederhana tanpa data pribadi
-                fullPrompt = "Kamu adalah asisten DormHub, sebuah aplikasi asrama mahasiswa. Berikan jawaban natural dalam Bahasa Indonesia. ";
+                fullPrompt = String.format("Kamu adalah asisten %s, sebuah aplikasi asrama mahasiswa bernama %s. Berikan jawaban natural dan ramah dalam Bahasa Indonesia. ", 
+                    websiteName, buildingName);
+                
+                if (!userSpecificInfo.isEmpty()) {
+                    fullPrompt += "Ini informasi tentang pengguna yang sedang kamu ajak bicara: " + userSpecificInfo + ". ";
+                    fullPrompt += "Gunakan namanya dalam percakapan untuk sentuhan personal. ";
+                }
+                
                 fullPrompt += "Kamu bisa mengobrol tentang berbagai topik dan menjawab pertanyaan umum pengguna. ";
-                fullPrompt += "Jangan menyarankan menu-menu dalam aplikasi kecuali ditanya. ";
-                fullPrompt += "Jangan memberi jawaban template, beri respons yang natural dan personal. ";
+                fullPrompt += "Beri respons yang natural, ramah dan personal seperti teman mengobrol. ";
+                fullPrompt += "Hindari bahasa formal dan kaku. Gunakan bahasa yang santai namun tetap sopan. ";
             }
             
             fullPrompt += "Berikut adalah pesan pengguna: " + userMessage;
@@ -301,8 +508,8 @@ public class ChatBotApiController {
             
             // Konfigurasi generasi
             ObjectNode generationConfig = objectMapper.createObjectNode();
-            generationConfig.put("temperature", isUserSpecificQuestion ? 0.2 : 0.7); // Lower temperature for data questions, higher for chat
-            generationConfig.put("maxOutputTokens", isUserSpecificQuestion ? 150 : 250); // Longer responses for chat
+            generationConfig.put("temperature", isUserSpecificQuestion ? 0.4 : 0.7); // Lower temperature for data questions, higher for chat
+            generationConfig.put("maxOutputTokens", isUserSpecificQuestion ? 200 : 300); // Longer responses for chat
             geminiRequestBody.set("generationConfig", generationConfig);
             
             // Log request body
@@ -722,7 +929,8 @@ public class ChatBotApiController {
                 }
             } else {
                 // Default fallback for other questions
-                response.put("answer", "Maaf, saya tidak memahami pertanyaan Anda. Silakan tanyakan tentang kamar, laporan, atau paket Anda.");
+                response.put("answer", 
+                    "Maaf, saya tidak memahami pertanyaan Anda. Silakan tanyakan tentang kamar, laporan, atau paket Anda.");
             }
         } catch (Exception e) {
             logger.error("Error processing query", e);
@@ -889,13 +1097,44 @@ public class ChatBotApiController {
             
             // Get building name from configuration
             String buildingName = konfigurasi.getOrDefault("web-nama-gedung", "asrama");
+            String websiteName = konfigurasi.getOrDefault("web-nama-website", "DormHub");
             
-            if (lowercaseQuestion.contains("kamar") && lowercaseQuestion.contains("saya")) {
+            // Cek kata kunci sederhana dan ubah ke format yang lebih spesifik
+            if (lowercaseQuestion.equals("kamar")) {
+                lowercaseQuestion = "kamar saya";
+                logger.info("Converting simple keyword 'kamar' to 'kamar saya'");
+            } else if (lowercaseQuestion.equals("laporan") || lowercaseQuestion.equals("lap")) {
+                lowercaseQuestion = "laporan saya";
+                logger.info("Converting simple keyword 'laporan' to 'laporan saya'");
+            } else if (lowercaseQuestion.equals("paket") || lowercaseQuestion.equals("barang")) {
+                lowercaseQuestion = "paket saya";
+                logger.info("Converting simple keyword 'paket/barang' to 'paket saya'");
+            } else if (lowercaseQuestion.equals("nama")) {
+                lowercaseQuestion = "nama saya";
+                logger.info("Converting simple keyword 'nama' to 'nama saya'");
+            } else if (lowercaseQuestion.equals("jurusan")) {
+                lowercaseQuestion = "jurusan saya";
+                logger.info("Converting simple keyword 'jurusan' to 'jurusan saya'");
+            } else if (lowercaseQuestion.equals("keluhan")) {
+                lowercaseQuestion = "keluhan saya";
+                logger.info("Converting simple keyword 'keluhan' to 'keluhan saya'");
+            } else if (lowercaseQuestion.equals("izin")) {
+                lowercaseQuestion = "izin saya";
+                logger.info("Converting simple keyword 'izin' to 'izin saya'");
+            } else if (lowercaseQuestion.equals("checkout") || lowercaseQuestion.equals("check out")) {
+                lowercaseQuestion = "tentang checkout";
+                logger.info("Converting to checkout information request");
+            } else if (lowercaseQuestion.equals("checkin") || lowercaseQuestion.equals("check in")) {
+                lowercaseQuestion = "tentang checkin";
+                logger.info("Converting to checkin information request");
+            }
+            
+            if (lowercaseQuestion.contains("kamar") && (lowercaseQuestion.contains("saya") || lowercaseQuestion.contains("berapa") || lowercaseQuestion.contains("nomor"))) {
                 if (mahasiswa != null) {
                     // Calculate floor based on room number convention (e.g., room 101 is on floor 1)
                     int lantai = mahasiswa.getNoKamar() / 100;
                     
-                    // Create a more detailed response
+                    // Create a more detailed and natural response
                     response.put("answer", String.format(
                         "Anda tinggal di %s lantai %d, kamar nomor %d, dan kasur nomor %d.",
                         buildingName, lantai, mahasiswa.getNoKamar(), mahasiswa.getNoKasur()
@@ -904,7 +1143,7 @@ public class ChatBotApiController {
                 } else {
                     response.put("answer", "Maaf, informasi kamar tidak tersedia. Anda mungkin perlu login kembali.");
                 }
-            } else if (lowercaseQuestion.contains("lantai") && lowercaseQuestion.contains("saya")) {
+            } else if (lowercaseQuestion.contains("lantai") && (lowercaseQuestion.contains("saya") || lowercaseQuestion.contains("berapa"))) {
                 if (mahasiswa != null) {
                     int lantai = mahasiswa.getNoKamar() / 100;
                     response.put("answer", String.format(
@@ -916,7 +1155,7 @@ public class ChatBotApiController {
                     response.put("answer", "Maaf, informasi lantai tidak tersedia. Anda mungkin perlu login kembali.");
                 }
             } else if ((lowercaseQuestion.contains("paket") || lowercaseQuestion.contains("barang")) && 
-                      lowercaseQuestion.contains("saya")) {
+                      (lowercaseQuestion.contains("saya") || lowercaseQuestion.contains("berapa") || lowercaseQuestion.contains("ada"))) {
                 if (mahasiswa != null) {
                     List<LaporanBarang> laporanBarangList = laporanBarangRepository.findByMahasiswaIdAndStatus(mahasiswa.getId(), "menunggu");
                     
@@ -938,7 +1177,8 @@ public class ChatBotApiController {
                 } else {
                     response.put("answer", "Maaf, informasi paket tidak tersedia. Anda mungkin perlu login kembali.");
                 }
-            } else if (lowercaseQuestion.contains("laporan") && lowercaseQuestion.contains("saya")) {
+            } else if (lowercaseQuestion.contains("laporan") && 
+                      (lowercaseQuestion.contains("saya") || lowercaseQuestion.contains("berapa") || lowercaseQuestion.contains("ada"))) {
                 if (mahasiswa != null) {
                     List<LaporanUmum> laporanUmumList = laporanUmumRepository.findAllByMahasiswaId(mahasiswa.getId());
                     int totalKeluhanCount = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
@@ -952,7 +1192,8 @@ public class ChatBotApiController {
                 } else {
                     response.put("answer", "Maaf, informasi laporan tidak tersedia. Anda mungkin perlu login kembali.");
                 }
-            } else if (lowercaseQuestion.contains("keluhan") && lowercaseQuestion.contains("saya")) {
+            } else if (lowercaseQuestion.contains("keluhan") && 
+                      (lowercaseQuestion.contains("saya") || lowercaseQuestion.contains("berapa") || lowercaseQuestion.contains("ada"))) {
                 if (mahasiswa != null) {
                     int totalKeluhanCount = laporanUmumRepository.countLaporanKeluhan(mahasiswa.getId());
                     
@@ -968,7 +1209,8 @@ public class ChatBotApiController {
                 } else {
                     response.put("answer", "Maaf, informasi keluhan tidak tersedia. Anda mungkin perlu login kembali.");
                 }
-            } else if (lowercaseQuestion.contains("izin") && lowercaseQuestion.contains("saya")) {
+            } else if (lowercaseQuestion.contains("izin") && 
+                      (lowercaseQuestion.contains("saya") || lowercaseQuestion.contains("berapa") || lowercaseQuestion.contains("ada"))) {
                 if (mahasiswa != null) {
                     int totalIzinCount = laporanUmumRepository.countLaporanIzin(mahasiswa.getId());
                     
@@ -984,7 +1226,8 @@ public class ChatBotApiController {
                 } else {
                     response.put("answer", "Maaf, informasi izin tidak tersedia. Anda mungkin perlu login kembali.");
                 }
-            } else if (lowercaseQuestion.contains("nama") && lowercaseQuestion.contains("saya")) {
+            } else if (lowercaseQuestion.contains("nama") && 
+                      (lowercaseQuestion.contains("saya") || lowercaseQuestion.contains("siapa"))) {
                 if (currentUser != null) {
                     response.put("answer", String.format(
                         "Nama Anda adalah %s. Anda terdaftar dengan email %s.", 
@@ -994,7 +1237,8 @@ public class ChatBotApiController {
                 } else {
                     response.put("answer", "Maaf, informasi pengguna tidak tersedia. Anda mungkin perlu login kembali.");
                 }
-            } else if (lowercaseQuestion.contains("jurusan") && lowercaseQuestion.contains("saya")) {
+            } else if (lowercaseQuestion.contains("jurusan") && 
+                      (lowercaseQuestion.contains("saya") || lowercaseQuestion.contains("apa"))) {
                 if (mahasiswa != null && mahasiswa.getJurusan() != null) {
                     response.put("answer", String.format(
                         "Anda terdaftar di jurusan %s.", 
@@ -1004,6 +1248,30 @@ public class ChatBotApiController {
                 } else {
                     response.put("answer", "Maaf, informasi jurusan tidak tersedia.");
                 }
+            } else if ((lowercaseQuestion.contains("jadwal") || lowercaseQuestion.contains("tanggal") || lowercaseQuestion.contains("kapan")) && 
+                      (lowercaseQuestion.contains("checkout") || lowercaseQuestion.contains("check out") || lowercaseQuestion.contains("keluar"))) {
+                // Get check-out date from configuration
+                String checkoutStartDate = konfigurasi.getOrDefault("web-mulai-tgl-co", "");
+                String checkoutEndDate = konfigurasi.getOrDefault("web-selesai-tgl-co", "");
+                
+                if (!checkoutStartDate.isEmpty() && !checkoutEndDate.isEmpty()) {
+                    response.put("answer", String.format(
+                        "Jadwal check-out di %s adalah dari tanggal %s sampai dengan tanggal %s. Pastikan Anda telah menyelesaikan semua kewajiban sebelum check-out.",
+                        buildingName, checkoutStartDate, checkoutEndDate
+                    ));
+                } else {
+                    response.put("answer", String.format(
+                        "Untuk informasi jadwal check-out, silakan perhatikan notifikasi pada dashboard Anda atau hubungi pihak %s.",
+                        websiteName
+                    ));
+                }
+                logger.info("Responding with check-out schedule info");
+            } else if ((lowercaseQuestion.contains("checkin") || lowercaseQuestion.contains("check in") || lowercaseQuestion.contains("masuk"))) {
+                response.put("answer", String.format(
+                    "Untuk check-in di %s, Anda perlu login ke sistem dan mengikuti petunjuk pada halaman beranda. Check-in biasanya dilakukan pada awal semester atau periode tertentu sesuai kebijakan asrama.",
+                    buildingName
+                ));
+                logger.info("Responding with check-in info");
             } else {
                 // Use direct-query as fallback
                 return directQuery(request, httpRequest);
@@ -1014,6 +1282,196 @@ public class ChatBotApiController {
         }
         
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/general-query")
+    public ResponseEntity<Map<String, String>> generalQuery(@RequestBody Map<String, String> request) {
+        Map<String, String> response = new HashMap<>();
+        String question = request.get("question");
+        
+        logger.info("Received general query: {}", question);
+        
+        // Default response
+        response.put("answer", "Maaf, saya tidak dapat memahami pertanyaan Anda.");
+        
+        if (question == null || question.trim().isEmpty()) {
+            return ResponseEntity.ok(response);
+        }
+        
+        // Lowercase question for easier matching
+        String lowercaseQuestion = question.toLowerCase();
+        
+        // Cek kata kunci sederhana dan ubah ke format yang lebih spesifik
+        if (lowercaseQuestion.equals("dormhub") || lowercaseQuestion.equals("asrama")) {
+            lowercaseQuestion = "tentang dormhub";
+            logger.info("Converting simple keyword to 'tentang dormhub'");
+        } else if (lowercaseQuestion.equals("siapa") || lowercaseQuestion.equals("kamu")) {
+            lowercaseQuestion = "siapa kamu";
+            logger.info("Converting simple keyword to 'siapa kamu'");
+        } else if (lowercaseQuestion.equals("bisa") || lowercaseQuestion.equals("bantu")) {
+            lowercaseQuestion = "bisa apa";
+            logger.info("Converting simple keyword to 'bisa apa'");
+        } else if (lowercaseQuestion.equals("checkout") || lowercaseQuestion.equals("check out")) {
+            lowercaseQuestion = "tentang checkout";
+            logger.info("Converting to checkout information request");
+        } else if (lowercaseQuestion.equals("checkin") || lowercaseQuestion.equals("check in")) {
+            lowercaseQuestion = "tentang checkin";
+            logger.info("Converting to checkin information request");
+        }
+        
+        try {
+            // Get configuration data
+            Map<String, String> konfigurasi = new HashMap<>();
+            try {
+                List<Object[]> konfigurasiList = entityManager.createNativeQuery(
+                    "SELECT k_key, k_value FROM konfigurasi"
+                ).getResultList();
+                
+                for (Object[] row : konfigurasiList) {
+                    konfigurasi.put((String) row[0], (String) row[1]);
+                }
+            } catch (Exception e) {
+                logger.warn("Could not load configuration data", e);
+            }
+            
+            // Get building name and other info from configuration
+            String websiteName = konfigurasi.getOrDefault("web-nama-website", "DormHub");
+            String buildingName = konfigurasi.getOrDefault("web-nama-gedung", "asrama");
+            
+            // Handle general questions about the chatbot or system
+            if (lowercaseQuestion.contains("siapa kamu") || 
+                lowercaseQuestion.contains("kamu siapa") || 
+                lowercaseQuestion.contains("siapa anda") ||
+                lowercaseQuestion.contains("anda siapa") ||
+                lowercaseQuestion.contains("siapa namamu") ||
+                lowercaseQuestion.contains("chatbot")) {
+                
+                response.put("answer", String.format(
+                    "Saya adalah asisten %s, chatbot yang membantu mahasiswa dengan informasi tentang asrama, laporan, dan paket. Saya dapat menjawab pertanyaan tentang data kamar, laporan, dan informasi lainnya yang Anda butuhkan.",
+                    websiteName
+                ));
+            } 
+            // Questions about what the bot can do
+            else if (lowercaseQuestion.contains("bisa apa") || 
+                     lowercaseQuestion.contains("bisa membantu") || 
+                     lowercaseQuestion.contains("bisa melakukan") ||
+                     lowercaseQuestion.contains("apa yang bisa") ||
+                     lowercaseQuestion.contains("membantu apa")) {
+                
+                response.put("answer", String.format(
+                    "Saya dapat membantu Anda dengan informasi tentang:\n" +
+                    "- Nomor kamar dan kasur Anda\n" +
+                    "- Jumlah dan status laporan Anda\n" +
+                    "- Informasi paket/barang Anda\n" +
+                    "- Informasi umum tentang %s\n" +
+                    "Silakan tanyakan apa yang Anda butuhkan!",
+                    websiteName
+                ));
+            }
+            // Greetings
+            else if (lowercaseQuestion.contains("halo") || 
+                     lowercaseQuestion.contains("hai") || 
+                     lowercaseQuestion.contains("hi") ||
+                     lowercaseQuestion.contains("hello") ||
+                     lowercaseQuestion.contains("pagi") ||
+                     lowercaseQuestion.contains("siang") ||
+                     lowercaseQuestion.contains("sore") ||
+                     lowercaseQuestion.contains("malam")) {
+                
+                response.put("answer", String.format(
+                    "Halo! Selamat datang di %s. Ada yang bisa saya bantu terkait informasi asrama, laporan, atau paket Anda?",
+                    websiteName
+                ));
+            }
+            // About the dormitory
+            else if (lowercaseQuestion.contains("asrama") || 
+                     lowercaseQuestion.contains("gedung") || 
+                     lowercaseQuestion.contains("dormhub") ||
+                     lowercaseQuestion.contains("dorm") ||
+                     lowercaseQuestion.contains("hub") ||
+                     lowercaseQuestion.contains("tentang dormhub")) {
+                
+                response.put("answer", String.format(
+                    "%s adalah sistem manajemen asrama yang membantu mahasiswa dalam proses check-in, check-out, pengelolaan laporan, dan penerimaan paket di %s.",
+                    websiteName, buildingName
+                ));
+            }
+            // About the check-in process
+            else if (lowercaseQuestion.contains("check-in") || 
+                     lowercaseQuestion.contains("checkin") ||
+                     lowercaseQuestion.contains("tentang checkin")) {
+                
+                response.put("answer", String.format(
+                    "Untuk check-in di %s, Anda perlu login ke sistem dan mengikuti petunjuk pada halaman beranda. " +
+                    "Check-in biasanya dilakukan pada awal semester atau periode tertentu sesuai kebijakan asrama.",
+                    buildingName
+                ));
+            }
+            // About the check-out process
+            else if (lowercaseQuestion.contains("check-out") || 
+                     lowercaseQuestion.contains("checkout") ||
+                     lowercaseQuestion.contains("tentang checkout")) {
+                
+                // Get check-out date from configuration
+                String checkoutStartDate = konfigurasi.getOrDefault("web-mulai-tgl-co", "");
+                String checkoutEndDate = konfigurasi.getOrDefault("web-selesai-tgl-co", "");
+                
+                if (!checkoutStartDate.isEmpty() && !checkoutEndDate.isEmpty()) {
+                    response.put("answer", String.format(
+                        "Jadwal check-out di %s adalah dari tanggal %s sampai dengan tanggal %s. " +
+                        "Pastikan Anda tidak memiliki tunggakan dan sudah menyelesaikan semua kewajiban sebelum melakukan check-out.",
+                        buildingName, checkoutStartDate, checkoutEndDate
+                    ));
+                } else {
+                    response.put("answer", 
+                        "Untuk check-out, silakan perhatikan notifikasi pada dashboard Anda. " +
+                        "Pastikan Anda tidak memiliki tunggakan dan sudah menyelesaikan semua kewajiban sebelum melakukan check-out."
+                    );
+                }
+            }
+            // About reports
+            else if (lowercaseQuestion.contains("lapor") || 
+                     lowercaseQuestion.contains("keluhan") ||
+                     lowercaseQuestion.contains("izin")) {
+                
+                response.put("answer", 
+                    "Untuk membuat laporan baru (keluhan atau izin), silakan akses menu 'Laporan' > 'Buat Laporan' di sidebar kiri. " +
+                    "Anda dapat melihat status laporan yang sudah dibuat di menu 'Laporan' > 'Daftar Laporan'."
+                );
+            }
+            // About packages
+            else if (lowercaseQuestion.contains("paket") || 
+                     lowercaseQuestion.contains("barang")) {
+                
+                response.put("answer", 
+                    "Paket atau barang yang diterima oleh petugas helpdesk akan dicatat dalam sistem. " +
+                    "Anda akan mendapatkan notifikasi di dashboard dan bisa melihat detail paket/barang Anda di sana."
+                );
+            }
+            // About room information
+            else if (lowercaseQuestion.contains("informasi kamar") || 
+                     lowercaseQuestion.contains("info kamar")) {
+                
+                response.put("answer", 
+                    "Untuk melihat informasi detail tentang kamar Anda, silakan akses menu 'Informasi Kamar' di sidebar kiri. " +
+                    "Di sana Anda dapat melihat lokasi kamar, detail fasilitas, dan informasi lainnya."
+                );
+            }
+            // Default response for other questions
+            else {
+                response.put("answer", 
+                    "Maaf, saya tidak dapat memahami pertanyaan Anda. Silakan tanyakan tentang informasi kamar, laporan, paket, " +
+                    "atau gunakan menu yang tersedia di dashboard untuk navigasi."
+                );
+            }
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("Error processing general query", e);
+            response.put("answer", "Terjadi kesalahan saat memproses pertanyaan Anda. Silakan coba lagi nanti.");
+            return ResponseEntity.ok(response);
+        }
     }
 
     @GetMapping("/test-query")
@@ -1127,8 +1585,6 @@ public class ChatBotApiController {
                             User user = userOpt.get();
                             response.put("userFound", true);
                             response.put("userName", user.getNamaLengkap());
-                        } else {
-                            response.put("userFound", false);
                         }
                     }
                 } catch (Exception e) {
@@ -1174,161 +1630,5 @@ public class ChatBotApiController {
         }
         
         return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/general-query")
-    public ResponseEntity<Map<String, String>> generalQuery(@RequestBody Map<String, String> request) {
-        Map<String, String> response = new HashMap<>();
-        String question = request.get("question");
-        
-        logger.info("Received general query: {}", question);
-        
-        // Default response
-        response.put("answer", "Maaf, saya tidak dapat memahami pertanyaan Anda.");
-        
-        if (question == null || question.trim().isEmpty()) {
-            return ResponseEntity.ok(response);
-        }
-        
-        // Lowercase question for easier matching
-        String lowercaseQuestion = question.toLowerCase();
-        
-        try {
-            // Get configuration data
-            Map<String, String> konfigurasi = new HashMap<>();
-            try {
-                List<Object[]> konfigurasiList = entityManager.createNativeQuery(
-                    "SELECT k_key, k_value FROM konfigurasi"
-                ).getResultList();
-                
-                for (Object[] row : konfigurasiList) {
-                    konfigurasi.put((String) row[0], (String) row[1]);
-                }
-            } catch (Exception e) {
-                logger.warn("Could not load configuration data", e);
-            }
-            
-            // Get building name and other info from configuration
-            String websiteName = konfigurasi.getOrDefault("web-nama-website", "DormHub");
-            String buildingName = konfigurasi.getOrDefault("web-nama-gedung", "asrama");
-            
-            // Handle general questions about the chatbot or system
-            if (lowercaseQuestion.contains("siapa kamu") || 
-                lowercaseQuestion.contains("kamu siapa") || 
-                lowercaseQuestion.contains("siapa anda") ||
-                lowercaseQuestion.contains("anda siapa") ||
-                lowercaseQuestion.contains("siapa namamu") ||
-                lowercaseQuestion.contains("chatbot")) {
-                
-                response.put("answer", String.format(
-                    "Saya adalah asisten %s, chatbot yang membantu mahasiswa dengan informasi tentang asrama, laporan, dan paket. Saya dapat menjawab pertanyaan tentang data kamar, laporan, dan informasi lainnya yang Anda butuhkan.",
-                    websiteName
-                ));
-            } 
-            // Questions about what the bot can do
-            else if (lowercaseQuestion.contains("bisa apa") || 
-                     lowercaseQuestion.contains("bisa membantu") || 
-                     lowercaseQuestion.contains("bisa melakukan") ||
-                     lowercaseQuestion.contains("apa yang bisa") ||
-                     lowercaseQuestion.contains("membantu apa")) {
-                
-                response.put("answer", String.format(
-                    "Saya dapat membantu Anda dengan informasi tentang:\n" +
-                    "- Nomor kamar dan kasur Anda\n" +
-                    "- Jumlah dan status laporan Anda\n" +
-                    "- Informasi paket/barang Anda\n" +
-                    "- Informasi umum tentang %s\n" +
-                    "Silakan tanyakan apa yang Anda butuhkan!",
-                    websiteName
-                ));
-            }
-            // Greetings
-            else if (lowercaseQuestion.contains("halo") || 
-                     lowercaseQuestion.contains("hai") || 
-                     lowercaseQuestion.contains("hi") ||
-                     lowercaseQuestion.contains("hello") ||
-                     lowercaseQuestion.contains("pagi") ||
-                     lowercaseQuestion.contains("siang") ||
-                     lowercaseQuestion.contains("sore") ||
-                     lowercaseQuestion.contains("malam")) {
-                
-                response.put("answer", String.format(
-                    "Halo! Selamat datang di %s. Ada yang bisa saya bantu terkait informasi asrama, laporan, atau paket Anda?",
-                    websiteName
-                ));
-            }
-            // About the dormitory
-            else if (lowercaseQuestion.contains("asrama") || 
-                     lowercaseQuestion.contains("gedung") || 
-                     lowercaseQuestion.contains("dormhub") ||
-                     lowercaseQuestion.contains("dorm") ||
-                     lowercaseQuestion.contains("hub")) {
-                
-                response.put("answer", String.format(
-                    "%s adalah sistem manajemen asrama yang membantu mahasiswa dalam proses check-in, check-out, pengelolaan laporan, dan penerimaan paket di %s.",
-                    websiteName, buildingName
-                ));
-            }
-            // About the check-in process
-            else if (lowercaseQuestion.contains("check-in") || 
-                     lowercaseQuestion.contains("checkin")) {
-                
-                response.put("answer", 
-                    "Untuk check-in, Anda perlu login ke sistem dan mengikuti petunjuk pada halaman beranda. " +
-                    "Check-in biasanya dilakukan pada awal semester atau periode tertentu sesuai kebijakan asrama."
-                );
-            }
-            // About the check-out process
-            else if (lowercaseQuestion.contains("check-out") || 
-                     lowercaseQuestion.contains("checkout")) {
-                
-                response.put("answer", 
-                    "Untuk check-out, silakan perhatikan notifikasi pada dashboard Anda. " +
-                    "Pastikan Anda tidak memiliki tunggakan dan sudah menyelesaikan semua kewajiban sebelum melakukan check-out."
-                );
-            }
-            // About reports
-            else if (lowercaseQuestion.contains("lapor") || 
-                     lowercaseQuestion.contains("keluhan") ||
-                     lowercaseQuestion.contains("izin")) {
-                
-                response.put("answer", 
-                    "Untuk membuat laporan baru (keluhan atau izin), silakan akses menu 'Laporan' > 'Buat Laporan' di sidebar kiri. " +
-                    "Anda dapat melihat status laporan yang sudah dibuat di menu 'Laporan' > 'Daftar Laporan'."
-                );
-            }
-            // About packages
-            else if (lowercaseQuestion.contains("paket") || 
-                     lowercaseQuestion.contains("barang")) {
-                
-                response.put("answer", 
-                    "Paket atau barang yang diterima oleh petugas helpdesk akan dicatat dalam sistem. " +
-                    "Anda akan mendapatkan notifikasi di dashboard dan bisa melihat detail paket/barang Anda di sana."
-                );
-            }
-            // About room information
-            else if (lowercaseQuestion.contains("informasi kamar") || 
-                     lowercaseQuestion.contains("info kamar")) {
-                
-                response.put("answer", 
-                    "Untuk melihat informasi detail tentang kamar Anda, silakan akses menu 'Informasi Kamar' di sidebar kiri. " +
-                    "Di sana Anda dapat melihat lokasi kamar, detail fasilitas, dan informasi lainnya."
-                );
-            }
-            // Default response for other questions
-            else {
-                response.put("answer", 
-                    "Maaf, saya tidak dapat memahami pertanyaan Anda. Silakan tanyakan tentang informasi kamar, laporan, paket, " +
-                    "atau gunakan menu yang tersedia di dashboard untuk navigasi."
-                );
-            }
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("Error processing general query", e);
-            response.put("answer", "Terjadi kesalahan saat memproses pertanyaan Anda. Silakan coba lagi nanti.");
-            return ResponseEntity.ok(response);
-        }
     }
 } 

@@ -6829,3 +6829,49 @@ Identify and stop the process that's listening on port 8080 or configure this ap
 2025-05-24T14:55:01.518Z  INFO 9436 --- [DormHub] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-05-24T14:55:01.520Z  INFO 9436 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
 2025-05-24T14:55:01.528Z  INFO 9436 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-05-24T15:41:25.153Z  INFO 360 --- [DormHub] [main] com.dormhub.DormHubApplication           : Starting DormHubApplication using Java 17.0.2 with PID 360 (C:\Users\arul\Downloads\dormhub-web\target\classes started by arul in C:\Users\arul\Downloads\dormhub-web)
+2025-05-24T15:41:25.162Z DEBUG 360 --- [DormHub] [main] com.dormhub.DormHubApplication           : Running with Spring Boot v3.4.0, Spring v6.2.0
+2025-05-24T15:41:25.164Z  INFO 360 --- [DormHub] [main] com.dormhub.DormHubApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-05-24T15:41:26.576Z  INFO 360 --- [DormHub] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-05-24T15:41:26.713Z  INFO 360 --- [DormHub] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 125 ms. Found 10 JPA repository interfaces.
+2025-05-24T15:41:27.490Z  INFO 360 --- [DormHub] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-05-24T15:41:27.502Z  INFO 360 --- [DormHub] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-24T15:41:27.503Z  INFO 360 --- [DormHub] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2025-05-24T15:41:27.654Z  INFO 360 --- [DormHub] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-24T15:41:27.656Z  INFO 360 --- [DormHub] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2381 ms
+2025-05-24T15:41:27.810Z  INFO 360 --- [DormHub] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-24T15:41:27.877Z  INFO 360 --- [DormHub] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.2.Final
+2025-05-24T15:41:27.913Z  INFO 360 --- [DormHub] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-05-24T15:41:28.962Z  INFO 360 --- [DormHub] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-24T15:41:29.238Z  INFO 360 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-05-24T15:41:29.952Z  INFO 360 --- [DormHub] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3bab95ca
+2025-05-24T15:41:29.970Z  INFO 360 --- [DormHub] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-05-24T15:41:30.111Z  WARN 360 --- [DormHub] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-24T15:41:30.127Z  WARN 360 --- [DormHub] [main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-05-24T15:41:30.204Z  INFO 360 --- [DormHub] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-24T15:41:31.974Z  INFO 360 --- [DormHub] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-24T15:41:32.230Z  INFO 360 --- [DormHub] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-24T15:41:32.534Z  INFO 360 --- [DormHub] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-24T15:41:33.370Z DEBUG 360 --- [DormHub] [main] com.dormhub.security.JwtAuthFilter       : Filter 'jwtAuthFilter' configured for use
+2025-05-24T15:41:34.088Z  WARN 360 --- [DormHub] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-05-24T15:41:34.119Z  INFO 360 --- [DormHub] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-05-24T15:41:34.321Z DEBUG 360 --- [DormHub] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 106 mappings in 'requestMappingHandlerMapping'
+2025-05-24T15:41:34.409Z DEBUG 360 --- [DormHub] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-05-24T15:41:34.432Z  INFO 360 --- [DormHub] [main] com.dormhub.config.SecurityConfig        : SecurityFilterChain configuration completed with JWT support
+2025-05-24T15:41:34.462Z DEBUG 360 --- [DormHub] [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, JwtAuthFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-05-24T15:41:34.532Z DEBUG 360 --- [DormHub] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-05-24T15:41:34.612Z DEBUG 360 --- [DormHub] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-05-24T15:41:34.760Z  INFO 360 --- [DormHub] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-05-24T15:41:34.776Z  INFO 360 --- [DormHub] [main] com.dormhub.DormHubApplication           : Started DormHubApplication in 10.508 seconds (process running for 11.232)
+2025-05-24T15:43:37.537Z  INFO 360 --- [DormHub] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-24T15:43:37.556Z  INFO 360 --- [DormHub] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-05-24T15:43:37.562Z  INFO 360 --- [DormHub] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-05-24T15:43:37.565Z  INFO 360 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-05-24T15:43:37.574Z  INFO 360 --- [DormHub] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

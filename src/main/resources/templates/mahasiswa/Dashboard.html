@@ -526,23 +526,49 @@
                         // Cek apakah ini pertanyaan spesifik tentang data pengguna
                         const userSpecificKeywords = [
                             'kamar', 'lantai', 'kasur', 'paket', 'barang', 'laporan', 
-                            'keluhan', 'izin', 'jurusan', 'nama', 'saya', 'berapa'
+                            'keluhan', 'izin', 'jurusan', 'nama', 'saya', 'berapa',
+                            'check-in', 'checkin', 'check-out', 'checkout', 'jadwal'
                         ];
                         
                         // Cek apakah ini pertanyaan umum tentang sistem
                         const systemKeywords = [
                             'dormhub', 'kamu siapa', 'anda siapa', 'bisa apa', 'check-in', 
-                            'checkout', 'membantu', 'asrama', 'gedung'
+                            'checkout', 'membantu', 'asrama', 'gedung', 'siapa kamu'
                         ];
+                        
+                        // Cek apakah ini single word query yang perlu diubah formatnya
+                        const singleWordCheck = prompt.trim().toLowerCase();
+                        let modifiedPrompt = prompt;
+                        
+                        // Ubah single word query menjadi pertanyaan lengkap
+                        if (singleWordCheck === "kamar") {
+                            modifiedPrompt = "Kamar saya nomor berapa?";
+                            console.log("Modified single word 'kamar' to full question");
+                        } else if (singleWordCheck === "laporan" || singleWordCheck === "lap") {
+                            modifiedPrompt = "Laporan saya ada berapa?";
+                            console.log("Modified single word 'laporan' to full question");
+                        } else if (singleWordCheck === "paket" || singleWordCheck === "barang") {
+                            modifiedPrompt = "Paket saya ada berapa?";
+                            console.log("Modified single word 'paket' to full question");
+                        } else if (singleWordCheck === "nama") {
+                            modifiedPrompt = "Nama saya siapa?";
+                            console.log("Modified single word 'nama' to full question");
+                        } else if (singleWordCheck === "checkin" || singleWordCheck === "check in") {
+                            modifiedPrompt = "Informasi tentang check in";
+                            console.log("Modified to check-in information request");
+                        } else if (singleWordCheck === "checkout" || singleWordCheck === "check out") {
+                            modifiedPrompt = "Informasi tentang check out";
+                            console.log("Modified to check-out information request");
+                        }
                         
                         // Cek apakah ada keyword spesifik user di prompt
                         const containsUserSpecificKeyword = userSpecificKeywords.some(keyword => 
-                            prompt.toLowerCase().includes(keyword)
+                            modifiedPrompt.toLowerCase().includes(keyword)
                         );
                         
                         // Cek apakah ada keyword tentang sistem di prompt
                         const containsSystemKeyword = systemKeywords.some(keyword => 
-                            prompt.toLowerCase().includes(keyword)
+                            modifiedPrompt.toLowerCase().includes(keyword)
                         );
                         
                         // Jika pertanyaan tentang data spesifik pengguna, gunakan detail-query API
@@ -553,7 +579,7 @@
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                body: JSON.stringify({ question: prompt }),
+                                body: JSON.stringify({ question: modifiedPrompt }),
                                 credentials: 'include' // Include cookies in the request
                             });
                             
@@ -565,7 +591,39 @@
                             console.log("Detail Query API Response:", detailQueryResult);
                             
                             if (detailQueryResult.answer) {
-                                return detailQueryResult.answer;
+                                // Dapatkan jawaban berbasis data dari API
+                                const dataAnswer = detailQueryResult.answer;
+                                
+                                // Tambahkan sentuhan personal dengan Gemini untuk pertanyaan spesifik
+                                try {
+                                    const personalizedResponse = await fetch('/api/chatbot/message', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ 
+                                            message: `${modifiedPrompt} Berikan respons yang ramah dan personal berdasarkan data ini: ${dataAnswer}` 
+                                        }),
+                                        credentials: 'include'
+                                    });
+                                    
+                                    if (personalizedResponse.ok) {
+                                        const geminiResult = await personalizedResponse.json();
+                                        if (geminiResult.candidates && geminiResult.candidates[0] && 
+                                            geminiResult.candidates[0].content && 
+                                            geminiResult.candidates[0].content.parts && 
+                                            geminiResult.candidates[0].content.parts[0] && 
+                                            geminiResult.candidates[0].content.parts[0].text) {
+                                            // Sukses mendapatkan respons personal dari Gemini
+                                            return geminiResult.candidates[0].content.parts[0].text;
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.log("Error getting personalized response, using data answer instead");
+                                }
+                                
+                                // Fallback ke jawaban berbasis data jika personalisasi gagal
+                                return dataAnswer;
                             }
                         }
                         
@@ -577,7 +635,7 @@
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                body: JSON.stringify({ question: prompt }),
+                                body: JSON.stringify({ question: modifiedPrompt }),
                                 credentials: 'include' // Include cookies in the request
                             });
                             
@@ -630,7 +688,7 @@
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ question: prompt }),
+                            body: JSON.stringify({ question: modifiedPrompt }),
                             credentials: 'include' // Include cookies in the request
                         });
                         
